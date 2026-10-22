@@ -7,17 +7,19 @@ import { Ico, usePausaCtl } from './util'
 import Vivo from './vivo'
 import Carta from './carta'
 import Reglas from './reglas'
+import Clases from './clases'
 import Mensajes from './mensajes'
 import Inventario from './inventario'
 import Analitica from './analitica'
 import Demo from './demo'
 
-type Sec = 'vivo' | 'carta' | 'inventario' | 'reglas' | 'mensajes' | 'analitica' | 'demo'
+type Sec = 'vivo' | 'carta' | 'inventario' | 'reglas' | 'clases' | 'mensajes' | 'analitica' | 'demo'
 const NAV: { id: Sec; full: string; short: string; ico: Parameters<typeof Ico>[0]['name'] }[] = [
   { id: 'vivo', full: 'En vivo', short: 'En vivo', ico: 'live' },
   { id: 'carta', full: 'Carta y stock', short: 'Carta', ico: 'carta' },
   { id: 'inventario', full: 'Inventario y aprovisionamiento', short: 'Inventario', ico: 'caja' },
   { id: 'reglas', full: 'Capacidad y reglas', short: 'Reglas', ico: 'sliders' },
+  { id: 'clases', full: 'Clase Estándar y Clase Oro', short: 'Clases', ico: 'star' },
   { id: 'mensajes', full: 'Mensajes', short: 'Avisos', ico: 'msg' },
   { id: 'analitica', full: 'Analítica del piloto', short: 'Piloto', ico: 'chart' },
   { id: 'demo', full: 'Escenario de demo', short: 'Demo', ico: 'demo' },
@@ -75,6 +77,7 @@ export default function ManagerApp() {
               {sec === 'carta' && <Carta s={s} />}
               {sec === 'inventario' && <Inventario s={s} />}
               {sec === 'reglas' && <Reglas s={s} ctl={ctl} />}
+              {sec === 'clases' && <Clases s={s} />}
               {sec === 'mensajes' && <Mensajes s={s} />}
               {sec === 'analitica' && <Analitica s={s} />}
               {sec === 'demo' && <Demo s={s} />}

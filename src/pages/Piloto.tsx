@@ -626,8 +626,8 @@ export default function Piloto() {
         <Link className="btn ghost" to="/">
           Todos los entregables
         </Link>
-        <Link className="btn ghost" to="/faq">
-          Preguntas frecuentes →
+        <Link className="btn ghost" to="/stack">
+          Stack técnico →
         </Link>
       </nav>
     </>

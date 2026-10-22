@@ -127,6 +127,13 @@ const PATHS: Record<string, ReactNode> = {
     </>
   ),
   flag: <path d="M6 21V4M6 5h11l-2 4 2 4H6" />,
+  voucher: (
+    <>
+      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" />
+      <path d="M14 6.5v11" strokeDasharray="1.8 2.4" />
+      <path d="M8 10.5h2.5M8 13.5h2.5" />
+    </>
+  ),
   wave: <path d="M3 12c2.5-3 4.5-3 7 0s4.5 3 7 0 3-2 4-1.5M3 17c2.5-3 4.5-3 7 0s4.5 3 7 0 3-2 4-1.5" />,
 }
 

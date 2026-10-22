@@ -166,6 +166,7 @@ function Feed({ s, now }: { s: ProtoState; now: number }) {
                   {e.p.prepedido && e.tipo === 'nuevo' ? ' · pre-pedido' : ''}
                   {e.p.sinPlastico && e.tipo === 'nuevo' ? ' · sin cubiertos' : ''}
                   {e.p.tarifaJoven && e.tipo === 'nuevo' ? ' · Tarifa Joven' : ''}
+                  {e.p.bono && e.tipo === 'nuevo' ? ` · bono ${e.p.bono.codigo}` : ''}
                 </span>
               </div>
               <time>{hace(now - e.t)}</time>

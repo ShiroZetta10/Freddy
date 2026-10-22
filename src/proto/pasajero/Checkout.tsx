@@ -1,16 +1,17 @@
 /** Hoja inferior: carrito → franja de recogida → pago simulado → confirmación (o pedido guardado offline / error). */
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CafeteriaId, LineaPedido, Pedido, ResultadoPedido, crearPedido, descuentoJoven, eur, franjas, getState, horaDe, pedidosAbiertos, producto, soloBebidas, totalLineas, uid } from '../store'
+import { CafeteriaId, LineaPedido, MotivoError, Pedido, ResultadoPedido, cotizar, crearPedido, eur, franjas, getState, horaDe, pedidosAbiertos, producto, soloBebidas, uid } from '../store'
 import { ProductoArt } from '../shared'
 import { CheckDraw, PI, vibrar } from './ui'
 import { SelectorCafeteria } from './Carta'
+import { BonoAplicadoPanel, BonoCanje } from './Bonos'
 import { useP } from './ctx'
 
 type Paso = 'carrito' | 'pago' | 'proceso' | 'ok' | 'offline' | 'error'
-type Metodo = Pedido['pago']
-type Err = { motivo: 'cerrado' | 'pausa' | 'franja-llena' | 'sin-stock'; detalle?: string; franjaNueva?: string | null }
-type Intento = { clientKey: string; billete: ReturnType<typeof useP>['billete']; lineas: LineaPedido[]; cafeteria: CafeteriaId; franja: number; pago: Metodo; sinPlastico: boolean }
+type Metodo = Exclude<Pedido['pago'], 'bono' | 'incluido'>
+type Err = { motivo: MotivoError; detalle?: string; franjaNueva?: string | null }
+type Intento = { clientKey: string; billete: ReturnType<typeof useP>['billete']; lineas: LineaPedido[]; cafeteria: CafeteriaId; franja: number; pago: Metodo; sinPlastico: boolean; bono?: string; mesa?: boolean; mesaRef?: string }
 
 const slide = {
   initial: { opacity: 0, x: 28 },
@@ -20,13 +21,15 @@ const slide = {
 }
 
 export default function Checkout({ onClose }: { onClose: () => void }) {
-  const { s, t, billete, cart, caf, setCaf, esOro, add, dec, removeLinea, clearCart, franjaSel, setFranjaSel, goTab } = useP()
+  const { s, t, billete, cart, caf, setCaf, esOro, add, dec, removeLinea, clearCart, franjaSel, setFranjaSel, goTab, bono, bonos, usarBono } = useP()
   const [paso, setPaso] = useState<Paso>('carrito')
   const [metodo, setMetodo] = useState<Metodo>('apple')
   const [err, setErr] = useState<Err | null>(null)
   const [res, setRes] = useState<Extract<ResultadoPedido, { ok: true }> | null>(null)
   const [dup, setDup] = useState(false)
   const [spManual, setSpManual] = useState<boolean | null>(null) // null = por defecto (activado si solo hay bebidas)
+  const [mesaSel, setMesaSel] = useState(true) // Clase Oro: servicio en mesa por defecto
+  const [mesaRef, setMesaRef] = useState('')
   const [reintentando, setReintentando] = useState(false)
   const [sigueOffline, setSigueOffline] = useState(false)
   const key = useRef(uid())
@@ -35,7 +38,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
   // una clientKey nueva por cada intento distinto (cambia el contenido del pedido); los reintentos la reutilizan
-  const firma = JSON.stringify({ cart, caf, franjaSel })
+  const firma = JSON.stringify({ cart, caf, franjaSel, bono: bono?.codigo })
   useEffect(() => {
     if (paso === 'carrito') key.current = uid()
   }, [firma, paso])
@@ -43,9 +46,15 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
   const frs = useMemo(() => franjas(s, caf, 6), [s, caf])
   const libres = frs.filter((f) => !f.llena)
   const sel = frs.find((f) => f.idx === franjaSel && !f.llena) ?? libres[0] ?? null
-  const subtotal = totalLineas(s, cart)
-  const dto = descuentoJoven(s, billete, cart)
-  const total = Math.round((subtotal - dto) * 100) / 100
+  // el bono se aplica primero; la ventaja joven solo recae en unidades que el bono no cubre (sin doble descuento)
+  const cot = cotizar(s, billete, cart, bono, caf)
+  const { subtotal, total, valorBono, dtoJoven: dto, oro } = cot
+  const oroMesa = esOro && caf === 'oro'
+  const mesaOn = oroMesa && mesaSel
+  const cubOro = new Map(oro.cubiertas.map((c) => [c.pid, c.qty]))
+  const bonoActivo = cot.plan?.completo ? bono : null
+  const cubiertas = new Map(cot.cubiertas.map((c) => [c.pid, c.qty]))
+  const gratis = total === 0 && (!!bonoActivo || oro.uds > 0)
   const sinPlastico = spManual ?? soloBebidas(s, cart)
   const abiertos = pedidosAbiertos(s)
   const pausa = s.ajustes.pausa[caf]
@@ -94,7 +103,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
 
   const pagar = () => {
     if (!sel || cart.length === 0) return
-    intento.current = { clientKey: key.current, billete, lineas: cart.map((l) => ({ ...l })), cafeteria: caf, franja: sel.idx, pago: metodo, sinPlastico }
+    intento.current = { clientKey: key.current, billete, lineas: cart.map((l) => ({ ...l })), cafeteria: caf, franja: sel.idx, pago: metodo, sinPlastico, bono: bonoActivo?.codigo, mesa: mesaOn, mesaRef: mesaOn ? mesaRef : undefined }
     setPaso('proceso')
     vibrar(15)
     timer.current = window.setTimeout(() => resolver(crearPedido(intento.current!)), 1400)
@@ -176,7 +185,11 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                             <PI n="plus" size={16} sw={2.6} />
                           </button>
                         </div>
-                        <span className="sub">{eur(p.precio * l.qty)}</span>
+                        <span className="sub">
+                          {eur(p.precio * (l.qty - (cubiertas.get(l.pid) ?? 0) - (cubOro.get(l.pid) ?? 0)))}
+                          {(cubOro.get(l.pid) ?? 0) > 0 && <em className="pj-bono-line">{t('or.incl')} ×{cubOro.get(l.pid)}</em>}
+                          {(cubiertas.get(l.pid) ?? 0) > 0 && <em className="pj-bono-line">{t('b.covered')} ×{cubiertas.get(l.pid)}</em>}
+                        </span>
                       </motion.li>
                     )
                   })}
@@ -196,6 +209,25 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                     {t('u.add')}
                   </button>
                 </div>
+              )}
+
+              <h3 className="pj-h3">{t('b.title')}</h3>
+              {bono ? (
+                <BonoAplicadoPanel cart={cart} />
+              ) : (
+                <>
+                  {bonos.length > 0 && (
+                    <div className="pj-bono-pick">
+                      {bonos.map((b) => (
+                        <button key={b.codigo} type="button" className="fob-btn ghost" onClick={() => usarBono(b.codigo)}>
+                          <PI n="voucher" size={17} /> {b.nombre}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {bonos.length === 0 && <p className="pj-note">{t('b.none')}</p>}
+                  <BonoCanje />
+                </>
               )}
 
               <h3 className="pj-h3">{t('k.from')}</h3>
@@ -218,6 +250,24 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
               {!abiertos && (
                 <div className="pj-banner bad" role="alert">
                   <PI n="clock" size={18} /> {t('e.cerrado', { n: s.ajustes.cierreAntesLlegada })}
+                </div>
+              )}
+
+              {oroMesa && (
+                <div className="pj-mesa">
+                  <button role="switch" aria-checked={mesaSel} className={'pj-eco-sw' + (mesaSel ? ' on' : '')} onClick={() => setMesaSel(!mesaSel)}>
+                    <span className="ic" aria-hidden>
+                      <PI n="star" size={20} />
+                    </span>
+                    <span className="tx">
+                      <b>{t('or.mesa.t')}</b>
+                      <small>{t('or.mesa.b')}</small>
+                    </span>
+                    <i aria-hidden>
+                      <motion.b layout transition={{ type: 'spring', stiffness: 500, damping: 32 }} />
+                    </i>
+                  </button>
+                  {mesaSel && <input className="pj-input" value={mesaRef} maxLength={24} onChange={(e) => setMesaRef(e.target.value)} placeholder={t('or.mesa.ph')} aria-label={t('or.mesa.ph')} />}
                 </div>
               )}
 
@@ -272,10 +322,24 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
         </div>
         {cart.length > 0 && (
           <div className="pj-sh-foot">
-            {dto > 0 && (
+            {(dto > 0 || valorBono > 0 || oro.valor > 0) && (
               <div className="pj-total-sub">
                 <span>{t('k.subtotal')}</span>
                 <span>{eur(subtotal)}</span>
+              </div>
+            )}
+            {oro.valor > 0 && (
+              <div className="pj-total-sub dto">
+                <span>{t('or.line')}</span>
+                <span>−{eur(oro.valor)}</span>
+              </div>
+            )}
+            {valorBono > 0 && bonoActivo && (
+              <div className="pj-total-sub dto">
+                <span>
+                  {t('b.line')} · {bonoActivo.nombre}
+                </span>
+                <span>−{eur(valorBono)}</span>
               </div>
             )}
             {dto > 0 && (
@@ -292,9 +356,10 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                 {eur(total)}
               </motion.b>
             </div>
-            <button className="fob-btn primary block" disabled={!sel || !abiertos || pausa} onClick={() => setPaso('pago')}>
-              {t('k.pay')}
-              <PI n="chevR" size={16} sw={2.4} />
+            {/* con el pedido cubierto por el bono no hay nada que cobrar: se salta el paso de pago */}
+            <button className="fob-btn primary block" disabled={!sel || !abiertos || pausa} onClick={() => (gratis ? pagar() : setPaso('pago'))}>
+              {gratis ? (bonoActivo ? t('b.cta.free') : t('or.cta.free')) : t('k.pay')}
+              <PI n={gratis ? 'check' : 'chevR'} size={16} sw={2.4} />
             </button>
           </div>
         )}
@@ -316,6 +381,16 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
             <small>
               {s.cafeterias[caf].nombre} · {sel?.desde}
             </small>
+            {oro.valor > 0 && (
+              <small className="pj-paydto">
+                {t('or.line')}: −{eur(oro.valor)}
+              </small>
+            )}
+            {valorBono > 0 && bonoActivo && (
+              <small className="pj-paydto">
+                {t('b.line')} · {bonoActivo.nombre}: −{eur(valorBono)}
+              </small>
+            )}
             {dto > 0 && (
               <small className="pj-paydto">
                 {t('j.line')}: −{eur(dto)}
@@ -354,8 +429,8 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
             <motion.circle cx="25" cy="25" r="21" fill="none" stroke="var(--fob-navy)" strokeWidth="4" strokeLinecap="round" strokeDasharray="40 100" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }} style={{ originX: '25px', originY: '25px' }} />
           </svg>
         </div>
-        <b className="pj-big-t">{t('y.auth')}</b>
-        <span className="pj-muted">{eur(total)}</span>
+        <b className="pj-big-t">{gratis ? (bonoActivo ? t('b.checking') : t('or.line')) : t('y.auth')}</b>
+        <span className="pj-muted">{gratis ? bonoActivo?.codigo ?? '' : eur(total)}</span>
       </motion.div>
     )
   } else if (paso === 'ok' && pedido && cafPedido) {
@@ -371,6 +446,35 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
         {dup && (
           <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}>
             <PI n="check" size={18} /> {t('y.dup')}
+          </motion.div>
+        )}
+        {pedido.servicio === 'mesa' && (
+          <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.92 }}>
+            <PI n="star" size={18} />
+            <div>
+              {t('or.ready.mesa')}
+              {pedido.mesaRef && (
+                <>
+                  <br />
+                  <small>{pedido.mesaRef}</small>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+        {pedido.menuOro && (
+          <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.93 }}>
+            <PI n="check" size={18} sw={2.6} /> {t('or.tag')} ×{pedido.menuOro.uds}
+          </motion.div>
+        )}
+        {pedido.bono && (
+          <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.95 }}>
+            <PI n="voucher" size={18} />
+            <div>
+              {pedido.total === 0 ? t('b.paid') : t('b.rest', { n: eur(pedido.total) })} · {pedido.bono.nombre}
+              <br />
+              <small>{pedido.bono.codigo}</small>
+            </div>
           </motion.div>
         )}
         <div className="pj-sum">
@@ -434,9 +538,15 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
     )
   } else if (paso === 'error' && err) {
     const prod = err.detalle ? s.productos.find((p) => p.nombre === err.detalle) : undefined
-    const titulo = t(err.motivo === 'franja-llena' ? 'e.franja.t' : err.motivo === 'sin-stock' ? 'e.stock.t' : err.motivo === 'pausa' ? 'e.pausa.t' : 'e.cerrado.t')
-    const msg =
-      err.motivo === 'franja-llena'
+    const esBono = err.motivo.startsWith('bono-')
+    const titulo = esBono ? t('e.bono.t') : err.motivo === 'solo-oro' ? t('e.oro.t') : t(err.motivo === 'franja-llena' ? 'e.franja.t' : err.motivo === 'sin-stock' ? 'e.stock.t' : err.motivo === 'pausa' ? 'e.pausa.t' : 'e.cerrado.t')
+    const msg = esBono
+      ? err.motivo === 'bono-incompleto'
+        ? t('e.bono-incompleto', { n: err.detalle ?? '' })
+        : t('b.err.' + err.motivo.slice(5).replace('invalido', 'formato'))
+      : err.motivo === 'solo-oro'
+        ? t('e.oro', { n: err.detalle ?? '' })
+        : err.motivo === 'franja-llena'
         ? err.franjaNueva
           ? t('e.franja', { h: err.franjaNueva })
           : t('e.franjaNone')
@@ -477,12 +587,23 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
               {t('e.remove', { n: prod.nombre })}
             </button>
           )}
+          {esBono && err.motivo !== 'bono-incompleto' && (
+            <button
+              className="fob-btn primary block"
+              onClick={() => {
+                usarBono(null)
+                volverACarrito()
+              }}
+            >
+              {t('e.bono.drop')}
+            </button>
+          )}
           {err.motivo === 'cerrado' ? (
             <button className="fob-btn ghost block" onClick={onClose}>
               {t('close')}
             </button>
           ) : (
-            <button className={'fob-btn block ' + (err.motivo === 'franja-llena' ? 'primary' : 'ghost')} onClick={volverACarrito}>
+            <button className={'fob-btn block ' + (err.motivo === 'franja-llena' || err.motivo === 'bono-incompleto' ? 'primary' : 'ghost')} onClick={volverACarrito}>
               {t('e.fix')}
             </button>
           )}

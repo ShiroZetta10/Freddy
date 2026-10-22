@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Canal, FASES, PERFILES, Pantalla, Perfil, PerfilId } from '../data/journey'
-import Icon from '../components/Icon'
+import { BarcoRuta } from '../components/journey/Barco'
+import EscenaPaso from '../components/journey/Escena'
+import './journey-anim.css'
 
 function Screen({ p, perfil }: { p: Pantalla; perfil: Perfil }) {
   return (
@@ -85,6 +87,8 @@ export default function Journey() {
 
   const paso = perfil.pasos[activo] ?? perfil.pasos[0]
   const faseActiva = FASES.indexOf(paso.fase)
+  // Hito de cada fase: progreso de su primer paso en este perfil
+  const hitos = FASES.map((f) => ({ fase: f, p: perfil.pasos.find((x) => x.fase === f)?.progreso ?? 0 }))
 
   const cambiarPerfil = (id: PerfilId) => {
     setPerfilId(id)
@@ -111,16 +115,7 @@ export default function Journey() {
             </button>
           ))}
         </div>
-        <div className="jr-route" aria-label={`Fase actual: ${paso.fase}`}>
-          <span className="jr-port">Santa Cruz</span>
-          <div className="jr-line">
-            <div className="jr-fill" style={{ width: `${paso.progreso * 100}%` }} />
-            <div className="jr-boat" style={{ left: `${paso.progreso * 100}%` }}>
-              <Icon name="anchor" size={14} />
-            </div>
-          </div>
-          <span className="jr-port">Agaete</span>
-        </div>
+        <BarcoRuta progreso={paso.progreso} fase={paso.fase} hitos={hitos} faseActiva={faseActiva} />
         <div className="jr-phases">
           {FASES.map((f, i) => (
             <span key={f} className={i === faseActiva ? 'on' : i < faseActiva ? 'done' : ''}>
@@ -152,16 +147,7 @@ export default function Journey() {
               </div>
               <h2>{s.titulo}</h2>
               <p>{s.hace}</p>
-              <div className="jr-pain">
-                <div>
-                  <h4>Hoy</h4>
-                  {s.dolor}
-                </div>
-                <div className="ours">
-                  <h4>Con FredOnBoard</h4>
-                  {s.solucion}
-                </div>
-              </div>
+              <EscenaPaso perfil={perfilId} idx={i} activo={i === activo} dolor={s.dolor} solucion={s.solucion} />
               {s.canales && (
                 <div className="jr-canales">
                   <h4>Comunicación con el cliente</h4>

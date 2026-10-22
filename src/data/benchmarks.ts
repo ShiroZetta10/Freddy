@@ -118,6 +118,77 @@ export const benchmarkB: Benchmark = {
 
 export const BENCHMARKS = { A: benchmarkA, B: benchmarkB }
 
+/* ---------- categorías generales (tabla de referencia de Canva) ---------- */
+export type CategoriaId = 'tecnologias' | 'procesos' | 'tendencias' | 'resultados' | 'otras'
+
+export const CATEGORIAS: Record<CategoriaId, { nombre: string; descripcion: string }> = {
+  tecnologias: { nombre: 'Tecnologías', descripcion: 'Herramientas, plataformas e integraciones que sustentan el servicio.' },
+  procesos: { nombre: 'Procesos', descripcion: 'Cómo se organiza y se presta el servicio al pasajero.' },
+  tendencias: { nombre: 'Tendencias', descripcion: 'Proyectos recientes y líneas de innovación hacia las que se mueve el sector.' },
+  resultados: { nombre: 'Resultados', descripcion: 'Impacto y reconocimiento medibles: KPIs, premios y satisfacción.' },
+  otras: { nombre: 'Otras', descripcion: 'Columnas sin categoría asignada.' },
+}
+
+/** Orden de las categorías y, dentro de cada una, orden de las columnas (contiguas). */
+export const CATEGORIAS_BENCHMARK: Record<'A' | 'B', { id: CategoriaId; columnas: string[] }[]> = {
+  A: [
+    {
+      id: 'tecnologias',
+      // app/web, pedido móvil y wifi son canales y soporte digital; pagos y wallets son tecnología de cobro
+      columnas: ['digital_app', 'pedido_movil', 'conectividad', 'pagos_fidelizacion'],
+    },
+    {
+      id: 'procesos',
+      // oferta gastronómica y experiencia a bordo son el servicio que se presta y cómo se organiza
+      columnas: ['oferta_fyb', 'experiencia_abordo'],
+    },
+    {
+      id: 'tendencias',
+      // proyectos digitales 2023-2026, IA y sostenibilidad: hacia dónde se mueve cada naviera
+      columnas: ['innovacion'],
+    },
+    {
+      id: 'resultados',
+      // no encaja en las tres categorías base: premios y encuestas son resultado, no capacidad
+      columnas: ['satisfaccion'],
+    },
+  ],
+  B: [
+    {
+      id: 'tecnologias',
+      // inventario sincronizado, modo offline/pagos y proveedor/integración TPV-ERP son pura tecnología
+      columnas: ['stock_tiempo_real', 'offline_pagos', 'tecnologia_integracion'],
+    },
+    {
+      id: 'procesos',
+      // flujo de pedido, recogida, picos, convivencia con venta tradicional e inclusión son procesos operativos
+      columnas: ['ux_pedido', 'recogida_entrega', 'gestion_picos', 'convivencia_canales', 'accesibilidad'],
+    },
+    // Tendencias: ninguna columna de B es de tendencias (las tendencias de B van en su sección propia), no se muestra vacía
+    {
+      id: 'resultados',
+      // resultados publicados (ventas, ticket medio, adopción): no encaja en las tres categorías base
+      columnas: ['impacto_kpis'],
+    },
+  ],
+}
+
+export type GrupoColumnas = { id: CategoriaId; columnas: Vertical[] }
+
+/** Agrupa (y ordena) las verticales dadas por categoría; las no asignadas van a «Otras». */
+export function agruparVerticales(b: Benchmark, vs: Vertical[]): GrupoColumnas[] {
+  const usadas = new Set<string>()
+  const out: GrupoColumnas[] = []
+  for (const g of CATEGORIAS_BENCHMARK[b.key]) {
+    const cols = g.columnas.map((id) => vs.find((v) => v.id === id)).filter((v): v is Vertical => !!v)
+    cols.forEach((v) => usadas.add(v.id))
+    if (cols.length) out.push({ id: g.id, columnas: cols })
+  }
+  const resto = vs.filter((v) => !usadas.has(v.id))
+  if (resto.length) out.push({ id: 'otras', columnas: resto })
+  return out
+}
+
 /** Pesos por vertical derivados de los criterios del jurado (reparto a partes iguales dentro de cada criterio). */
 export function pesosJurado(b: Benchmark): Record<string, number> {
   const count: Record<string, number> = {}

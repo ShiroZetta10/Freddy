@@ -2,9 +2,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import Icon from '../../components/Icon'
-import { fase, horaDe, pedidosAbiertos, progreso } from '../store'
+import { fase, horaDe, pedidosAbiertos, planMenuOro, progreso } from '../store'
 import { useToast } from '../shared'
 import { BarcoSVG, Olas, PI, Stars, vibrar } from './ui'
+import { BonoCard } from './Bonos'
 import { ss, useP } from './ctx'
 
 function Contador({ valor }: { valor: number }) {
@@ -26,7 +27,7 @@ function Hoja({ children }: { children?: React.ReactNode }) {
 const ESTADOS_ACTIVOS = ['recibido', 'preparando', 'listo']
 
 export default function Viaje() {
-  const { s, t, goTab, mios, billete, plusGanados } = useP()
+  const { s, t, goTab, setCaf, esOro, mios, billete, plusGanados, bonos, bono, usarBono } = useP()
   const toast = useToast()
   const f = fase(s)
   const p = progreso(s)
@@ -38,6 +39,9 @@ export default function Viaje() {
   const pendientes = s.pendientesOffline.filter((x) => x.ticket === billete.ticket)
   const avisos = [...s.mensajes].slice(-3).reverse()
   const llegada_fase = f === 'llegando' || f === 'llegado'
+  const oroMenu = planMenuOro(s, billete, 'oro', [])
+  const enEmbarque = f === 'antes' || f === 'embarque'
+  const [upAbierto, setUpAbierto] = useState(false)
 
   // valoración
   const claveRate = `pj-rate-${billete.ticket}`
@@ -107,6 +111,51 @@ export default function Viaje() {
         </div>
       </section>
 
+      {/* Clase Oro: distintivo, prioridades y acceso directo al menú incluido */}
+      {esOro && (
+        <section className="pj-oro fob-card" aria-label={t('or.trip.t')}>
+          <div className="pj-oro-h">
+            <span className="seal" aria-hidden>
+              <PI n="star" size={20} sw={2} />
+            </span>
+            <div>
+              <b>{t('or.trip.t')}</b>
+              <span>{t('or.trip.hello', { n: billete.nombre })}</span>
+            </div>
+            <em className="pj-oro-badge">{t('or.badge')}</em>
+          </div>
+          <p>{t('or.trip.b', { cub: s.cafeterias.oro.cubierta })}</p>
+          <ul className="pj-oro-prio">
+            <li className={enEmbarque ? 'act' : f === 'navegando' || llegada_fase ? 'idle' : ''}>
+              <PI n="check" size={16} sw={2.6} />
+              <div>
+                <b>{t('or.board.t')}</b>
+                {enEmbarque && <span>{t('or.board.b', { t: billete.ticket })}</span>}
+              </div>
+            </li>
+            <li className={llegada_fase ? 'act' : 'idle'}>
+              <PI n="check" size={16} sw={2.6} />
+              <div>
+                <b>{t('or.disem.t')}</b>
+                {llegada_fase && <span>{billete.vehiculo ? t('or.disem.b') : t('or.disem.novh')}</span>}
+              </div>
+            </li>
+          </ul>
+          {abiertos && (
+            <button
+              className="fob-btn navy"
+              onClick={() => {
+                setCaf('oro')
+                goTab('carta')
+              }}
+            >
+              {t('or.menu.t')} · {oroMenu.restantes}/{oroMenu.limite}
+              <PI n="chevR" size={16} sw={2.4} />
+            </button>
+          )}
+        </section>
+      )}
+
       {/* mensaje contextual */}
       <AnimatePresence mode="wait">
         <motion.section
@@ -135,6 +184,33 @@ export default function Viaje() {
         </motion.section>
       </AnimatePresence>
 
+      {/* bonos de consumo: lo que el pasajero compró con el billete */}
+      {bonos.length > 0 && (
+        <section className="pj-block" aria-label={t('b.title')}>
+          <h3>{t('b.title')}</h3>
+          {bonos.map((b) => (
+            <BonoCard key={b.codigo} b={b} titulo={t('b.have', { n: b.nombre })} destacado={bono?.codigo === b.codigo}>
+              {bono?.codigo === b.codigo ? (
+                <span className="fob-pill green">
+                  <PI n="check" size={12} sw={2.6} /> {t('b.sel')}
+                </span>
+              ) : abiertos ? (
+                <button
+                  className="fob-btn navy"
+                  onClick={() => {
+                    usarBono(b.codigo)
+                    goTab('carta')
+                  }}
+                >
+                  {t('b.use')}
+                </button>
+              ) : null}
+            </BonoCard>
+          ))}
+          <p className="pj-note">{t('b.have.b')}</p>
+        </section>
+      )}
+
       {/* pedidos en curso */}
       {(activos.length > 0 || pendientes.length > 0) && (
         <section className="pj-block">
@@ -153,6 +229,39 @@ export default function Viaje() {
               <span className={'fob-pill ' + (x.estado === 'listo' ? 'green' : '')}>{t('o.st.' + x.estado)}</span>
             </button>
           ))}
+        </section>
+      )}
+
+      {/* Clase Estándar: tarjeta discreta de mejora a Clase Oro (conmutable desde Manager) */}
+      {!esOro && s.ajustes.upsellOro && f !== 'llegado' && (
+        <section className="pj-uporo fob-card" aria-label={t('or.up.t')}>
+          <div className="pj-uporo-h">
+            <PI n="star" size={16} sw={2} />
+            <div>
+              <b>{t('or.up.t')}</b>
+              <span>{t('or.up.b')}</span>
+            </div>
+            <button className="pj-link" aria-expanded={upAbierto} onClick={() => setUpAbierto((v) => !v)}>
+              {upAbierto ? t('or.up.less') : t('or.up.more')}
+            </button>
+          </div>
+          <AnimatePresence initial={false}>
+            {upAbierto && (
+              <motion.div key="det" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
+                <ul className="pj-uporo-l">
+                  {['or.up.i1', 'or.up.i2', 'or.up.i3', 'or.up.i4', 'or.up.i5'].map((k) => (
+                    <li key={k}>
+                      <PI n="check" size={14} sw={2.6} /> {t(k)}
+                    </li>
+                  ))}
+                </ul>
+                <p className="pj-uporo-p">
+                  <b>{t('or.up.price')}</b>
+                </p>
+                <p className="pj-note">{t('or.up.note')}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
       )}
 

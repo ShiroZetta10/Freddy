@@ -25,7 +25,7 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
     if (p.estado === 'listo' && p.cafeteria !== caf)
       return setRes({ ok: false, pedido: p, titulo: `#${p.id} es de ${st.cafeterias[p.cafeteria].nombre}`, detalle: 'Indica al pasajero que recoja en su cafetería.' })
     const r = entregarPorQR(qrDe(p))
-    if (r.ok) setRes({ ok: true, pedido: p, titulo: `Entregado #${p.id} · ya pagado`, detalle: `${p.nombre} · localizador ${p.ticket}` })
+    if (r.ok) setRes({ ok: true, pedido: p, titulo: `Entregado #${p.id} · ${p.bono && p.total === 0 ? 'pagado con bono' : 'ya pagado'}`, detalle: p.bono ? `${p.nombre} · bono ${p.bono.codigo}${p.total > 0 ? ` · resto cobrado ${p.total.toFixed(2).replace('.', ',')} €` : ''}` : `${p.nombre} · localizador ${p.ticket}` })
     else setRes({ ok: false, pedido: r.pedido ?? p, titulo: `#${p.id}: ${r.motivo}`, detalle: r.motivo === 'Ya entregado' ? 'Este QR ya se canjeó. Posible duplicado.' : undefined })
   }, [caf])
 
@@ -135,6 +135,8 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
                         ))}
                         {res.pedido.sinPlastico && <li>Sin cubiertos ni bolsa</li>}
                         {res.pedido.tarifaJoven && <li>Tarifa Joven</li>}
+                        {res.pedido.bono && <li>Bono {res.pedido.bono.codigo} · {res.pedido.bono.nombre}</li>}
+                        {res.pedido.clase === 'oro' && <li>Clase Oro{res.pedido.servicio === 'mesa' ? ' · servicio en mesa' + (res.pedido.mesaRef ? ' (' + res.pedido.mesaRef + ')' : '') : ''}</li>}
                       </ul>
                     )}
                     <button className="fob-btn ghost" onClick={() => setRes(null)}>
@@ -182,7 +184,8 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
                     <span className="n">#{p.id}</span>
                     <span className="w">
                       {p.nombre} · {p.ticket}
-                      {!p.bot && <em> · del móvil</em>}
+                      {!p.bot && <em> · {p.canal === 'barra' ? 'en barra' : 'del móvil'}</em>}
+                      {p.bono && <em> · bono</em>}
                     </span>
                     <span className="go">Escanear</span>
                   </button>

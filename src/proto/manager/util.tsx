@@ -195,7 +195,7 @@ export function cuentaAtras(hasta: number | undefined, now: number) {
 }
 
 // iconos propios (línea)
-export function Ico({ name, size = 20 }: { name: 'live' | 'caja' | 'carta' | 'sliders' | 'msg' | 'chart' | 'demo' | 'download' | 'pause' | 'play' | 'alert' | 'ship'; size?: number }) {
+export function Ico({ name, size = 20 }: { name: 'live' | 'caja' | 'carta' | 'sliders' | 'msg' | 'chart' | 'demo' | 'download' | 'pause' | 'play' | 'alert' | 'ship' | 'star'; size?: number }) {
   const P: Record<string, ReactNode> = {
     live: <path d="M3 12h4l3-7 4 14 3-7h4" />,
     caja: (
@@ -240,6 +240,7 @@ export function Ico({ name, size = 20 }: { name: 'live' | 'caja' | 'carta' | 'sl
       </>
     ),
     ship: <path d="M3 15l2 4h14l2-4-9-3-9 3zM12 12V4h4M8 9h8" />,
+    star: <path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8L3.6 9.6l5.8-.8L12 3.5z" />,
   }
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>

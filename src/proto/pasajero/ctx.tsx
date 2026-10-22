@@ -1,6 +1,6 @@
 /** Contexto de la sesión del pasajero: billete, idioma, accesibilidad, carrito, navegación y chat. */
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Billete, CafeteriaId, LineaPedido, Pedido, ProtoState, disponible, pedidosAbiertos, totalPedido, useProtoState } from '../store'
+import { Billete, Bono, CafeteriaId, ConsultaBono, LineaPedido, Pedido, ProtoState, bonosDeBillete, consultarBono, cotizar, disponible, estadoBono, pedidosAbiertos, useProtoState } from '../store'
 import { Lang, TFn, makeT } from './i18n'
 import { vibrar } from './ui'
 
@@ -87,6 +87,13 @@ type PJ = {
   setChat: (fn: (c: ChatMsg[]) => ChatMsg[]) => void
   logout: () => void
   plusGanados: number
+  /** Bonos que el pasajero puede usar: los comprados con su billete y los físicos que ha canjeado por código. */
+  bonos: Bono[]
+  /** Bono aplicado al carrito (null = ninguno). */
+  bono: Bono | null
+  usarBono: (codigo: string | null) => void
+  /** Introduce un código (tecleado o escaneado): lo valida, lo añade a «mis bonos» y lo aplica al pedido. */
+  canjearCodigo: (raw: string) => ConsultaBono
 }
 
 const Ctx = createContext<PJ>(null as unknown as PJ)
@@ -119,6 +126,14 @@ export function PJProvider({ ticket, onLogout, children }: { ticket: string; onL
   const [flyers, setFlyers] = useState<Flyer[]>([])
   const [sheet, setSheet] = useState<SheetId>(null)
   const [chat, setChatState] = useState<ChatMsg[]>([])
+  const [bonoSel, setBonoSel] = useState<string | null>(() => ss.get('pj-bono'))
+  const [fisicos, setFisicos] = useState<string[]>(() => {
+    try {
+      return JSON.parse(ss.get('pj-bonos-fis') || '[]') as string[]
+    } catch {
+      return []
+    }
+  })
   const tabRef = useRef(tab)
   tabRef.current = tab
 
@@ -214,8 +229,44 @@ export function PJProvider({ ticket, onLogout, children }: { ticket: string; onL
     if (!igual) setCartNow(filtrado)
   }, [s, setCartNow])
 
+  // bonos del pasajero: los de su billete + los físicos que ha introducido (siempre contrastados con el estado compartido)
+  const bonos = useMemo(() => {
+    const propios = bonosDeBillete(s, ticket)
+    const fis = fisicos.flatMap((c) => s.bonos.filter((b) => b.codigo === c && b.tipo === 'fisico' && estadoBono(s, b) === 'disponible'))
+    return [...propios, ...fis]
+  }, [s, ticket, fisicos])
+  const bono = useMemo(() => bonos.find((b) => b.codigo === bonoSel) ?? null, [bonos, bonoSel])
+  // si el bono aplicado se canjea en otro sitio (otra pestaña, barra) o caduca, se quita solo
+  useEffect(() => {
+    if (bonoSel && !bono) {
+      setBonoSel(null)
+      ss.del('pj-bono')
+    }
+  }, [bonoSel, bono])
+  const usarBono = useCallback((codigo: string | null) => {
+    setBonoSel(codigo)
+    if (codigo) ss.set('pj-bono', codigo)
+    else ss.del('pj-bono')
+  }, [])
+  const canjearCodigo = useCallback(
+    (raw: string): ConsultaBono => {
+      const r = consultarBono(sRef.current, raw, ticket)
+      if (r.ok) {
+        if (r.bono.tipo === 'fisico') {
+          const nuevos = fisicos.includes(r.bono.codigo) ? fisicos : [...fisicos, r.bono.codigo]
+          setFisicos(nuevos)
+          ss.set('pj-bonos-fis', JSON.stringify(nuevos))
+        }
+        usarBono(r.bono.codigo)
+        vibrar(15)
+      } else vibrar([40, 50, 40])
+      return r
+    },
+    [fisicos, ticket, usarBono],
+  )
+
   const cartCount = cart.reduce((a, l) => a + l.qty, 0)
-  const cartTotal = totalPedido(s, billete, cart.filter((l) => s.productos.some((p) => p.id === l.pid)))
+  const cartTotal = cotizar(s, billete, cart.filter((l) => s.productos.some((p) => p.id === l.pid)), bono, caf).total
   const mios = useMemo(() => s.pedidos.filter((p) => p.ticket === ticket), [s.pedidos, ticket])
   const plusGanados = Math.floor(mios.filter((p) => p.estado !== 'cancelado').reduce((a, p) => a + p.total, 0))
 
@@ -223,6 +274,8 @@ export function PJProvider({ ticket, onLogout, children }: { ticket: string; onL
     ss.del('pj-ticket')
     ss.del('pj-cart')
     ss.del('pj-lang')
+    ss.del('pj-bono')
+    ss.del('pj-bonos-fis')
     onLogout()
   }, [onLogout])
 
@@ -262,6 +315,10 @@ export function PJProvider({ ticket, onLogout, children }: { ticket: string; onL
     setChat,
     logout,
     plusGanados,
+    bonos,
+    bono,
+    usarBono,
+    canjearCodigo,
   }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

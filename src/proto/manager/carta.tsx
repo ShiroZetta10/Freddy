@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Categoria, Producto, ProtoState, disponible, setAgotado, setPrecio, setStock } from '../store'
+import { Categoria, Producto, ProtoState, TIPOS_BONO, disponible, estadisticasBonos, eur, setAgotado, setPrecio, setStock } from '../store'
 import { ProductoArt } from '../shared'
 import { Card, Ico, NumField, Switch, hhmm } from './util'
 
@@ -38,6 +38,34 @@ function Fila({ p, s, onCambio }: { p: Producto; s: ProtoState; onCambio: () => 
         {p.agotado && <span className="fob-pill red">Agotado</span>}
       </div>
     </motion.div>
+  )
+}
+
+/** Tipos de bono de consumo (solo lectura): contenido, precio de referencia y uso en esta travesía. */
+function BonosTipos({ s }: { s: ProtoState }) {
+  const bn = estadisticasBonos(s)
+  return (
+    <Card title="Tipos de bono de consumo" sub="Menús prepagados con el billete o en físico. Solo lectura en el piloto; precios de referencia por validar con Fred. Olsen">
+      <ul className="mg-bono-tipos">
+        {TIPOS_BONO.map((t) => {
+          const x = bn.porTipo.find((p) => p.tipo.id === t.id)!
+          return (
+            <li key={t.id}>
+              <div>
+                <b>{t.nombre}</b>
+                <span>{t.desc}</span>
+              </div>
+              <div className="r">
+                <b>{eur(t.precio)}</b>
+                <span>
+                  {x.canjeados} de {x.emitidos} canjeados
+                </span>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
   )
 }
 
@@ -112,6 +140,7 @@ export default function Carta({ s }: { s: ProtoState }) {
           <Fila key={p.id} p={p} s={s} onCambio={() => setCambios((n) => n + 1)} />
         ))}
       </Card>
+      <BonosTipos s={s} />
       <p className="mg-nota">
         <Ico name="ship" size={14} /> «A la venta» descuenta el umbral de seguridad ({s.ajustes.umbralStock} uds.): el producto se oculta a los pasajeros cuando queda ese stock o menos.
       </p>

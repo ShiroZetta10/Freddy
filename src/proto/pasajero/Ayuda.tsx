@@ -1,10 +1,10 @@
 /** Pestaña Ayuda: asistente híbrido (chips guiados + chat con respuestas por palabras clave y datos del store). */
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { horaDe } from '../store'
+import { horaDe, solicitarSoporteOro } from '../store'
 import { LANGS } from './i18n'
 import { PI, vibrar } from './ui'
-import { ChatMsg, useP } from './ctx'
+import { ChatMsg, ss, useP } from './ctx'
 
 const norm = (x: string) => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 
@@ -15,6 +15,8 @@ export default function Ayuda() {
   const { s, t, lang, setLang, chat, setChat, billete } = P
   const [txt, setTxt] = useState('')
   const [escribiendo, setEscribiendo] = useState(false)
+  const claveSop = `pj-soporte-${billete.ticket}`
+  const [soporte, setSoporte] = useState(() => ss.get(claveSop) === '1')
   const raiz = useRef<HTMLDivElement>(null)
   const timer = useRef<number>()
   useEffect(() => () => window.clearTimeout(timer.current), [])
@@ -64,6 +66,7 @@ export default function Ayuda() {
       const list = (['proa', 'popa', 'oro'] as const).map((c) => `${caf(c).nombre} (${caf(c).cubierta})`).join(', ')
       return t('bot.where', { list }) + (P.esOro ? t('bot.where.gold') : '')
     }
+    if (/soporte|support|prioridad|priorit|vip|\boro\b|gold|vorrang/.test(n)) return P.esOro ? t('bot.gold', { b: t('or.soporte.btn') }) : t('bot.gold.std')
     if (/^(hola|hi|hello|hallo|buenas|hey)\b/.test(n)) return t('bot.hello')
     return t('bot.fallback')
   }
@@ -111,6 +114,32 @@ export default function Ayuda() {
           ))}
         </div>
       </div>
+
+      {P.esOro && (
+        <section className="pj-soporte fob-card" aria-label={t('or.soporte.t')}>
+          <div className="h">
+            <PI n="star" size={18} sw={2} />
+            <div>
+              <b>{t('or.soporte.t')}</b>
+              <span>{t('or.soporte.b')}</span>
+            </div>
+          </div>
+          <button
+            className="fob-btn navy block"
+            disabled={soporte}
+            onClick={() => {
+              if (!solicitarSoporteOro(billete)) return
+              ss.set(claveSop, '1')
+              setSoporte(true)
+              vibrar(20)
+              setChat((c) => [...c, { id: Date.now(), de: 'bot', texto: t('or.soporte.sent') }])
+            }}
+          >
+            <PI n={soporte ? 'check' : 'bell'} size={18} />
+            {soporte ? t('or.soporte.again') : t('or.soporte.btn')}
+          </button>
+        </section>
+      )}
 
       <div className="pj-chat" aria-live="polite" aria-label={t('a.title')}>
         {burbuja({ id: 'hello', de: 'bot', texto: t('a.hello', { n: billete.nombre }) })}

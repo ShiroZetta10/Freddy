@@ -89,12 +89,12 @@ export default function Hub() {
           </div>
         </div>
 
-        <Link to="/faq" className="card faq-banner section">
+        <Link to="/stack" className="card faq-banner section">
           <div>
-            <h3>Preguntas para Fred. Olsen</h3>
-            <p className="small muted">Ágora, inventario entre tierra, mar y cafeterías, y su stack, con las opciones de integración según lo que respondan.</p>
+            <h3>Stack técnico propuesto</h3>
+            <p className="small muted">Arquitectura local-first que funciona sin internet, capas del prototipo y producción, y cuatro formas de integrar con Ágora.</p>
           </div>
-          <span className="hub-go">Ver preguntas</span>
+          <span className="hub-go">Ver stack</span>
         </Link>
       </div>
     </>

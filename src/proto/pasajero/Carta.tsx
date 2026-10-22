@@ -1,18 +1,19 @@
 /** Pestaña Carta: selector de cafetería, filtros, productos con stock en vivo y upselling. */
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CafeteriaId, Categoria, Producto, disponible, eur, pedidosAbiertos } from '../store'
-import { ProductoArt } from '../shared'
+import { CafeteriaId, Categoria, Producto, disponible, eur, pedidosAbiertos, planMenuOro } from '../store'
+import { ElaboradoLogo, ProductoArt } from '../shared'
 import { PI } from './ui'
+import { BonoAplicadoPanel } from './Bonos'
 import { useP } from './ctx'
 
 const CATS: Categoria[] = ['Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks', 'Tienda']
-const TAGS = ['canario', 'sin gluten', 'vegetariano', 'combo'] as const
+const TAGS = ['canario', 'sin gluten', 'vegetariano', 'combo', 'oro'] as const
 type Tag = (typeof TAGS)[number]
 const CAFS: CafeteriaId[] = ['proa', 'popa', 'oro']
 const CAF_CORTO: Record<CafeteriaId, string> = { proa: 'Proa', popa: 'Popa', oro: 'Oro' }
 
-const tieneTag = (p: Producto, t: Tag) => (t === 'canario' ? !!p.km0 : !!p.tags?.includes(t))
+const tieneTag = (p: Producto, t: Tag) => (t === 'canario' ? !!p.km0 : t === 'oro' ? !!p.incluidoOro : !!p.tags?.includes(t))
 
 export function SelectorCafeteria({ compacto }: { compacto?: boolean }) {
   const { s, t, caf, setCaf, esOro } = useP()
@@ -35,15 +36,19 @@ export function SelectorCafeteria({ compacto }: { compacto?: boolean }) {
 }
 
 export default function Carta() {
-  const { s, t, caf, cart, add, dec, esOro, billete } = useP()
+  const { s, t, caf, setCaf, cart, add, dec, esOro, billete, bono } = useP()
   const [cat, setCat] = useState<Categoria | 'todo'>('todo')
   const [tags, setTags] = useState<Tag[]>([])
   const abiertos = pedidosAbiertos(s)
   const pausa = s.ajustes.pausa[caf]
 
+  // Clase Oro: en la cafetería Oro el menú incluido va a 0 € hasta el límite por persona
+  const oroMode = esOro && caf === 'oro'
+  const oro = planMenuOro(s, billete, caf, cart)
+  const oroQuedan = Math.max(0, oro.restantes - oro.uds) // incluidos que aún caben tras lo que ya hay en el carrito
   const lista = useMemo(
-    () => s.productos.filter((p) => (cat === 'todo' || p.cat === cat) && tags.every((x) => tieneTag(p, x))),
-    [s.productos, cat, tags],
+    () => s.productos.filter((p) => (!p.soloOro || oroMode) && (cat === 'todo' || p.cat === cat) && tags.every((x) => tieneTag(p, x))),
+    [s.productos, cat, tags, oroMode],
   )
   const qtyDe = (pid: string) => cart.find((l) => l.pid === pid)?.qty ?? 0
 
@@ -51,7 +56,7 @@ export default function Carta() {
   const hayBolleria = cart.some((l) => l.pid === 'croissant' || l.pid === 'oferta-bolleria')
   const combo = s.productos.find((p) => p.id === 'oferta-bolleria')
   const upsell = hayCafe && !hayBolleria && combo && disponible(s, combo) > 0 && abiertos
-  void esOro
+  const promo = !esOro && !upsell && abiertos && combo && disponible(s, combo) > 0 && !pausa ? combo : null
 
   return (
     <div className="pj-tab pj-carta">
@@ -74,6 +79,30 @@ export default function Carta() {
         )}
       </AnimatePresence>
 
+      {esOro && (
+        <section className="pj-oro-menu" aria-label={t('or.menu.t')}>
+          <div className="h">
+            <PI n="star" size={18} sw={2} />
+            <b>{t('or.menu.t')}</b>
+          </div>
+          {oroMode ? (
+            <>
+              <p>{oro.restantes > 0 ? t('or.menu.b', { n: oroQuedan, max: oro.limite }) : t('or.menu.full', { max: oro.limite })}</p>
+              <p className="note">{t('or.menu.note')}</p>
+            </>
+          ) : (
+            <>
+              <p>{t('or.menu.other')}</p>
+              <button className="fob-btn navy" onClick={() => setCaf('oro')}>
+                {t('or.menu.go')}
+              </button>
+            </>
+          )}
+        </section>
+      )}
+
+      {bono && <BonoAplicadoPanel cart={cart} />}
+
       <div className="pj-filters" role="group" aria-label={t('c.filters')}>
         <div className="pj-chiprow">
           <button className={'pj-fchip' + (cat === 'todo' ? ' on' : '')} aria-pressed={cat === 'todo'} onClick={() => setCat('todo')}>
@@ -86,11 +115,11 @@ export default function Carta() {
           ))}
         </div>
         <div className="pj-chiprow tags">
-          {TAGS.map((x) => {
+          {TAGS.filter((x) => x !== 'oro' || oroMode).map((x) => {
             const on = tags.includes(x)
             return (
               <button key={x} className={'pj-fchip tag' + (on ? ' on' : '')} aria-pressed={on} onClick={() => setTags((a) => (on ? a.filter((y) => y !== x) : [...a, x]))}>
-                {x === 'canario' ? t('c.canonly') : t('tag.' + x)}
+                {x === 'canario' ? t('c.canonly') : x === 'oro' ? t('or.chip') : t('tag.' + x)}
               </button>
             )
           })}
@@ -115,6 +144,20 @@ export default function Carta() {
       </AnimatePresence>
 
       <AnimatePresence initial={false}>
+        {promo && (
+          <motion.div key="promo" className="pj-upsell promo" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <ProductoArt nombre={promo.nombre} color={promo.color} size={44} />
+            <div className="tx">
+              <b>{t('pm.t')}</b>
+              <span>
+                {t('pm.b')} · {eur(promo.precio)}
+              </span>
+            </div>
+            <button className="fob-btn navy" onClick={(e) => add(promo.id, e.currentTarget)}>
+              {t('u.add')}
+            </button>
+          </motion.div>
+        )}
         {upsell && combo && (
           <motion.div key="up" className="pj-upsell" initial={{ opacity: 0, y: -10, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
             <ProductoArt nombre={combo.nombre} color={combo.color} size={44} />
@@ -155,7 +198,7 @@ export default function Carta() {
                   <span className="desc">{p.desc}</span>
                   {p.km0 && p.origen && <span className="origen">{t('c.origin', { o: p.origen })}</span>}
                   <span className="tags">
-                    {p.km0 && <span className="fob-pill green">{t('tag.canario')}</span>}
+                    {p.km0 && (p.elaboradoCanarias ? <ElaboradoLogo height={20} fallback={<span className="fob-pill green">{t('tag.canario')}</span>} /> : <span className="fob-pill green">{t('tag.canario')}</span>)}
                     {p.tags?.map((x) => (
                       <span key={x} className="fob-pill">
                         {t('tag.' + x)}
@@ -166,7 +209,14 @@ export default function Carta() {
                   </span>
                 </div>
                 <div className="pj-prod-act">
-                  <span className="price">{eur(p.precio)}</span>
+                  {oroMode && p.incluidoOro && oro.restantes > 0 ? (
+                    <span className="price incl">
+                      {t('or.incl')}
+                      <s>{eur(p.precio)}</s>
+                    </span>
+                  ) : (
+                    <span className="price">{eur(p.precio)}</span>
+                  )}
                   {q === 0 ? (
                     <motion.button
                       className="pj-add"

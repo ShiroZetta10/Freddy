@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes, Link, useLocation } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes, Link, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
 import Hub from './pages/Hub'
 import BenchmarkHome from './pages/BenchmarkHome'
@@ -11,8 +11,9 @@ import Metodologia from './pages/Metodologia'
 import Implementacion from './pages/Implementacion'
 import Comunicacion from './pages/Comunicacion'
 import Piloto from './pages/Piloto'
+import Roadmap from './pages/Roadmap'
 import Journey from './pages/Journey'
-import Faq from './pages/Faq'
+import Stack from './pages/Stack'
 import AppPrototipo from './app/AppPrototipo'
 // El prototipo se carga aparte para que la web de entregables siga siendo ligera
 const ProtoShell = lazy(() => import('./proto/ProtoShell'))
@@ -72,11 +73,12 @@ export default function App() {
               Inicio
             </NavLink>
             {ENTREGABLES.map((e) => (
-              <NavLink key={e.id} to={e.ruta} className={() => (e.id === 'benchmark' && enBenchmark ? 'active' : '')}>
+              <NavLink key={e.id} to={e.ruta} className={({ isActive }) => (isActive || (e.id === 'benchmark' && enBenchmark) ? 'active' : '')}>
                 {e.titulo.replace('Plan de ', '')}
               </NavLink>
             ))}
-            <NavLink to="/faq">Preguntas</NavLink>
+            <NavLink to="/futuro">Futuro</NavLink>
+            <NavLink to="/stack">Stack</NavLink>
           </nav>
         </div>
         {enBenchmark && (
@@ -106,7 +108,9 @@ export default function App() {
           <Route path="/journey" element={<Journey />} />
           <Route path="/prototipo/*" element={<AppPrototipo />} />
           <Route path="/piloto" element={<Piloto />} />
-          <Route path="/faq" element={<Faq />} />
+          <Route path="/futuro" element={<Roadmap />} />
+          <Route path="/stack" element={<Stack />} />
+          <Route path="/faq" element={<Navigate to="/stack" replace />} />
           <Route path="*" element={<Hub />} />
         </Routes>
       </main>

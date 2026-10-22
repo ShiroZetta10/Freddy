@@ -6,7 +6,7 @@ import './pasajero.css'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { ProtoChrome, useToast } from '../shared'
-import { EstadoPedido, eur, login, useProtoState } from '../store'
+import { EstadoPedido, eur, fase, login, useProtoState } from '../store'
 import Welcome from './Welcome'
 import Viaje from './Viaje'
 import Carta from './Carta'
@@ -16,7 +16,7 @@ import Checkout from './Checkout'
 import { PJProvider, TABS, Tab, ls, ss, useP } from './ctx'
 
 /** En el barco no hay asiento asignado: solo se indica la Clase Oro. */
-const esOroLabel = (b: { clase?: 'oro' }) => (b.clase === 'oro' ? 'Clase Oro · ' : '')
+const esOroLabel = (b: { clase?: string }) => (b.clase === 'oro' ? 'Clase Oro · ' : '')
 import { LANGS } from './i18n'
 import { PI, Sheet, Skeleton, vibrar } from './ui'
 
@@ -63,6 +63,22 @@ function Tracker() {
     prev.current = cur
     pend.current = new Set(s.pendientesOffline.filter((x) => x.ticket === billete.ticket).map((x) => x.clientKey))
   }, [mios, s.pendientesOffline, s.cafeterias, billete.ticket, t, toast])
+
+  // avisos de embarque y llegada: estándar para todos; con tono personal y prioridad para Clase Oro
+  const faseAnt = useRef(fase(s))
+  const f = fase(s)
+  useEffect(() => {
+    const antes = faseAnt.current
+    faseAnt.current = f
+    if (antes === f) return
+    if (f === 'embarque') {
+      if (billete.clase === 'oro') toast({ titulo: t('or.toast.board.t', { n: billete.nombre }), texto: t('or.toast.board.b', { t: billete.ticket }), icono: 'shield' })
+      else toast({ titulo: t('n.board.t'), texto: t('n.board.b'), icono: 'anchor' })
+    } else if (f === 'llegando') {
+      if (billete.clase === 'oro' && billete.vehiculo) toast({ titulo: t('or.toast.disem.t'), texto: t('or.toast.disem.b'), icono: 'shield' })
+      else toast({ titulo: t('n.arrive.t'), texto: t('n.arrive.b'), icono: 'route' })
+    }
+  }, [f, billete.clase, billete.vehiculo, billete.nombre, billete.ticket, t, toast])
 
   useEffect(() => {
     const nuevos = s.mensajes.filter((m) => m.id > ultimoMsg.current && m.de === 'manager')
@@ -136,7 +152,12 @@ function Sesion() {
             <div>
               <b>{t('hi', { n: billete.nombre })}</b>
               <span>
-                {esOroLabel(billete)}{billete.ticket}
+                {billete.clase === 'oro' && (
+                  <em className="pj-oro-badge">
+                    <PI n="star" size={11} sw={2.2} /> {t('or.badge')}
+                  </em>
+                )}
+                {billete.ticket}
               </span>
             </div>
           </div>

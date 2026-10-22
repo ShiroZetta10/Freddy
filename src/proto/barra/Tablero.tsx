@@ -10,7 +10,8 @@ export const COLS: Col[] = [
   { k: 'listo', titulo: 'Listo', btn: 'Entregar', objetivoMin: 3, vacio: 'Nada esperando recogida' },
 ]
 
-const ordenar = (a: Pedido, b: Pedido) => a.franja - b.franja || (a.t.creado ?? 0) - (b.t.creado ?? 0)
+// a igual franja, los pedidos Clase Oro van primero (los atiende la cafetería Oro; no suman carga a Proa/Popa)
+const ordenar = (a: Pedido, b: Pedido) => a.franja - b.franja || Number(b.clase === 'oro') - Number(a.clase === 'oro') || (a.t.creado ?? 0) - (b.t.creado ?? 0)
 
 function nivel(p: Pedido, now: number, objetivoMin: number | null): 'ok' | 'amber' | 'red' {
   if (objetivoMin == null) return 'ok'
@@ -31,12 +32,12 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
       ref={ref}
       layout
       layoutId={`br-ped-${p.id}`}
-      className={`br-card ${p.bot ? '' : 'real'} ${fresh ? 'fresh' : ''}`}
+      className={`br-card ${p.bot ? '' : 'real'} ${fresh ? 'fresh' : ''} ${p.clase === 'oro' ? 'oro' : ''}`}
       initial={fresh ? { opacity: 0, x: -56, scale: 0.97 } : false}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.12 } }}
       transition={{ type: 'spring', stiffness: 420, damping: 38, mass: 0.9 }}
-      aria-label={`Pedido ${p.id}, ${p.nombre}, localizador ${p.ticket}`}
+      aria-label={`Pedido ${p.id}${p.clase === 'oro' ? ' Clase Oro' : ''}, ${p.nombre}, localizador ${p.ticket}${p.servicio === 'mesa' ? ', servicio en mesa' : ''}`}
     >
       <div className="br-card-top">
         <span className="br-num">#{p.id}</span>
@@ -62,6 +63,13 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
           <Ico n="clock" size={13} />
           Recogida {horaDe(s, minFranja)}
         </span>
+        {p.clase === 'oro' && <span className="br-oro">Clase Oro</span>}
+        {p.servicio === 'mesa' && (
+          <span className="br-mesa" title="Se sirve en la mesa del salón Oro">
+            Servicio en mesa{p.mesaRef ? ` · ${p.mesaRef}` : ''}
+          </span>
+        )}
+        {p.menuOro && <span className="br-menu-oro">Menú Oro incluido ×{p.menuOro.uds}</span>}
         {p.prepedido && <span className="fob-pill">Pre-pedido</span>}
         {p.sinPlastico && (
           <span className="br-eco" title="Sin cubiertos ni bolsa">
@@ -74,10 +82,17 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
             Tarifa Joven{p.descuentoJoven ? ` −${p.descuentoJoven.toFixed(2).replace('.', ',')} €` : ''}
           </span>
         )}
+        {p.bono && (
+          <span className="br-bono" title={`${p.bono.nombre} · ${p.bono.codigo}`}>
+            <Ico n="voucher" size={13} />
+            Bono <b>{p.bono.codigo}</b>
+            {p.total === 0 ? ' · pagado con bono' : ` · cobrar ${p.total.toFixed(2).replace('.', ',')} €`}
+          </span>
+        )}
         {!p.bot && (
           <span className="br-real-tag">
             <Ico n="user" size={12} />
-            Del móvil
+            {p.canal === 'barra' ? 'En barra' : 'Del móvil'}
           </span>
         )}
       </div>

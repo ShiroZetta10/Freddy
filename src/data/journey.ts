@@ -222,7 +222,7 @@ export const PERFILES: Perfil[] = [
         progreso: 1,
         hora: 'Jueves · 09:05 y después',
         titulo: 'Llegada, valoración y próximo viaje',
-        hace: 'FredOnBoard le avisa 15 minutos antes de llegar, le recuerda el bus gratuito a Las Palmas y después le pide valorar el servicio. Recibe su ticket y Plus Points.',
+        hace: 'FredOnBoard le avisa 15 minutos antes de llegar, le recuerda la guagua gratuita a Las Palmas y después le pide valorar el servicio. Recibe su ticket y Plus Points.',
         dolor: 'Hoy la relación termina al desembarcar: no hay valoración ni motivo para repetir.',
         solucion: 'Cierre del viaje y vínculo con el siguiente: valoración, Plus Points y oferta de desayuno para la vuelta.',
         mvp: false,
@@ -231,7 +231,7 @@ export const PERFILES: Perfil[] = [
             tipo: 'push',
             de: 'FredOnBoard',
             hora: 'Jueves 09:05',
-            lineas: ['Llegamos a Agaete en 15 minutos', 'Bus gratuito a Las Palmas a la salida de la terminal.'],
+            lineas: ['Llegamos a Agaete en 15 minutos', 'Guagua gratuita a Las Palmas a la salida de la terminal.'],
           },
           {
             tipo: 'email',
@@ -249,7 +249,7 @@ export const PERFILES: Perfil[] = [
         ],
         pantalla: {
           titulo: 'Llegamos en 15 min',
-          sub: 'Agaete · Bus gratuito a Las Palmas 09:30',
+          sub: 'Agaete · Guagua gratuita a Las Palmas 09:30',
           items: [
             { l: '¿Qué tal tu pedido?', r: '★★★★★', estado: 'info' },
             { l: 'Plus Points ganados', r: '+9' },
@@ -502,3 +502,90 @@ export const PERFILES: Perfil[] = [
     ],
   },
 ]
+
+/**
+ * Descripción de cada escena ilustrada (aria-label y pie visible) por perfil y paso, en el mismo orden que `pasos`.
+ * La protagonista no tiene asiento asignado: se sienta donde quiere en el salón.
+ */
+export type EscenaTexto = { hoy: string; con: string }
+
+export const ESCENAS: Record<PerfilId, EscenaTexto[]> = {
+  pasajero: [
+    {
+      hoy: 'Carmen, en el sofá la noche anterior, ya tiene el billete pero no sabe qué podrá desayunar a bordo.',
+      con: 'Carmen abre «Tu viaje con FredOnBoard» desde el email de confirmación, sin descargar nada ni crear cuenta.',
+    },
+    {
+      hoy: 'Carmen sabe que al zarpar habrá una cola larga en la cafetería y no puede pedir antes.',
+      con: 'Carmen pre-pide café y bocadillo desde el sofá, elige la franja de recogida de las 08:15 y paga con el móvil.',
+    },
+    {
+      hoy: 'En el puerto, Carmen no sabe dónde está la cafetería, cuándo llegan ni si habrá cola.',
+      con: 'Carmen se conecta al wifi del barco y FredOnBoard le muestra su pedido y la hora de llegada.',
+    },
+    {
+      hoy: 'Sentada en el salón, Carmen tiene sed pero la cola de la barra es larga y renuncia a pedir.',
+      con: 'Sentada donde quiere en el salón, Carmen pide agua desde el móvil y recibe su franja de recogida mientras el barco navega.',
+    },
+    {
+      hoy: 'Carmen espera de pie en la cola de la barra más de diez minutos, sin saber cuándo le tocará.',
+      con: 'Carmen recibe el aviso «Tu pedido está listo», enseña el QR en la barra y recoge su agua en segundos.',
+    },
+    {
+      hoy: 'Al desembarcar en Agaete, Carmen no recibe información ni motivo para repetir: la relación termina ahí.',
+      con: 'Carmen llega a Agaete, valora el servicio, suma Plus Points y ve el aviso de la guagua gratuita a Las Palmas.',
+    },
+  ],
+  barra: [
+    {
+      hoy: 'Javi empieza el turno a las 07:00 sin saber cuánta gente va a pedir al zarpar.',
+      con: 'Javi consulta en la tablet los 34 pre-pedidos para la salida de las 08:00 y adelanta la preparación.',
+    },
+    {
+      hoy: 'Una cola de clientes y pedidos digitales mezclados compiten por la atención de Javi.',
+      con: 'La tablet de Javi ordena los pedidos por franjas de 5 minutos con tope de capacidad; la cola presencial es corta.',
+    },
+    {
+      hoy: 'Un cliente pide un croissant y Javi tiene que decirle que ya no queda.',
+      con: 'Javi marca el croissant como agotado en la tablet y el cliente lo ve en su móvil antes de pedirlo.',
+    },
+    {
+      hoy: 'Javi toma nota, cobra y prepara a la vez mientras la cola crece.',
+      con: 'Los pedidos llegan pagados y ordenados a la tablet de Javi, que solo prepara y entrega; la cola es corta.',
+    },
+    {
+      hoy: 'Javi cobra y da cambio a cada cliente: cada entrega lleva unos 40 segundos.',
+      con: 'Javi escanea el QR del cliente y entrega el pedido en unos 5 segundos, sin cobrar.',
+    },
+    {
+      hoy: 'Al acabar la travesía, Javi cuadra la caja a mano entre montones de tickets.',
+      con: 'La tablet de Javi cierra los pedidos y concilia las ventas con el TPV de forma automática.',
+    },
+  ],
+  manager: [
+    {
+      hoy: 'La responsable gestiona una carta distinta en papel para cada buque.',
+      con: 'La responsable publica desde el portátil una única carta digital que se aplica a todos los buques de la flota.',
+    },
+    {
+      hoy: 'La responsable adivina qué capacidad necesita cada franja, sin datos.',
+      con: 'La responsable ajusta en el portátil el tope por franja y los horarios de apertura y cierre de pedidos.',
+    },
+    {
+      hoy: 'La responsable no sabe dónde está cada barco ni cuánta gente pide a bordo hasta el cierre.',
+      con: 'El panel en vivo del portátil muestra los buques en ruta, los pasajeros conectados y los pre-pedidos.',
+    },
+    {
+      hoy: 'La responsable se entera de la saturación por llamadas de queja cuando ya es tarde.',
+      con: 'Una alerta avisa de que Proa supera el tiempo objetivo y la responsable sugiere la cafetería de popa con un clic.',
+    },
+    {
+      hoy: 'La responsable no tiene registro de incidencias ni de tiempos de recogida.',
+      con: 'El portátil muestra el tiempo de listo a recogido (1:40) y cada incidencia registrada con su causa.',
+    },
+    {
+      hoy: 'La responsable no puede demostrar si el cambio ha funcionado.',
+      con: 'La responsable compara la venta por pasajero del piloto (1,61 €) con la línea base (1,37 €), cifras ilustrativas.',
+    },
+  ],
+}

@@ -3,7 +3,23 @@ import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { Canal, FASES, Fase, PERFILES } from '../data/journey'
 import { BARRERAS, EJES_CANARIOS, FO_OFICIAL, LEMA } from '../data/canarias'
+import AnalisisRedes from '../components/comunicacion/AnalisisRedes'
+import PlanRedes from '../components/comunicacion/PlanRedes'
+import CanalesSolucion from '../components/comunicacion/CanalesSolucion'
+import Personas from '../components/comunicacion/Personas'
+import Paneles from '../components/comunicacion/Paneles'
+import { PersonaId } from '../data/comunicacion'
 import './comunicacion.css'
+
+const PESTANAS = [
+  { id: 'base', t: 'Plan base' },
+  { id: 'redes', t: 'Redes y engagement' },
+  { id: 'lanzamiento', t: 'Lanzamiento en redes' },
+  { id: 'canales', t: 'Canales de la solución' },
+  { id: 'personas', t: 'Buyer personas' },
+  { id: 'paneles', t: 'Paneles publicitarios' },
+] as const
+type Pestana = (typeof PESTANAS)[number]['id']
 
 const CANAL_LABEL: Record<Canal['tipo'], string> = { whatsapp: 'WhatsApp', email: 'Email', push: 'Notificación', wifi: 'Portal wifi' }
 
@@ -118,6 +134,8 @@ const KPIS = [
 
 export default function Comunicacion() {
   const [fase, setFase] = useState<Fase>('Antes')
+  const [tab, setTab] = useState<Pestana>('base')
+  const [persona, setPersona] = useState<PersonaId>('yaiza')
   const datos = CONTACTOS[fase]
   const canales = CANALES_POR_FASE[fase]
 
@@ -132,6 +150,19 @@ export default function Comunicacion() {
         </p>
       </div>
 
+      <div className="co-tabs" role="tablist" aria-label="Secciones del plan de comunicación">
+        {PESTANAS.map((p) => (
+          <button key={p.id} role="tab" aria-selected={tab === p.id} onClick={() => setTab(p.id)}>{p.t}</button>
+        ))}
+      </div>
+
+      {tab === 'redes' && <section className="section co-sub"><h2 className="section-title">8. Análisis de las redes sociales de Fred. Olsen Express</h2><AnalisisRedes /></section>}
+      {tab === 'lanzamiento' && <section className="section co-sub"><h2 className="section-title">9. Plan de lanzamiento de FredOnBoard en redes</h2><PlanRedes /></section>}
+      {tab === 'canales' && <section className="section co-sub"><h2 className="section-title">10. Canales de la solución: WhatsApp y cartelería con QR</h2><CanalesSolucion /></section>}
+      {tab === 'personas' && <section className="section co-sub"><h2 className="section-title">11. Buyer personas</h2><Personas id={persona} onChange={setPersona} /></section>}
+      {tab === 'paneles' && <section className="section co-sub"><h2 className="section-title">12. Paneles publicitarios por buyer persona</h2><Paneles id={persona} onChange={setPersona} /></section>}
+
+      {tab === 'base' && (<>
       <section className="section">
         <h2 className="section-title">1. Objetivos y mensaje central</h2>
         <div className="callout navy">
@@ -340,6 +371,7 @@ export default function Comunicacion() {
           </table>
         </div>
       </section>
+      </>)}
 
       <nav className="co-nav" aria-label="Navegación entre entregables">
         <Link className="btn ghost" to="/implementacion">← Implementación</Link>

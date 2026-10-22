@@ -7,6 +7,7 @@ import { CafeteriaId, fase, horaDe, insumoLimitante, pedidosAbiertos, ProtoState
 import { CAFS, CAF_CORTO, FASE_LABEL, Ico, useCafSeleccionada, pitar, useNow, usePedidosNuevos, useSilencio } from './util'
 import Tablero from './Tablero'
 import Escaner from './Escaner'
+import CanjeBono from './CanjeBono'
 import Inventario from './Inventario'
 import Prevision from './Prevision'
 import Cierre from './Cierre'
@@ -61,6 +62,7 @@ export default function BarraApp() {
   const [caf, setCaf] = useCafSeleccionada()
   const [tab, setTab] = useState<Tab>('pedidos')
   const [scan, setScan] = useState(false)
+  const [bonoOpen, setBonoOpen] = useState(false)
   const [silencio, toggleSilencio] = useSilencio()
   const now = useNow(1000)
   const { avisos, cerrar } = useAvisosAgotado(s, silencio)
@@ -162,6 +164,10 @@ export default function BarraApp() {
             </button>
           ))}
           <div className="br-spacer" />
+          <button className="fob-btn ghost br-bonobtn" onClick={() => setBonoOpen(true)}>
+            <Ico n="voucher" size={20} />
+            Canjear bono
+          </button>
           <button className="fob-btn primary br-scanbtn" onClick={() => setScan(true)}>
             <Icon name="qr" size={20} />
             Escanear QR
@@ -211,6 +217,7 @@ export default function BarraApp() {
         </div>
 
         <AnimatePresence>{scan && <Escaner s={s} caf={caf} onClose={() => setScan(false)} />}</AnimatePresence>
+        <AnimatePresence>{bonoOpen && <CanjeBono s={s} caf={caf} onClose={() => setBonoOpen(false)} />}</AnimatePresence>
       </div>
     </MotionConfig>
   )

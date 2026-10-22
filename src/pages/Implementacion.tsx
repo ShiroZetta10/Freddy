@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, LabelList } from 'recharts'
 import Icon from '../components/Icon'
-import { eur, num, pct, totales, derivados } from '../data/bajamar'
-import { EJES_CANARIOS, FO_OFICIAL, TIPOS_TRAVESIA } from '../data/canarias'
+import { eur, num, pct, totales, derivados, franjas } from '../data/bajamar'
+import { BARRERAS, EJES_CANARIOS, FO_OFICIAL, TIPOS_TRAVESIA } from '../data/canarias'
 import {
   CONSTANTES,
   ESCENARIOS,
@@ -456,6 +456,168 @@ function ModeloNegocio() {
   )
 }
 
+
+/* ------------------------------------------------------------------ lienzo de 6 bloques */
+
+/** Desplaza a una sección de la página sin tocar el hash (la app usa HashRouter). */
+function irA(id: string) {
+  const el = document.getElementById(id)
+  if (!el) return
+  const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+}
+
+type BloqueProps = {
+  n: number
+  area: string
+  titulo: string
+  desc: string
+  detalle?: { id: string; etiqueta: string }
+  vacio?: boolean
+  children?: React.ReactNode
+}
+
+function Bloque({ n, area, titulo, desc, detalle, vacio, children }: BloqueProps) {
+  return (
+    <section className={`im-block im-b${n}${vacio ? ' is-empty' : ''}`} style={{ gridArea: area }} aria-labelledby={`im-b${n}-t`}>
+      <header className="im-block-head">
+        <span className="im-block-num" aria-hidden="true">{n}</span>
+        <div>
+          <h3 id={`im-b${n}-t`}>{titulo}</h3>
+          <p className="im-block-desc">{desc}</p>
+        </div>
+      </header>
+      <div className="im-block-body">{vacio ? <p className="im-block-empty">Por completar.</p> : children}</div>
+      {detalle && (
+        <button type="button" className="im-block-link" onClick={() => irA(detalle.id)}>
+          Ver detalle: {detalle.etiqueta} <span aria-hidden="true">↓</span>
+        </button>
+      )}
+    </section>
+  )
+}
+
+function Lienzo() {
+  const mañana = franjas[0]
+  return (
+    <section className="section im-canvas-wrap" aria-labelledby="im-canvas-title">
+      <div className="section-title">
+        <h2 id="im-canvas-title">Plan de implementación en un vistazo</h2>
+        <p>Seis bloques que resumen la propuesta. Cada uno enlaza con su detalle más abajo.</p>
+      </div>
+      <div className="im-canvas">
+        <Bloque n={1} area="b1" titulo="Ideas y oportunidades" desc="Qué frena hoy la compra a bordo y cuánto valor hay en juego." detalle={{ id: 'modelo-de-negocio', etiqueta: 'datos y supuestos' }}>
+          <ul className="im-list">
+            {BARRERAS.map((b) => (
+              <li key={b.id}>
+                <strong>{b.titulo}:</strong> {b.suyo}
+              </li>
+            ))}
+          </ul>
+          <div className="im-figs">
+            <div>
+              <b>{pct(derivados.tasaCompra)}</b>
+              <span>de los pasajeros compra hoy (derivado)</span>
+            </div>
+            <div>
+              <b>{eur(totales.consumoPorPasajero, 2)}</b>
+              <span>de venta por pasajero</span>
+            </div>
+          </div>
+        </Bloque>
+
+        <Bloque n={2} area="b2" titulo="Descripción de la solución" desc="Qué es FredOnBoard y cómo funciona a bordo." detalle={{ id: 'recursos', etiqueta: 'recursos y condiciones' }}>
+          <p className="im-lead">
+            <strong>FredOnBoard</strong>, dentro de On Board Club: el pasajero pide y paga desde su asiento (o antes de embarcar) y recoge cuando el pedido está listo.
+          </p>
+          <ul className="im-list">
+            <li>Pre-pedido y Click & Collect, con franjas de recogida con tope.</li>
+            <li>Aviso «listo» y entrega con QR.</li>
+            <li>Tablet de barra para la tripulación y panel de manager con KPIs.</li>
+            <li>Funciona sin internet a bordo: servidor local por el wifi del barco.</li>
+          </ul>
+        </Bloque>
+
+        <Bloque n={3} area="b3" titulo="Propuesta de valor" desc="Qué gana cada parte con el servicio." detalle={{ id: 'modelo-de-negocio', etiqueta: 'modelo de negocio' }}>
+          <div className="im-value">
+            <div>
+              <h4>Pasajero</h4>
+              <p>Pide sin levantarse y sin cola; solo se mueve cuando está listo. Sin cuenta ni instalar nada.</p>
+            </div>
+            <div>
+              <h4>Tripulación</h4>
+              <p>El pedido llega ya cobrado a la tablet, con franjas y pausa para evitar picos. Sin ampliar dotación.</p>
+            </div>
+            <div>
+              <h4>Fred. Olsen</h4>
+              <p>Más pasajeros que compran y más venta por pasajero, con datos propios y una plataforma escalable a la flota.</p>
+            </div>
+          </div>
+        </Bloque>
+
+        <Bloque n={4} area="b4" titulo="Actores clave implicados" desc="Quién interviene y qué papel tiene." detalle={{ id: 'canario', etiqueta: 'acento canario' }}>
+          <dl className="im-actors">
+            <div>
+              <dt>Fred. Olsen</dt>
+              <dd>Dirección, restauración (F&B), IT y tripulación de cafetería.</dd>
+            </div>
+            <div>
+              <dt>Pasajeros</dt>
+              <dd>Usuarios del servicio, también socios de Fred. Olsen Plus.</dd>
+            </div>
+            <div>
+              <dt>Proveedores tecnológicos</dt>
+              <dd>TPV Ágora, pasarela de pago y conectividad a bordo.</dd>
+            </div>
+            <div>
+              <dt>Proveedores locales canarios</dt>
+              <dd>Producto KM0 y «Elaborado en Canarias» en la carta.</dd>
+            </div>
+            <div>
+              <dt>Equipo Shiro / Talento Canario</dt>
+              <dd>Producto y desarrollo del piloto y traspaso a un equipo local.</dd>
+            </div>
+          </dl>
+        </Bloque>
+
+        <Bloque n={5} area="b5" titulo="Cómo funcionaría (3 hitos)" desc="Los tres pasos que llevan de la prueba a la flota." detalle={{ id: 'hoja-de-ruta', etiqueta: 'hoja de ruta por fases' }}>
+          <ol className="im-hitos">
+            <li>
+              <span className="im-hito-n">Hito 1</span>
+              <strong>Piloto MVP en el Bajamar Express</strong>
+              <span>Fases 0 y 1 · semana 0 de medición y 4 semanas con servicio. Conciliación diaria, sin integraciones.</span>
+            </li>
+            <li>
+              <span className="im-hito-n">Hito 2</span>
+              <strong>Integración TPV, pagos y Plus</strong>
+              <span>Fase 2 · 2–3 meses. Una sola caja, pasarela tokenizada y Plus Points.</span>
+            </li>
+            <li>
+              <span className="im-hito-n">Hito 3</span>
+              <strong>Escalado a la flota</strong>
+              <span>Fase 3 · 6–12 meses, por oleadas de buques y dentro de On Board Club.</span>
+            </li>
+          </ol>
+        </Bloque>
+
+        <Bloque n={6} area="b6" titulo="Primer paso realista" desc="Qué se hace primero y qué hace falta para empezar." detalle={{ id: 'fase-0', etiqueta: 'Fase 0' }}>
+          <ul className="im-list">
+            <li>
+              <strong>Semana 0:</strong> medir sin servicio (tickets por hora, % que compra, espera en barra).
+            </li>
+            <li>
+              <strong>Piloto:</strong> Bajamar Express, franja de {mañana.franja.toLowerCase()} ({mañana.horas}), 1 de las {totales.cafeterias} cafeterías.
+            </li>
+            <li>
+              <strong>Hace falta:</strong> una tablet y un servidor a bordo, carta y precios cargados, y acuerdo con Fred. Olsen sobre espacio de recogida y medio de pago.
+            </li>
+          </ul>
+        </Bloque>
+      </div>
+    </section>
+  )
+}
+
 /* ------------------------------------------------------------------ página */
 
 export default function Implementacion() {
@@ -473,7 +635,9 @@ export default function Implementacion() {
         </p>
       </div>
 
-      <div className="grid g3">
+      <Lienzo />
+
+      <div className="grid g3" style={{ marginTop: 40 }}>
         <div className="card stat">
           <div className="label">Buque piloto</div>
           <div className="value">Bajamar Express</div>
@@ -499,7 +663,7 @@ export default function Implementacion() {
         </div>
         <div className="im-phases">
           {FASES.map((f) => (
-            <div key={f.num} className="card im-phase">
+            <div key={f.num} id={f.num === 'Fase 0' ? 'fase-0' : undefined} className="card im-phase">
               <div className="im-phase-head">
                 <div className="im-phase-num">{f.num}</div>
                 <h3>{f.titulo}</h3>
@@ -565,7 +729,7 @@ export default function Implementacion() {
         </div>
         <div className="callout navy" style={{ marginTop: 16 }}>
           <strong>Hipótesis oficial del reto:</strong> «La operativa podrá integrarse sin ampliar inicialmente la dotación». El piloto la comprueba midiendo la carga del equipo en barra. La arquitectura y el stack están en las{' '}
-          <Link to="/faq">preguntas técnicas</Link>.
+          <Link to="/stack">stack técnico</Link>.
         </div>
       </section>
 
@@ -753,8 +917,8 @@ export default function Implementacion() {
             </Link>
           </div>
           <div className="group">
-            <Link className="btn light" to="/faq">
-              Preguntas técnicas
+            <Link className="btn light" to="/stack">
+              Stack técnico
             </Link>
             <Link className="btn light" to="/prototipo">
               Ver prototipo

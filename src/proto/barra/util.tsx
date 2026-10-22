@@ -167,6 +167,7 @@ const I: Record<string, JSX.Element> = {
   list: <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />,
   leaf: <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14M5 19c2-4 5-7 9-9" />,
   bell: <><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4l2-2z" /><path d="M10 21h4" /></>,
+  voucher: <><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" /><path d="M14 6.5v11" strokeDasharray="1.8 2.4" /></>,
 }
 export function Ico({ n, size = 20 }: { n: string; size?: number }) {
   return (

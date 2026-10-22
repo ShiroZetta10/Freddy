@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { EstadoPedido, Pedido, cancelarPedido, crearPedido, eur, horaDe, producto, qrDe } from '../store'
 import { useToast } from '../shared'
 import { PI, Sheet, vibrar } from './ui'
+import { BonoCanje, BonoCard } from './Bonos'
 import { useP } from './ctx'
 
 const PASOS: EstadoPedido[] = ['recibido', 'preparando', 'listo', 'entregado']
@@ -38,7 +39,7 @@ function resumen(p: Pedido, s: Parameters<typeof producto>[0]) {
 }
 
 export default function Pedidos() {
-  const { s, t, mios, billete, goTab } = useP()
+  const { s, t, mios, billete, goTab, bonos, bono, usarBono } = useP()
   const toast = useToast()
   const [cancelId, setCancelId] = useState<number | null>(null)
   const [msgs, setMsgs] = useState<Record<string, string>>({})
@@ -64,7 +65,7 @@ export default function Pedidos() {
     setReint(p.clientKey)
     window.setTimeout(() => {
       // mismo clientKey: el store reconoce el pedido y no lo duplica
-      const r = crearPedido({ clientKey: p.clientKey, billete, lineas: p.lineas, cafeteria: p.cafeteria, franja: p.franja, pago: p.pago, sinPlastico: p.sinPlastico })
+      const r = crearPedido({ clientKey: p.clientKey, billete, lineas: p.lineas, cafeteria: p.cafeteria, franja: p.franja, pago: p.pago === 'bono' || p.pago === 'incluido' ? 'apple' : p.pago, sinPlastico: p.sinPlastico, bono: p.bono?.codigo, mesa: p.servicio === 'mesa', mesaRef: p.mesaRef })
       setReint(null)
       if (r.ok) setMsgs((m) => ({ ...m, [p.clientKey]: r.offline ? t('y.stilloff') : t('y.dup') }))
       else setMsgs((m) => ({ ...m, [p.clientKey]: t('e.' + (r.motivo === 'franja-llena' ? 'franja.t' : r.motivo === 'sin-stock' ? 'stock.t' : r.motivo === 'pausa' ? 'pausa.t' : 'cerrado.t')) }))
@@ -78,6 +79,33 @@ export default function Pedidos() {
       <div className="pj-sec-h">
         <h2>{t('o.title')}</h2>
       </div>
+
+      {/* bonos de consumo: los de tu billete, los físicos que canjees por código y el campo para introducirlos */}
+      <section className="pj-bonos" aria-label={t('o.bonos')}>
+        <h3 className="pj-h3">{t('o.bonos')}</h3>
+        <AnimatePresence initial={false}>
+          {bonos.map((b) => (
+            <BonoCard key={b.codigo} b={b} destacado={bono?.codigo === b.codigo}>
+              {bono?.codigo === b.codigo ? (
+                <button className="fob-btn ghost" onClick={() => usarBono(null)}>
+                  {t('b.remove')}
+                </button>
+              ) : (
+                <button
+                  className="fob-btn navy"
+                  onClick={() => {
+                    usarBono(b.codigo)
+                    goTab('carta')
+                  }}
+                >
+                  {t('b.use')}
+                </button>
+              )}
+            </BonoCard>
+          ))}
+        </AnimatePresence>
+        <BonoCanje onOk={() => vibrar(10)} />
+      </section>
 
       {vacio && (
         <div className="pj-empty big">
@@ -143,6 +171,7 @@ export default function Pedidos() {
                     <p className="pj-ready-caf">
                       {t('o.ready.b', { caf: caf.nombre, cub: caf.cubierta })}
                     </p>
+                    {p.servicio === 'mesa' && <p className="pj-ready-caf">{t('or.ready.mesa')}</p>}
                   </div>
                 ) : (
                   <div className="pj-order-h">
@@ -155,8 +184,16 @@ export default function Pedidos() {
                 {p.estado !== 'cancelado' && <Stepper estado={p.estado} />}
 
                 <p className="pj-order-l">{resumen(p, s)}</p>
-                {(p.sinPlastico || p.tarifaJoven) && (
+                {(p.sinPlastico || p.tarifaJoven || p.bono || p.menuOro || p.servicio) && (
                   <p className="pj-order-tags">
+                    {p.bono && (
+                      <span className="fob-pill pj-pill-bono">
+                        <PI n="voucher" size={12} /> {t('b.tag', { c: p.bono.codigo })}
+                        {p.total === 0 ? ` · ${t('b.paid')}` : ''}
+                      </span>
+                    )}
+                    {p.menuOro && <span className="fob-pill pj-pill-oro">{t('or.tag')} ×{p.menuOro.uds}</span>}
+                    {p.servicio === 'mesa' && <span className="fob-pill pj-pill-oro">{t('or.mesa.tag')}{p.mesaRef ? ` · ${p.mesaRef}` : ''}</span>}
                     {p.sinPlastico && <span className="fob-pill green">{t('g.nocut')}</span>}
                     {p.tarifaJoven && <span className="fob-pill">{t('j.tag')}{p.descuentoJoven ? ` −${eur(p.descuentoJoven)}` : ''}</span>}
                   </p>
@@ -191,6 +228,11 @@ export default function Pedidos() {
           </div>
           <h2>{t('o.cancel.q', { id: aCancelar?.id ?? cancelId ?? '' })}</h2>
           <p>{t('o.cancel.b')}</p>
+          {aCancelar?.bono && (
+            <p className="pj-banner ok" role="note">
+              <PI n="voucher" size={16} /> {t('b.cancel.note', { c: aCancelar.bono.codigo })}
+            </p>
+          )}
           <div className="pj-actions">
             <button className="fob-btn navy block" onClick={() => setCancelId(null)}>
               {t('o.keep')}

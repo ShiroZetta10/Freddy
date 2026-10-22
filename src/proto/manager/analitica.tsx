@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { ProtoState, VENTAJA_JOVEN, eur, kpis, producto, sostenibilidad } from '../store'
+import { ProtoState, VENTAJA_JOVEN, estadisticasBonos, eur, kpis, producto, sostenibilidad } from '../store'
 import { C, Card, Counter, Dot, Ico, num } from './util'
 
 type Tono = 'ok' | 'warn' | 'ko' | 'nd'
 
 function csv(s: ProtoState) {
   const q = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
-  const head = ['pedido', 'localizador', 'pasajero', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'total_eur', 'lineas', 'creado']
+  const head = ['pedido', 'localizador', 'pasajero', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'bono', 'valor_bono_eur', 'total_eur', 'lineas', 'creado']
   const rows = s.pedidos.map((p) =>
     [
       p.id,
@@ -22,6 +22,8 @@ function csv(s: ProtoState) {
       p.sinPlastico ? 'si' : 'no',
       p.tarifaJoven ? 'si' : 'no',
       (p.descuentoJoven ?? 0).toFixed(2).replace('.', ','),
+      p.bono?.codigo ?? '',
+      (p.bono?.valor ?? 0).toFixed(2).replace('.', ','),
       p.total.toFixed(2).replace('.', ','),
       p.lineas.map((l) => `${l.qty}x ${producto(s, l.pid).nombre}`).join(' | '),
       new Date(p.t.creado ?? 0).toISOString(),
@@ -75,6 +77,7 @@ function Comp({ label, base, medido, fmt, extra, objetivo }: { label: string; ba
 export default function Analitica({ s }: { s: ProtoState }) {
   const k = kpis(s)
   const eco = sostenibilidad(s)
+  const bn = estadisticasBonos(s)
   const validos = s.pedidos.filter((p) => p.estado !== 'cancelado')
   const base = s.base
 
@@ -95,11 +98,11 @@ export default function Analitica({ s }: { s: ProtoState }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.pedidos, s.productos])
 
-  const pagos = (['apple', 'google', 'tarjeta'] as const).map((id, i) => ({
+  const pagos = (['apple', 'google', 'tarjeta', 'bono'] as const).map((id, i) => ({
     id,
-    name: { apple: 'Apple Pay', google: 'Google Pay', tarjeta: 'Tarjeta' }[id],
+    name: { apple: 'Apple Pay', google: 'Google Pay', tarjeta: 'Tarjeta', bono: 'Bono' }[id],
     value: validos.filter((p) => p.pago === id).length,
-    color: [C.navy, C.sky, C.gold][i],
+    color: [C.navy, C.sky, C.gold, C.teal][i],
   }))
   const totalPagos = pagos.reduce((a, p) => a + p.value, 0)
 
@@ -199,6 +202,54 @@ export default function Analitica({ s }: { s: ProtoState }) {
               <span className="fob-pill">Tarifa Joven</span>
               {eco.pedidosJoven} {eco.pedidosJoven === 1 ? 'pedido' : 'pedidos'} con la ventaja «{VENTAJA_JOVEN.texto}» ({eur(eco.descuentoJoven)} descontados) · <i>ventaja propuesta, por validar con Fred. Olsen</i>
             </p>
+          </Card>
+          <Card title="Bonos" sub="Menús prepagados: comprados con el billete o en físico (código de un solo uso)">
+            <div className="mg-bonos">
+              <div>
+                <b>
+                  <Counter value={bn.emitidos} />
+                </b>
+                <span>Emitidos</span>
+                <small>
+                  {bn.deBillete} con billete · {bn.fisicos} físicos
+                </small>
+              </div>
+              <div>
+                <b>
+                  <Counter value={bn.canjeados} />
+                </b>
+                <span>Canjeados</span>
+                <small>
+                  {bn.disponibles} disponibles{bn.caducados ? ` · ${bn.caducados} caducados` : ''}
+                </small>
+              </div>
+              <div>
+                <b>{bn.emitidos ? `${num(bn.pctCanje * 100)} %` : '—'}</b>
+                <span>% de canje</span>
+                <small>{bn.pedidosConBono} {bn.pedidosConBono === 1 ? 'pedido' : 'pedidos'} con bono</small>
+              </div>
+              <div>
+                <b>
+                  <Counter value={bn.ingresosAnticipados} decimals={2} suffix=" €" />
+                </b>
+                <span>Ingresos anticipados</span>
+                <small>vendidos con el billete</small>
+              </div>
+              <div>
+                <b>
+                  <Counter value={bn.valorCanjeado} decimals={2} suffix=" €" />
+                </b>
+                <span>Valor canjeado</span>
+                <small>a precio de carta</small>
+              </div>
+              <div>
+                <b>
+                  <Counter value={bn.ingresosFisicos} decimals={2} suffix=" €" />
+                </b>
+                <span>Vendidos en físico</span>
+                <small>referencia, fuera del billete</small>
+              </div>
+            </div>
           </Card>
           <div className="mg-mini">
             <Card title="Mix de pago">

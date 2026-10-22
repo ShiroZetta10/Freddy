@@ -1,20 +1,22 @@
 /** Acceso sin cuenta: localizador del billete, escaneo simulado de QR y billetes de demo. */
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BILLETES_DEMO, login, useProtoState } from '../store'
+import { BILLETES_DEMO, estadoBono, login, useProtoState } from '../store'
 import { LANGS, Lang, makeT } from './i18n'
 import { BarcoSVG, Olas, PI, vibrar } from './ui'
 import { ss } from './ctx'
 
 const DEMO_INFO: Record<string, string> = {
-  FO7K2Q: 'Carmen · ES',
-  FO9X4M: 'Tom · EN',
+  FO7K2Q: 'Carmen · ES · bono desayuno',
+  FO9X4M: 'Tom · EN · bono bocadillo + bebida',
   FO3H8B: 'Greta · DE · Clase Oro',
-  FO2J5T: 'Yeray · ES · Tarifa Joven',
+  FO2J5T: 'Yeray · ES · Tarifa Joven + bono desayuno',
 }
 
 export default function Welcome({ onLogin }: { onLogin: (ticket: string) => void }) {
-  useProtoState() // se suscribe para que login() vea los billetes actuales
+  const st = useProtoState() // se suscribe para que login() vea los billetes actuales
+  const fisicos = st.bonos.filter((b) => b.tipo === 'fisico')
+  const [copiado, setCopiado] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>(() => (ss.get('pj-lang') as Lang) || 'es')
   const idioma: Lang = ['es', 'en', 'de'].includes(lang) ? lang : 'es'
   const t = makeT(idioma)
@@ -153,6 +155,38 @@ export default function Welcome({ onLogin }: { onLogin: (ticket: string) => void
                 <span>{DEMO_INFO[b.ticket] ?? b.nombre}</span>
               </button>
             ))}
+          </div>
+        </div>
+        <div className="pj-demos pj-demos-bonos">
+          <span className="pj-label">{t('w.bonos')}</span>
+          <p className="pj-note">{t('w.bonos.b')}</p>
+          <div className="pj-chips">
+            {fisicos.map((b) => {
+              const usado = estadoBono(st, b) !== 'disponible'
+              return (
+                <button
+                  key={b.codigo}
+                  className={'pj-chip-ticket pj-chip-bono' + (usado ? ' used' : '')}
+                  disabled={usado}
+                  onClick={() => {
+                    ss.set('pj-bono-pre', b.codigo) // al entrar, el campo «Canjear código» ya lo trae escrito
+                    try {
+                      navigator.clipboard?.writeText(b.codigo).catch(() => undefined)
+                    } catch {
+                      /* sin portapapeles */
+                    }
+                    setCopiado(b.codigo)
+                    timers.current.push(window.setTimeout(() => setCopiado((c) => (c === b.codigo ? null : c)), 1800))
+                    vibrar(8)
+                  }}
+                  aria-label={`${b.codigo}, ${b.nombre}${usado ? ', ' + t('w.bono.used') : ''}`}
+                >
+                  <PI n="voucher" size={18} />
+                  <b>{b.codigo}</b>
+                  <span>{usado ? t('w.bono.used') : copiado === b.codigo ? t('w.copied') : b.nombre}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
         <p className="pj-foot">{t('w.foot')}</p>

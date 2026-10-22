@@ -1,0 +1,66 @@
+/* Journey animado: barco en la ruta + escenas de la protagonista. Prefijo ja- */
+
+/* ── barra sticky: mar, barco, estela e hitos ── */
+.ja-ruta { display: flex; align-items: center; gap: 12px; --ja-w: 64px; }
+.ja-mar { position: relative; flex: 1; min-width: 0; height: 64px; overflow: hidden; border-radius: 8px; background: linear-gradient(#fff 0, #f1f6fd 70%); }
+.ja-carril { position: absolute; top: 0; bottom: 0; left: calc(var(--ja-w) / 2); right: calc(var(--ja-w) / 2); }
+.ja-linea { position: absolute; left: 0; right: 0; top: 9px; height: 3px; border-radius: 3px; background: repeating-linear-gradient(90deg, #c5cddb 0 6px, transparent 6px 10px); }
+.ja-linea-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--navy, #0b3478); border-radius: 3px; }
+.ja-hito { position: absolute; top: 10.5px; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; border: 2px solid var(--navy, #0b3478); box-sizing: border-box; transition: background .3s, box-shadow .3s; }
+.ja-hito.done { background: var(--navy, #0b3478); }
+.ja-hito.on { background: var(--yellow, #ffcc00); box-shadow: 0 0 0 4px rgba(255, 204, 0, .35); animation: ja-pulso 2s ease-in-out infinite; }
+.ja-barco { position: absolute; bottom: 9px; width: var(--ja-w); margin-left: calc(var(--ja-w) / -2); }
+.ja-barco svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ja-estela { position: absolute !important; right: 82%; bottom: 0; width: calc(var(--ja-w) * 1.1) !important; height: 12px !important; opacity: 0; transition: opacity .5s; }
+.ja-estela[data-on='true'] { opacity: 1; }
+.ja-espuma { stroke-dasharray: 7 6; animation: ja-espuma 1s linear infinite; }
+.ja-olas { position: absolute; left: 0; bottom: 0; overflow: hidden; pointer-events: none; }
+.ja-olas-g { animation: ja-olas 5s linear infinite; }
+.ja-olas-frente .ja-olas-g { animation-duration: 3s; }
+.ja-muelle { position: absolute; bottom: 0; }
+.ja-muelle-izq { left: 0; }
+.ja-muelle-der { right: 0; transform: scaleX(-1); }
+@keyframes ja-olas { to { transform: translateX(-40px); } }
+@keyframes ja-espuma { to { stroke-dashoffset: -26; } }
+@keyframes ja-pulso { 50% { box-shadow: 0 0 0 7px rgba(255, 204, 0, 0); } }
+
+/* El panel de dispositivo sticky baja un poco: la barra del barco es más alta que el antiguo hilo */
+.jr-grid .jr-device { top: 240px; height: calc(100vh - 260px); }
+
+/* ── escenas ── */
+.ja-escena { margin: 14px 0 6px; }
+.ja-conmuta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.ja-conmuta button { font: inherit; font-size: 13px; font-weight: 700; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line, #d8dee9); background: #fff; color: var(--navy, #0b3478); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.ja-conmuta button:hover { border-color: var(--navy, #0b3478); }
+.ja-conmuta button[aria-pressed='true'] { background: var(--navy, #0b3478); border-color: var(--navy, #0b3478); color: #fff; }
+.ja-conmuta button.con[aria-pressed='true'] { background: var(--yellow, #ffcc00); border-color: var(--yellow, #ffcc00); color: var(--navy, #0b3478); }
+.ja-conmuta button:focus-visible { outline: 3px solid var(--navy-3, #1f5bb5); outline-offset: 2px; }
+.ja-marco { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line, #d8dee9); background: var(--bg-soft, #f4f6f9); }
+.ja-marco.ja-v-ambas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 0; overflow: visible; background: none; }
+.ja-celda { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-soft, #f4f6f9); }
+.ja-v-ambas .ja-celda { border-radius: 10px; border: 1px solid var(--line, #d8dee9); }
+.ja-celda svg { display: block; width: 100%; height: 100%; }
+.ja-chip { position: absolute; left: 8px; top: 8px; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; pointer-events: none; }
+.ja-chip-hoy { background: rgba(74, 85, 104, .88); color: #fff; }
+.ja-chip-con { background: var(--yellow, #ffcc00); color: var(--navy, #0b3478); }
+.ja-pie { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--muted, #5d6779); min-height: 2.9em; }
+.ja-pain > div { cursor: pointer; transition: opacity .25s ease; }
+.ja-pain > div.ja-dim { opacity: .5; }
+
+@media (max-width: 760px) {
+  .ja-marco.ja-v-ambas { grid-template-columns: 1fr; }
+  .ja-conmuta button { flex: 1 1 auto; min-height: 44px; text-align: center; }
+  .ja-pie { min-height: 0; }
+  .ja-pain > div.ja-dim { opacity: .75; }
+}
+@media (max-width: 560px) {
+  .ja-ruta { --ja-w: 46px; gap: 8px; }
+  .ja-mar { height: 54px; }
+  .ja-hito { width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+}
+
+/* Sin animaciones continuas si el usuario lo prefiere (JS ya desactiva las de framer-motion) */
+@media (prefers-reduced-motion: reduce) {
+  .ja-olas-g, .ja-espuma, .ja-hito.on { animation: none; }
+  .ja-estela { transition: none; }
+}

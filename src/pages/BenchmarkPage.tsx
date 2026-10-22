@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { BENCHMARKS, Empresa, pesosIguales, puntuar, SECTOR_LABEL, CRITERIOS } from '../data/benchmarks'
+import { BENCHMARKS, Empresa, pesosIguales, puntuar, SECTOR_LABEL, CRITERIOS, CATEGORIAS, agruparVerticales } from '../data/benchmarks'
+import './benchmark-grupos.css'
 import { Avatar, CompanyDrawer, Legend, ScoreCell, SourceLink } from '../components/ui'
 
 type Orden = 'score' | 'nombre' | string
@@ -52,7 +53,13 @@ export default function BenchmarkPage() {
     return r
   }, [b, sector, grupo, q, orden, pesos, soloTablero, hayTablero])
 
-  const visibles = b.verticales.filter((v) => verts.includes(v.id))
+  // columnas ordenadas para que las de una misma categoría queden contiguas
+  const grupos = useMemo(() => agruparVerticales(b, b.verticales.filter((v) => verts.includes(v.id))), [b, verts])
+  const visibles = grupos.flatMap((g) => g.columnas)
+  const todasOrdenadas = agruparVerticales(b, b.verticales).flatMap((g) => g.columnas)
+  const inicioGrupo = new Set(grupos.map((g) => g.columnas[0].id))
+  const catDe: Record<string, string> = {}
+  grupos.forEach((g) => g.columnas.forEach((v) => (catDe[v.id] = g.id)))
   const toggleVert = (id: string) => setVerts((vs) => (vs.includes(id) ? (vs.length > 1 ? vs.filter((x) => x !== id) : vs) : [...vs, id]))
 
   // mejor de cada vertical
@@ -120,7 +127,7 @@ export default function BenchmarkPage() {
         <span className="small muted" style={{ alignSelf: 'center', marginRight: 4 }}>
           Verticales:
         </span>
-        {b.verticales.map((v) => (
+        {todasOrdenadas.map((v) => (
           <button key={v.id} className={`chip${verts.includes(v.id) ? ' on' : ''}`} onClick={() => toggleVert(v.id)} title={v.descripcion}>
             {v.nombre}
           </button>
@@ -129,15 +136,33 @@ export default function BenchmarkPage() {
 
       {vista === 'matriz' ? (
         <>
+          <div className="bg-leyenda" aria-label="Categorías de la tabla">
+            {grupos.map((g) => (
+              <span key={g.id} className={`bg-leyenda-item bg-cat-${g.id}`}>
+                <span className="bg-swatch" aria-hidden="true" />
+                <strong>{CATEGORIAS[g.id].nombre}:</strong> {CATEGORIAS[g.id].descripcion}
+              </span>
+            ))}
+          </div>
           <div className="matrix-wrap">
-            <table className="matrix">
+            <table className="matrix bg-matrix">
               <thead>
-                <tr>
-                  <th>
+                <tr className="bg-row1">
+                  <th rowSpan={2} className="bg-corner">
                     {rows.length} empresas <span style={{ opacity: 0.6, fontWeight: 500 }}>· clic para ficha</span>
                   </th>
+                  {grupos.map((g) => (
+                    <th key={g.id} colSpan={g.columnas.length} scope="colgroup" className={`bg-cat bg-cat-${g.id} bg-gstart`}>
+                      {CATEGORIAS[g.id].nombre}
+                    </th>
+                  ))}
+                  <th rowSpan={2} className="bg-total bg-gstart">
+                    Media
+                  </th>
+                </tr>
+                <tr className="bg-row2">
                   {visibles.map((v) => (
-                    <th key={v.id} title={v.descripcion}>
+                    <th key={v.id} scope="col" title={v.descripcion} className={`bg-col bg-cat-${catDe[v.id]}${inicioGrupo.has(v.id) ? ' bg-gstart' : ''}`}>
                       {v.nombre}
                       {b.mapaCriterios[v.id] && (
                         <div style={{ marginTop: 4 }}>
@@ -146,7 +171,6 @@ export default function BenchmarkPage() {
                       )}
                     </th>
                   ))}
-                  <th>Media</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,7 +198,7 @@ export default function BenchmarkPage() {
                         const ev = e.evaluacion[v.id]
                         const s = ev?.puntuacion ?? 0
                         return (
-                          <td key={v.id} style={{ position: 'relative' }}>
+                          <td key={v.id} className={inicioGrupo.has(v.id) ? 'bg-gstart' : ''} style={{ position: 'relative' }}>
                             <ScoreCell v={s} onClick={() => setSel(e)} title={`${e.nombre} · ${v.nombre}: ${ev?.evidencia ?? 'Sin información'}`} />
                             {s > 0 && s === best[v.id] && (
                               <span style={{ position: 'absolute', top: 4, right: 6, fontSize: 11 }} title="Mejor puntuación de la vertical">
@@ -184,7 +208,7 @@ export default function BenchmarkPage() {
                           </td>
                         )
                       })}
-                      <td className="total" title={`Cobertura de información: ${Math.round(cobertura * 100)} %`}>
+                      <td className="total bg-gstart" title={`Cobertura de información: ${Math.round(cobertura * 100)} %`}>
                         {score ? score.toFixed(1) : '—'}
                         <div className="tiny muted" style={{ fontWeight: 500 }}>
                           {Math.round(cobertura * 100)} % info

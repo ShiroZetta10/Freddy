@@ -1,0 +1,22 @@
+// Paleta de las ilustraciones del journey (navy / amarillo / grises / tonos neutros).
+export const C = {
+  navy: '#0b3478',
+  navy2: '#1d4a99',
+  navy3: '#5b78ad',
+  navy4: '#9fb2d4',
+  yellow: '#ffcc00',
+  yellowD: '#e0b000',
+  white: '#ffffff',
+  g1: '#f3f5f9',
+  g2: '#e3e8f0',
+  g3: '#c5cddb',
+  g4: '#8a95ab',
+  g5: '#4a5568',
+  ink: '#1b2433',
+  rojo: '#c0462f',
+  verde: '#2f8f5b',
+  ambar: '#d99a1e',
+  mar: '#d6e6f8',
+  mar2: '#a9c6ea',
+  mar3: '#7ea7da',
+}

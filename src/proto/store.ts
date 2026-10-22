@@ -14,6 +14,7 @@ import { useSyncExternalStore } from 'react'
 
 // ---------------------------------------------------------------- tipos
 export type CafeteriaId = 'proa' | 'popa' | 'oro'
+export type ClaseId = 'estandar' | 'oro'
 export type Categoria = 'Desayunos' | 'Bocadillos' | 'Sándwiches' | 'Bebidas' | 'Snacks' | 'Tienda'
 export type Producto = {
   id: string
@@ -21,7 +22,10 @@ export type Producto = {
   precio: number
   cat: Categoria
   desc: string
-  km0?: boolean // producto canario / de proximidad («Elaborado en Canarias»)
+  km0?: boolean // producto canario / de proximidad
+  elaboradoCanarias?: boolean // elaborado en Canarias (candidato al distintivo «Elaborado en Canarias»; su uso requiere autorización y producto certificado)
+  incluidoOro?: boolean // incluido en el menú de Clase Oro (0 €) cuando se pide desde la cafetería Oro, hasta el límite por persona
+  soloOro?: boolean // solo se sirve en la cafetería / salón Clase Oro
   origen?: string // procedencia genérica (sin marcas), p. ej. «Quesería de Tenerife»
   tags?: string[] // 'sin gluten', 'vegetariano', 'combo'
   stock: number // unidades restantes en la travesía (total entre cafeterías)
@@ -41,13 +45,42 @@ export type Pedido = {
   franja: number // índice de franja (minuto de viaje / tamaño de franja)
   estado: EstadoPedido
   prepedido: boolean
-  pago: 'apple' | 'google' | 'tarjeta'
+  pago: 'apple' | 'google' | 'tarjeta' | 'bono' | 'incluido' // 'bono' = total 0 € pagado con un bono · 'incluido' = total 0 € cubierto por el menú de Clase Oro
+  clase?: ClaseId // 'oro' si el billete es Clase Oro (prioridad visual en barra)
+  menuOro?: MenuOroAplicado // unidades del menú Clase Oro incluido (a 0 €) en este pedido
+  servicio?: 'mesa' // servicio en mesa del salón Clase Oro (lo atiende la cafetería Oro)
+  mesaRef?: string // referencia libre de mesa (no hay asiento asignado)
+  bono?: BonoAplicado // bono de consumo canjeado en este pedido
+  canal?: 'barra' // pedido creado en barra (bono físico canjeado en mostrador)
   sinPlastico?: boolean // «Sin cubiertos ni bolsa» (En Armonía con el Mar)
   tarifaJoven?: boolean // el billete es Tarifa Joven y se aplicó la ventaja propuesta
   descuentoJoven?: number // € descontados por la ventaja Tarifa Joven (ya restados de `total`)
   bot?: boolean
   t: Partial<Record<EstadoPedido | 'creado', number>> // marcas de tiempo (ms reales)
 }
+/** Menú Clase Oro incluido aplicado a un pedido: qué unidades van a 0 € y su valor a precio de carta. */
+export type MenuOroAplicado = { uds: number; valor: number; cubiertas: LineaPedido[] }
+/** Bono aplicado a un pedido: qué unidades cubre (a 0 €) y su valor a precio de carta. */
+export type BonoAplicado = { codigo: string; nombre: string; tipo: BonoOrigen; valor: number; cubiertas: LineaPedido[] }
+
+// ---------------------------------------------------------------- bonos de consumo
+export type BonoOrigen = 'billete' | 'fisico'
+export type EstadoBono = 'disponible' | 'canjeado' | 'caducado'
+/** Qué cubre un bono: `qty` unidades de cualquiera de los productos `pids`. */
+export type CoberturaBono = { etiqueta: string; pids: string[]; qty: number }
+export type TipoBono = { id: string; nombre: string; desc: string; precio: number; cubre: CoberturaBono[] }
+export type Bono = {
+  codigo: string // BN-XXXX-C: de un solo uso, con letra de control
+  tipo: BonoOrigen // 'billete' = comprado junto al billete · 'fisico' = comprado en físico (código impreso)
+  tipoId: string
+  nombre: string
+  contenido: CoberturaBono[]
+  precio: number // precio de referencia (lo que pagó el pasajero)
+  estado: EstadoBono
+  ticket?: string // localizador del billete al que va asociado (bonos de billete)
+  canjeadoEn?: { pedido: number; t: number; hora: string; valor: number }
+}
+
 // ---------------------------------------------------------------- inventario
 /**
  * Inventario por escandallo (como el sistema de Fred. Olsen): cada producto de venta descuenta
@@ -76,7 +109,7 @@ export type TipoMovimiento = 'venta' | 'cancelacion' | 'entrada' | 'merma' | 'aj
 export type Movimiento = { id: number; t: number; iid: string; delta: number; tipo: TipoMovimiento; ref?: string }
 
 export type Fase = 'antes' | 'embarque' | 'navegando' | 'llegando' | 'llegado'
-export type Billete = { ticket: string; nombre: string; clase?: 'oro'; idioma: 'es' | 'en' | 'de'; plus: number; tarifaJoven?: boolean }
+export type Billete = { ticket: string; nombre: string; clase?: ClaseId; vehiculo?: boolean; idioma: 'es' | 'en' | 'de'; plus: number; tarifaJoven?: boolean }
 export type Mensaje = { id: number; texto: string; t: number; de: 'manager' | 'sistema' }
 export type Alerta = { id: number; nivel: 'info' | 'warn'; texto: string; t: number }
 
@@ -99,6 +132,8 @@ export type ProtoState = {
     pausa: Record<CafeteriaId, boolean>
     bot: boolean
     online: boolean // simula la conexión (Starlink) del barco
+    upsellOro: boolean // mostrar al pasajero estándar la tarjeta «Pásate a Clase Oro»
+    limiteMenuOro: number // unidades del menú Clase Oro incluido por pasajero y travesía (propuesta del equipo, a confirmar)
   }
   cafeterias: Record<CafeteriaId, { nombre: string; cubierta: string; abierta: boolean }>
   productos: Producto[]
@@ -108,6 +143,7 @@ export type ProtoState = {
   mensajes: Mensaje[]
   alertas: Alerta[]
   siguienteId: number
+  bonos: Bono[] // bonos de consumo emitidos (de billete y físicos); el código es de un solo uso
   insumos: Insumo[]
   escandallos: Record<string, LineaEscandallo[]> // producto -> receta
   movimientos: Movimiento[] // últimos movimientos de inventario
@@ -119,27 +155,32 @@ export type ProtoState = {
 
 // ---------------------------------------------------------------- datos iniciales
 export const PRODUCTOS_INICIALES: Producto[] = [
-  { id: 'cortado', nombre: 'Café cortado', precio: 1.9, cat: 'Desayunos', desc: 'Café de origen con leche canaria.', stock: 120, agotado: false, color: '#7a4b2a', km0: true, origen: 'Leche de ganaderías canarias' },
-  { id: 'solo', nombre: 'Café solo', precio: 1.9, cat: 'Desayunos', desc: 'Espresso recién molido.', stock: 120, agotado: false, color: '#3b2416' },
-  { id: 'oferta-bolleria', nombre: 'Bollería + bebida caliente', precio: 4.2, cat: 'Desayunos', desc: 'Croissant o napolitana con café o infusión.', tags: ['combo'], stock: 60, agotado: false, color: '#d99a3d' },
-  { id: 'croissant', nombre: 'Croissant', precio: 2.1, cat: 'Desayunos', desc: 'Horneado a bordo.', stock: 8, agotado: false, color: '#e0a84f' },
-  { id: 'pollo-gourmet', nombre: 'Bocadillo pollo gourmet', precio: 5.72, cat: 'Bocadillos', desc: 'Pollo asado, rúcula y alioli suave.', stock: 40, agotado: false, color: '#c0763a' },
-  { id: 'serrano-queso', nombre: 'Bocadillo jamón serrano y queso', precio: 5.76, cat: 'Bocadillos', desc: 'Pan de leña y queso semicurado canario.', km0: true, origen: 'Quesería de Tenerife', stock: 35, agotado: false, color: '#b5453a' },
-  { id: 'tortilla', nombre: 'Bocadillo de tortilla', precio: 5.77, cat: 'Bocadillos', desc: 'Tortilla de papas del día.', tags: ['vegetariano'], stock: 25, agotado: false, color: '#e8c25a' },
-  { id: 'mixto', nombre: 'Sándwich mixto', precio: 5.7, cat: 'Sándwiches', desc: 'Jamón cocido y queso fundido.', stock: 30, agotado: false, color: '#d8b06a' },
-  { id: 'atun', nombre: 'Sándwich de atún', precio: 5.73, cat: 'Sándwiches', desc: 'Atún, tomate y lechuga.', stock: 20, agotado: false, color: '#9fb36b' },
-  { id: 'agua', nombre: 'Agua sin gas 1/2', precio: 1.75, cat: 'Bebidas', desc: 'Agua mineral canaria.', km0: true, origen: 'Manantial de Canarias', stock: 200, agotado: false, color: '#5aa7d6' },
-  { id: 'refresco', nombre: 'Refresco de cola', precio: 2.3, cat: 'Bebidas', desc: 'Lata 33 cl.', stock: 90, agotado: false, color: '#8a1c1c' },
-  { id: 'cerveza', nombre: 'Cerveza canaria', precio: 2.9, cat: 'Bebidas', desc: 'Tercio bien frío.', km0: true, origen: 'Cervecería artesana de Canarias', stock: 60, agotado: false, color: '#e3a600' },
-  { id: 'papas', nombre: 'Papas fritas', precio: 1.8, cat: 'Snacks', desc: 'Bolsa individual.', tags: ['sin gluten'], stock: 70, agotado: false, color: '#f0c419' },
-  { id: 'fruta', nombre: 'Plátano de Canarias', precio: 1.2, cat: 'Snacks', desc: 'IGP Plátano de Canarias.', km0: true, origen: 'Plátano de Canarias IGP', tags: ['sin gluten', 'vegetariano'], stock: 40, agotado: false, color: '#f2d43a' },
+  { id: 'cortado', nombre: 'Café cortado', precio: 1.9, cat: 'Desayunos', desc: 'Café de origen con leche canaria.', stock: 120, agotado: false, color: '#7a4b2a', km0: true, origen: 'Leche de ganaderías canarias', incluidoOro: true },
+  { id: 'solo', nombre: 'Café solo', precio: 1.9, cat: 'Desayunos', desc: 'Espresso recién molido.', stock: 120, agotado: false, color: '#3b2416', incluidoOro: true },
+  { id: 'oferta-bolleria', nombre: 'Bollería + bebida caliente', precio: 4.2, cat: 'Desayunos', desc: 'Croissant o napolitana con café o infusión.', tags: ['combo'], stock: 60, agotado: false, color: '#d99a3d', incluidoOro: true },
+  { id: 'croissant', nombre: 'Croissant', precio: 2.1, cat: 'Desayunos', desc: 'Horneado a bordo.', stock: 8, agotado: false, color: '#e0a84f', incluidoOro: true },
+  { id: 'pollo-gourmet', nombre: 'Bocadillo pollo gourmet', precio: 5.72, cat: 'Bocadillos', desc: 'Pollo asado, rúcula y alioli suave.', stock: 40, agotado: false, color: '#c0763a', incluidoOro: true },
+  { id: 'serrano-queso', nombre: 'Bocadillo jamón serrano y queso', precio: 5.76, cat: 'Bocadillos', desc: 'Pan de leña y queso semicurado canario.', km0: true, origen: 'Quesería de Tenerife', stock: 35, agotado: false, color: '#b5453a', incluidoOro: true },
+  { id: 'tortilla', nombre: 'Bocadillo de tortilla', precio: 5.77, cat: 'Bocadillos', desc: 'Tortilla de papas del día.', tags: ['vegetariano'], stock: 25, agotado: false, color: '#e8c25a', incluidoOro: true },
+  { id: 'mixto', nombre: 'Sándwich mixto', precio: 5.7, cat: 'Sándwiches', desc: 'Jamón cocido y queso fundido.', stock: 30, agotado: false, color: '#d8b06a', incluidoOro: true },
+  { id: 'atun', nombre: 'Sándwich de atún', precio: 5.73, cat: 'Sándwiches', desc: 'Atún, tomate y lechuga.', stock: 20, agotado: false, color: '#9fb36b', incluidoOro: true },
+  { id: 'agua', nombre: 'Agua sin gas 1/2', precio: 1.75, cat: 'Bebidas', desc: 'Agua mineral canaria.', km0: true, origen: 'Manantial de Canarias', stock: 200, agotado: false, color: '#5aa7d6', incluidoOro: true, elaboradoCanarias: true },
+  { id: 'refresco', nombre: 'Refresco de cola', precio: 2.3, cat: 'Bebidas', desc: 'Lata 33 cl.', stock: 90, agotado: false, color: '#8a1c1c', incluidoOro: true },
+  { id: 'cerveza', nombre: 'Cerveza canaria', precio: 2.9, cat: 'Bebidas', desc: 'Tercio bien frío.', km0: true, origen: 'Cervecería artesana de Canarias', stock: 60, agotado: false, color: '#e3a600', elaboradoCanarias: true },
+  { id: 'papas', nombre: 'Papas fritas', precio: 1.8, cat: 'Snacks', desc: 'Bolsa individual.', tags: ['sin gluten'], stock: 70, agotado: false, color: '#f0c419', incluidoOro: true },
+  { id: 'fruta', nombre: 'Plátano de Canarias', precio: 1.2, cat: 'Snacks', desc: 'IGP Plátano de Canarias.', km0: true, origen: 'Plátano de Canarias IGP', tags: ['sin gluten', 'vegetariano'], stock: 40, agotado: false, color: '#f2d43a', incluidoOro: true },
   // Tienda a bordo: producto canario y recuerdos («Lo nuestro viaja contigo»). Recogida en barra como el resto.
-  { id: 'mojo', nombre: 'Mojo picón en tarro', precio: 4.5, cat: 'Tienda', desc: 'Mojo picón casero, tarro de 200 g.', km0: true, origen: 'Elaborado en Tenerife', stock: 24, agotado: false, color: '#b8321f' },
-  { id: 'gofio', nombre: 'Gofio de millo tostado', precio: 3.2, cat: 'Tienda', desc: 'Gofio molido a la piedra, paquete de 500 g.', km0: true, origen: 'Gofio de La Palma', tags: ['vegetariano'], stock: 24, agotado: false, color: '#c9a35e' },
-  { id: 'miel', nombre: 'Miel de abeja canaria', precio: 6.9, cat: 'Tienda', desc: 'Miel de flores de las islas, tarro de 250 g.', km0: true, origen: 'Apicultores de Tenerife', tags: ['sin gluten', 'vegetariano'], stock: 18, agotado: false, color: '#d9962b' },
-  { id: 'dulces', nombre: 'Dulces típicos canarios', precio: 5.5, cat: 'Tienda', desc: 'Caja de galletas y dulces de almendra.', km0: true, origen: 'Obrador artesano de La Gomera', tags: ['vegetariano'], stock: 20, agotado: false, color: '#c98a5a' },
+  { id: 'mojo', nombre: 'Mojo picón en tarro', precio: 4.5, cat: 'Tienda', desc: 'Mojo picón casero, tarro de 200 g.', km0: true, origen: 'Elaborado en Tenerife', stock: 24, agotado: false, color: '#b8321f', elaboradoCanarias: true },
+  { id: 'gofio', nombre: 'Gofio de millo tostado', precio: 3.2, cat: 'Tienda', desc: 'Gofio molido a la piedra, paquete de 500 g.', km0: true, origen: 'Gofio de La Palma', tags: ['vegetariano'], stock: 24, agotado: false, color: '#c9a35e', elaboradoCanarias: true },
+  { id: 'miel', nombre: 'Miel de abeja canaria', precio: 6.9, cat: 'Tienda', desc: 'Miel de flores de las islas, tarro de 250 g.', km0: true, origen: 'Apicultores de Tenerife', tags: ['sin gluten', 'vegetariano'], stock: 18, agotado: false, color: '#d9962b', elaboradoCanarias: true },
+  { id: 'dulces', nombre: 'Dulces típicos canarios', precio: 5.5, cat: 'Tienda', desc: 'Caja de galletas y dulces de almendra.', km0: true, origen: 'Obrador artesano de La Gomera', tags: ['vegetariano'], stock: 20, agotado: false, color: '#c98a5a', elaboradoCanarias: true },
   { id: 'camiseta', nombre: 'Camiseta Fred. Olsen Express', precio: 14.9, cat: 'Tienda', desc: 'Algodón, recuerdo de tu travesía. Tallas S a XL.', stock: 12, agotado: false, color: '#0b3478' },
   { id: 'cartas', nombre: 'Juego de cartas infantil', precio: 6.5, cat: 'Tienda', desc: 'Baraja ilustrada con los barcos y las islas.', stock: 14, agotado: false, color: '#1f8f6a' },
+  // Menú Clase Oro: platos fríos que solo se sirven en el salón Oro (incluidos hasta el límite por persona). Precios de carta de referencia.
+  { id: 'oro-tabla', nombre: 'Tabla de quesos y embutidos canarios', precio: 8.5, cat: 'Snacks', desc: 'Selección fría para compartir, con pan.', km0: true, origen: 'Quesería de Tenerife', stock: 30, agotado: false, color: '#c98a4a', soloOro: true, incluidoOro: true },
+  { id: 'oro-gourmet', nombre: 'Sándwich gourmet frío', precio: 5.9, cat: 'Sándwiches', desc: 'Pan artesano, jamón serrano, queso y rúcula.', stock: 30, agotado: false, color: '#b0773a', soloOro: true, incluidoOro: true },
+  { id: 'oro-ensalada', nombre: 'Ensalada fría de pollo', precio: 6.5, cat: 'Snacks', desc: 'Pollo asado, tomate, lechuga y rúcula.', tags: ['sin gluten'], stock: 25, agotado: false, color: '#7fa65a', soloOro: true, incluidoOro: true },
+  { id: 'oro-postre', nombre: 'Postre del día', precio: 3.2, cat: 'Snacks', desc: 'Postre frío de la cocina del barco.', tags: ['vegetariano'], stock: 30, agotado: false, color: '#d9b36a', soloOro: true, incluidoOro: true },
 ]
 
 export const INSUMOS_INICIALES: Insumo[] = [
@@ -166,6 +207,7 @@ export const INSUMOS_INICIALES: Insumo[] = [
   { id: 'alioli', nombre: 'Alioli suave', unidad: 'g', stock: 600, inicial: 800, minimo: 150, tipo: 'perecedero', conservacion: 'frio', aprovisionamiento: 'catering diario', coste: 0.006, litros: 0.001, envase: 200 },
   { id: 'croissant', nombre: 'Croissant / napolitana', unidad: 'ud', stock: 12, inicial: 40, minimo: 8, tipo: 'perecedero', conservacion: 'seco', aprovisionamiento: 'catering diario', coste: 0.45, envase: 10 },
   { id: 'platano', nombre: 'Plátano de Canarias', unidad: 'ud', stock: 30, inicial: 40, minimo: 8, tipo: 'perecedero', conservacion: 'seco', aprovisionamiento: 'catering diario', coste: 0.25, envase: 10 },
+  { id: 'postre', nombre: 'Postre del día (ración)', unidad: 'ud', stock: 30, inicial: 40, minimo: 8, tipo: 'perecedero', conservacion: 'frio', aprovisionamiento: 'catering diario', coste: 0.9, litros: 0.2, envase: 8 },
   // Tienda a bordo · no perecedero, seco, compra semanal (el insumo es la propia unidad de venta)
   { id: 'ti-mojo', nombre: 'Mojo picón (tarro)', unidad: 'ud', stock: 24, inicial: 36, minimo: 6, tipo: 'no-perecedero', conservacion: 'seco', aprovisionamiento: 'compra semanal', coste: 2.1, envase: 12 },
   { id: 'ti-gofio', nombre: 'Gofio (paquete 500 g)', unidad: 'ud', stock: 24, inicial: 36, minimo: 6, tipo: 'no-perecedero', conservacion: 'seco', aprovisionamiento: 'compra semanal', coste: 1.4, envase: 12 },
@@ -191,6 +233,11 @@ export const ESCANDALLOS_INICIALES: Record<string, LineaEscandallo[]> = {
   cerveza: [{ iid: 'cerveza-tercio', qty: 1 }],
   papas: [{ iid: 'papas-bolsa', qty: 1 }],
   fruta: [{ iid: 'platano', qty: 1 }],
+  // menú Clase Oro (platos fríos)
+  'oro-tabla': [{ iid: 'queso-semi', qty: 60 }, { iid: 'serrano', qty: 40 }, { iid: 'pan-bocadillo', qty: 1 }],
+  'oro-gourmet': [{ iid: 'pan-molde', qty: 2 }, { iid: 'serrano', qty: 40 }, { iid: 'queso-lonchas', qty: 30 }, { iid: 'verdura', qty: 20 }],
+  'oro-ensalada': [{ iid: 'pollo', qty: 80 }, { iid: 'verdura', qty: 90 }, { iid: 'alioli', qty: 10 }],
+  'oro-postre': [{ iid: 'postre', qty: 1 }],
   // tienda: la propia unidad
   mojo: [{ iid: 'ti-mojo', qty: 1 }],
   gofio: [{ iid: 'ti-gofio', qty: 1 }],
@@ -229,10 +276,10 @@ export const CONSUMO_POR_PASAJERO: Record<string, { u: number; fuente: 'real' | 
 }
 
 export const BILLETES_DEMO: Billete[] = [
-  { ticket: 'FO7K2Q', nombre: 'Carmen', idioma: 'es', plus: 340 },
-  { ticket: 'FO9X4M', nombre: 'Tom', idioma: 'en', plus: 0 },
-  { ticket: 'FO3H8B', nombre: 'Greta', clase: 'oro', idioma: 'de', plus: 1250 },
-  { ticket: 'FO2J5T', nombre: 'Yeray', idioma: 'es', plus: 120, tarifaJoven: true },
+  { ticket: 'FO7K2Q', nombre: 'Carmen', clase: 'estandar', idioma: 'es', plus: 340 },
+  { ticket: 'FO9X4M', nombre: 'Tom', clase: 'estandar', idioma: 'en', plus: 0 },
+  { ticket: 'FO3H8B', nombre: 'Greta', clase: 'oro', vehiculo: true, idioma: 'de', plus: 1250 }, // Clase Oro y viaja con vehículo: desembarque prioritario
+  { ticket: 'FO2J5T', nombre: 'Yeray', clase: 'estandar', idioma: 'es', plus: 120, tarifaJoven: true },
 ]
 
 /**
@@ -246,11 +293,182 @@ export const VENTAJA_JOVEN = {
   texto: 'Tarifa Joven: café o refresco −20 % con tu pedido',
 }
 
+
+// ---------------------------------------------------------------- clases de billete: Estándar vs Clase Oro
+/** Unidades del menú Clase Oro incluido por pasajero y travesía. Propuesta del equipo: Fred. Olsen no publica un límite (a confirmar). */
+export const LIMITE_MENU_ORO = 6
+
+export type EstadoVerificacion = 'verificado' | 'corregido' | 'a-confirmar'
+export type Prestacion = {
+  id: string
+  etiqueta: string
+  estandar: string
+  oro: string
+  estado: EstadoVerificacion // verificado = coincide con fredolsen.es · corregido = la propuesta inicial no se sostenía · a-confirmar = sin fuente oficial
+  nota: string
+}
+export const FUENTES_CLASES = [
+  { id: 'oro', titulo: 'Clase Oro (web oficial)', url: 'https://www.fredolsen.es/en/gold-class' },
+  { id: 'tarifas', titulo: 'Tarifas (web oficial)', url: 'https://www.fredolsen.es/en/rates' },
+  { id: 'faq', titulo: 'Preguntas frecuentes (web oficial)', url: 'https://www.fredolsen.es/en/faqs' },
+]
+/** Tabla comparativa verificada con fredolsen.es (consulta del 22/10/2026). Tarifas interinsulares; los servicios pueden variar según el buque. */
+export const PRESTACIONES: Prestacion[] = [
+  { id: 'salon', etiqueta: 'Salón', estandar: 'Salón general, butacas estándar', oro: 'Salón Clase Oro: aforo reducido, butacas extra confort, mesas de reunión', estado: 'verificado', nota: 'El acceso al salón solo está en las tarifas Priority y Oro. La web habla de «Clase Oro Lounge»; «VIP» aparece en la tabla de tarifas.' },
+  { id: 'embarque', etiqueta: 'Embarque', estandar: 'General en Básica; prioritario en Óptima Web+', oro: 'Prioritario', estado: 'corregido', nota: 'La propuesta inicial decía «flujo general» para todo Estándar, pero Óptima Web+ también tiene embarque prioritario (también Priority).' },
+  { id: 'desembarque', etiqueta: 'Desembarque con vehículo', estandar: 'Orden general', oro: 'Prioritario, solo si viajas con vehículo', estado: 'corregido', nota: 'La web limita el desembarque prioritario a la tarifa Oro con vehículo. Sin vehículo no hay prioridad de desembarque.' },
+  { id: 'comida', etiqueta: 'Comida y bebida', estandar: 'De pago en cafetería (en Óptima Web+, menú a bordo en cafeterías «Web Plus»)', oro: 'Servicio gastronómico incluido durante la travesía: bebidas, platos, snacks y postres', estado: 'corregido', nota: 'Incluido, pero con condiciones: platos fríos y calientes de lunes a viernes; fines de semana y festivos solo selección fría; se consume a bordo (no se puede sacar del barco); menús especiales con 48 h de antelación. No hay límite publicado: el prototipo aplica uno propio. Alcohol: a confirmar con Fred. Olsen.' },
+  { id: 'terraza', etiqueta: 'Terraza', estandar: 'Zonas exteriores generales', oro: 'Terraza exclusiva dentro del salón Oro', estado: 'verificado', nota: 'Terraza exclusiva de Oro confirmada. Qué zonas exteriores tiene Estándar en el Bajamar Express: a confirmar con Fred. Olsen.' },
+  { id: 'atencion', etiqueta: 'Atención', estandar: 'General en cafetería o recepción', oro: 'Servicio en el asiento y trato personalizado, con pocos pasajeros', estado: 'verificado', nota: 'La web dice que el personal sirve en el asiento y que el aforo reducido permite trato personalizado. «Personal dedicado» no figura literalmente: a confirmar.' },
+  { id: 'trabajo', etiqueta: 'Trabajo y wifi', estandar: 'Wifi general del barco', oro: 'Mesas de reunión, enchufes y wifi en el salón', estado: 'corregido', nota: 'Mesas, enchufes y wifi están confirmados. «Mejor conectividad» no figura en ninguna fuente oficial y se ha retirado. Enchufes en el salón general: a confirmar.' },
+  { id: 'flex', etiqueta: 'Flexibilidad', estandar: 'Cambios de fecha, hora y tarifa según disponibilidad; sin vuelta abierta, Puntos Plus ni reembolso (salvo Óptima Flexible)', oro: 'Cambios + vuelta abierta, pago con Puntos Plus y reembolso', estado: 'corregido', nota: 'Todas las tarifas permiten cambios (con diferencia si cambia la tarifa; billete válido 1 año). Vuelta abierta, pago con Puntos Plus y reembolso son de Óptima Flexible y de Oro. No aplica a la ruta Canarias–Huelva.' },
+]
+export type ReglaAtencion = { id: string; texto: string; estado: 'prototipo' | 'a-confirmar' }
+/** Lógica de atención al cliente por clase (propuesta del equipo, implementada en el prototipo). */
+export const REGLAS_ATENCION: Record<ClaseId, { nombre: string; tono: string; reglas: ReglaAtencion[] }> = {
+  estandar: {
+    nombre: 'Clase Estándar (Básica / Óptima)',
+    tono: 'Ágil y directo',
+    reglas: [
+      { id: 'e1', texto: 'Mostrar servicios adicionales: tarjeta discreta «Pásate a Clase Oro» (conmutable) con lo que incluye; precio a consultar.', estado: 'prototipo' },
+      { id: 'e2', texto: 'Notificaciones estándar de embarque y llegada.', estado: 'prototipo' },
+      { id: 'e3', texto: 'Promociones de cafetería y bar en la carta (p. ej. bollería + bebida caliente).', estado: 'prototipo' },
+      { id: 'e4', texto: 'Ofrecer también Priority como escalón intermedio (salón, embarque prioritario y comida, sin desembarque prioritario ni flexibilidad).', estado: 'a-confirmar' },
+    ],
+  },
+  oro: {
+    nombre: 'Clase Oro (Confort Oro)',
+    tono: 'Premium y personalizado: se trata al pasajero por su nombre',
+    reglas: [
+      { id: 'o1', texto: 'Distintivo Clase Oro en la cabecera de la app y en la pantalla de viaje.', estado: 'prototipo' },
+      { id: 'o2', texto: 'Aviso de embarque prioritario y, con vehículo, de desembarque prioritario.', estado: 'prototipo' },
+      { id: 'o3', texto: 'Acceso directo desde la app al menú Clase Oro incluido, con servicio en mesa en el salón Oro.', estado: 'prototipo' },
+      { id: 'o4', texto: 'Botón de soporte prioritario en Ayuda: la solicitud aparece como alerta al responsable.', estado: 'prototipo' },
+      { id: 'o5', texto: 'Carril físico de embarque y desembarque prioritario (señalización y personal): a confirmar con Fred. Olsen.', estado: 'a-confirmar' },
+    ],
+  },
+}
+
+/** Unidades del menú Oro ya consumidas por un billete (pedidos activos, también los pendientes de sincronizar). Un pedido cancelado las devuelve. */
+export const oroUsadas = (s: Pick<ProtoState, 'pedidos' | 'pendientesOffline'>, ticket: string) =>
+  [...s.pedidos, ...s.pendientesOffline].filter((p) => p.ticket === ticket && p.estado !== 'cancelado').reduce((a, p) => a + (p.menuOro?.uds ?? 0), 0)
+
+export type PlanMenuOro = { elegible: boolean; limite: number; usadas: number; restantes: number; cubiertas: LineaPedido[]; uds: number; valor: number }
+/**
+ * Menú Clase Oro incluido: solo para billetes Oro y pedidos a la cafetería Oro. Las unidades elegibles del carrito (por orden de carrito)
+ * pasan a 0 € hasta agotar el límite por persona; lo que exceda se cobra a precio de carta.
+ */
+export function planMenuOro(s: ProtoState, billete: Partial<Pick<Billete, 'ticket' | 'clase'>>, cafeteria: CafeteriaId | undefined, lineas: LineaPedido[]): PlanMenuOro {
+  const limite = s.ajustes.limiteMenuOro
+  const elegible = billete.clase === 'oro' && cafeteria === 'oro' && !!billete.ticket
+  const usadas = billete.ticket ? oroUsadas(s, billete.ticket) : 0
+  const restantes = elegible ? Math.max(0, limite - usadas) : 0
+  const cub: LineaPedido[] = []
+  let quedan = restantes
+  let valor = 0
+  if (elegible) {
+    for (const l of lineas) {
+      if (quedan <= 0) break
+      const p = s.productos.find((x) => x.id === l.pid)
+      if (!p?.incluidoOro || l.qty <= 0) continue
+      const n = Math.min(quedan, l.qty)
+      cub.push({ pid: l.pid, qty: n })
+      valor += p.precio * n
+      quedan -= n
+    }
+  }
+  return { elegible, limite, usadas, restantes, cubiertas: cub, uds: restantes - quedan, valor: Math.round(valor * 100) / 100 }
+}
+
+// ---------------------------------------------------------------- bonos: catálogo y códigos
+/**
+ * Tipos de bono de consumo (menús prepagados). Se compran junto al billete o en físico (código impreso de un solo uso).
+ * Precios de referencia = propuesta del equipo, por validar con Fred. Olsen.
+ */
+export const TIPOS_BONO: TipoBono[] = [
+  {
+    id: 'desayuno',
+    nombre: 'Menú desayuno',
+    desc: '1 bebida caliente + 1 bollería',
+    precio: 3.9,
+    cubre: [
+      { etiqueta: 'Bebida caliente', pids: ['cortado', 'solo'], qty: 1 },
+      { etiqueta: 'Bollería', pids: ['croissant'], qty: 1 },
+    ],
+  },
+  {
+    id: 'bocadillo',
+    nombre: 'Menú bocadillo + bebida',
+    desc: '1 bocadillo o sándwich + 1 agua o refresco',
+    precio: 6.9,
+    cubre: [
+      { etiqueta: 'Bocadillo o sándwich', pids: ['pollo-gourmet', 'serrano-queso', 'tortilla', 'mixto', 'atun'], qty: 1 },
+      { etiqueta: 'Agua o refresco', pids: ['agua', 'refresco'], qty: 1 },
+    ],
+  },
+  {
+    id: 'cafe-snack',
+    nombre: 'Menú café y snack',
+    desc: '1 café + 1 snack (papas o plátano)',
+    precio: 3.2,
+    cubre: [
+      { etiqueta: 'Café', pids: ['cortado', 'solo'], qty: 1 },
+      { etiqueta: 'Snack', pids: ['papas', 'fruta'], qty: 1 },
+    ],
+  },
+]
+export const tipoBono = (id: string) => TIPOS_BONO.find((t) => t.id === id)!
+
+const COD_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // sin I, O, 0, 1 (se confunden al teclear)
+const COD_CTRL = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
+/** Letra de control de 4 caracteres: detecta erratas al teclear el código. */
+function letraControl(cuerpo: string) {
+  let n = 0
+  for (let i = 0; i < cuerpo.length; i++) n += (COD_CHARS.indexOf(cuerpo[i]) + 1) * (i + 1)
+  return COD_CTRL[n % COD_CTRL.length]
+}
+/** Código legible de un solo uso: BN-7K2Q-D (cuerpo de 4 + letra de control). */
+export const codigoBono = (cuerpo: string) => `BN-${cuerpo}-${letraControl(cuerpo)}`
+/** Normaliza lo que teclea o escanea el pasajero (minúsculas, espacios, guiones opcionales) y comprueba la letra de control. */
+export function normalizarCodigoBono(raw: string): string | null {
+  const c = raw.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const m = /^(?:BN)?([A-Z0-9]{4})([A-Z])$/.exec(c)
+  if (!m || [...m[1]].some((ch) => !COD_CHARS.includes(ch)) || letraControl(m[1]) !== m[2]) return null
+  return `BN-${m[1]}-${m[2]}`
+}
+const nuevoCuerpo = () => Array.from({ length: 4 }, () => COD_CHARS[Math.floor(Math.random() * COD_CHARS.length)]).join('')
+
+function mkBono(tipoId: string, origen: BonoOrigen, cuerpo: string, ticket?: string): Bono {
+  const t = tipoBono(tipoId)
+  return { codigo: codigoBono(cuerpo), tipo: origen, tipoId, nombre: t.nombre, contenido: t.cubre.map((c) => ({ ...c, pids: [...c.pids] })), precio: t.precio, estado: 'disponible', ...(ticket ? { ticket } : {}) }
+}
+
+/**
+ * Bonos de partida de la demo.
+ *  - De billete (comprados junto al billete): Carmen «Menú desayuno», Tom «Menú bocadillo + bebida», Yeray «Menú desayuno»
+ *    (Yeray tiene Tarifa Joven: sirve para probar que bono y ventaja conviven sin doble descuento) y 3 de otros pasajeros.
+ *  - Físicos (código impreso de un solo uso): 4 códigos para que el jurado los pruebe.
+ */
+export function bonosIniciales(): Bono[] {
+  return [
+    mkBono('desayuno', 'billete', 'D4PM', 'FO7K2Q'),
+    mkBono('bocadillo', 'billete', 'T6QJ', 'FO9X4M'),
+    mkBono('desayuno', 'billete', 'R2WK', 'FO2J5T'),
+    mkBono('bocadillo', 'billete', 'G8XN', 'FO5C7E'),
+    mkBono('desayuno', 'billete', 'M3VB', 'FO6D2R'),
+    mkBono('cafe-snack', 'billete', 'K9HY', 'FO4P8T'),
+    mkBono('desayuno', 'fisico', '7K2Q'),
+    mkBono('bocadillo', 'fisico', '4M9D'),
+    mkBono('cafe-snack', 'fisico', 'X3TB'),
+    mkBono('desayuno', 'fisico', 'H8N5'),
+  ]
+}
+
 const NOMBRES_BOT = ['Ana', 'Luis', 'Marta', 'Jonay', 'Yeray', 'Elena', 'Pedro', 'Nira', 'Acerina', 'Raúl', 'Sofía', 'Iván', 'Beatriz', 'Dácil', 'Hugo']
 
 export function estadoInicial(): ProtoState {
   return recalcular({
-    version: 4,
+    version: 6,
     viaje: { buque: 'Bajamar Express', origen: 'Santa Cruz de Tenerife', destino: 'Agaete', salida: '08:00', duracionMin: 80, minuto: -25, velocidad: 0.5 },
     ajustes: {
       franjaMin: 5,
@@ -260,6 +478,8 @@ export function estadoInicial(): ProtoState {
       pausa: { proa: false, popa: false, oro: false },
       bot: true,
       online: true,
+      upsellOro: true,
+      limiteMenuOro: LIMITE_MENU_ORO,
     },
     cafeterias: {
       proa: { nombre: 'Cafetería Proa', cubierta: 'Cubierta 5 · proa', abierta: true },
@@ -273,6 +493,7 @@ export function estadoInicial(): ProtoState {
     mensajes: [{ id: 1, texto: 'Bienvenidos a bordo del Bajamar Express. Mar en calma, llegada prevista a Agaete a las 09:20.', t: Date.now(), de: 'sistema' }],
     alertas: [],
     siguienteId: 201,
+    bonos: bonosIniciales(),
     insumos: INSUMOS_INICIALES.map((i) => ({ ...i })),
     escandallos: JSON.parse(JSON.stringify(ESCANDALLOS_INICIALES)),
     movimientos: [],
@@ -283,7 +504,7 @@ export function estadoInicial(): ProtoState {
 }
 
 // ---------------------------------------------------------------- store (localStorage + BroadcastChannel)
-const KEY = 'fredonboard-proto-v4'
+const KEY = 'fredonboard-proto-v6'
 const canal: BroadcastChannel | null = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(KEY) : null
 
 function cargar(): ProtoState {
@@ -293,7 +514,7 @@ function cargar(): ProtoState {
     // una demo abandonada (más de 20 min sin actividad) arranca de cero con una travesía nueva
     if (raw && Date.now() - t < 20 * 60 * 1000) {
       const s = JSON.parse(raw) as ProtoState
-      if (s.version === 4) return recalcular(s)
+      if (s.version === 6) return recalcular(s)
     }
   } catch {
     /* sin almacenamiento: seguimos en memoria */
@@ -428,6 +649,125 @@ export function descuentoJoven(s: ProtoState, billete: Pick<Billete, 'tarifaJove
 /** Total a pagar de unas líneas para un billete (aplica la ventaja joven si corresponde). */
 export const totalPedido = (s: ProtoState, billete: Pick<Billete, 'tarifaJoven'>, lineas: LineaPedido[]) =>
   Math.round((totalLineas(s, lineas) - descuentoJoven(s, billete, lineas)) * 100) / 100
+
+// ---------------------------------------------------------------- bonos: motor
+/** Estado efectivo: un bono disponible caduca al llegar a puerto. */
+export const estadoBono = (s: Pick<ProtoState, 'viaje'>, b: Bono): EstadoBono => (b.estado === 'disponible' && s.viaje.minuto >= s.viaje.duracionMin ? 'caducado' : b.estado)
+
+export type ConsultaBono = { ok: true; bono: Bono } | { ok: false; motivo: 'formato' | 'desconocido' | 'ajeno' | 'usado' | 'caducado'; bono?: Bono }
+
+/** Valida un código: formato (letra de control), existencia, titular (bonos de billete), un solo uso y caducidad. */
+export function consultarBono(s: ProtoState, raw: string, ticket?: string): ConsultaBono {
+  const cod = normalizarCodigoBono(raw)
+  if (!cod) return { ok: false, motivo: 'formato' }
+  const bono = s.bonos.find((b) => b.codigo === cod)
+  if (!bono) return { ok: false, motivo: 'desconocido' }
+  if (bono.tipo === 'billete' && ticket && bono.ticket !== ticket) return { ok: false, motivo: 'ajeno' }
+  const e = estadoBono(s, bono)
+  if (e === 'canjeado') return { ok: false, motivo: 'usado', bono }
+  if (e === 'caducado') return { ok: false, motivo: 'caducado', bono }
+  return { ok: true, bono }
+}
+
+export type FaltaBono = { cobertura: CoberturaBono; qty: number; opciones: string[] }
+export type PlanBono = { cubiertas: LineaPedido[]; valor: number; faltan: FaltaBono[]; completo: boolean }
+
+/**
+ * Qué parte del carrito cubre un bono. Por cada cobertura se toman las unidades elegibles MÁS BARATAS del carrito
+ * (la ventaja nunca supera lo que el pasajero ha elegido y no hay sorpresas); esas unidades pasan a 0 €.
+ * `faltan` lista lo que aún no está en el carrito, con los productos vendibles que lo completan.
+ */
+export function planBono(s: ProtoState, bono: Pick<Bono, 'contenido'>, lineas: LineaPedido[]): PlanBono {
+  const resto = new Map<string, number>()
+  for (const l of lineas) if (l.qty > 0) resto.set(l.pid, (resto.get(l.pid) ?? 0) + l.qty)
+  const cubiertas = new Map<string, number>()
+  const faltan: FaltaBono[] = []
+  let valor = 0
+  for (const c of bono.contenido) {
+    let necesita = c.qty
+    const elegibles = c.pids
+      .filter((pid) => (resto.get(pid) ?? 0) > 0)
+      .sort((a, b) => (s.productos.find((p) => p.id === a)?.precio ?? 0) - (s.productos.find((p) => p.id === b)?.precio ?? 0))
+    for (const pid of elegibles) {
+      if (necesita <= 0) break
+      const n = Math.min(necesita, resto.get(pid)!)
+      resto.set(pid, resto.get(pid)! - n)
+      cubiertas.set(pid, (cubiertas.get(pid) ?? 0) + n)
+      valor += (s.productos.find((p) => p.id === pid)?.precio ?? 0) * n
+      necesita -= n
+    }
+    if (necesita > 0) {
+      const opciones = c.pids
+        .map((pid) => s.productos.find((p) => p.id === pid))
+        .filter((p): p is Producto => !!p && disponible(s, p) > 0)
+        .sort((a, b) => a.precio - b.precio)
+        .map((p) => p.id)
+      faltan.push({ cobertura: c, qty: necesita, opciones })
+    }
+  }
+  return { cubiertas: [...cubiertas].map(([pid, qty]) => ({ pid, qty })), valor: Math.round(valor * 100) / 100, faltan, completo: faltan.length === 0 }
+}
+
+const restarLineas = (lineas: LineaPedido[], cubiertas: LineaPedido[]) =>
+  lineas.map((l) => ({ ...l, qty: l.qty - (cubiertas.find((c) => c.pid === l.pid)?.qty ?? 0) })).filter((l) => l.qty > 0)
+
+/**
+ * Cotización completa de un pedido: subtotal, bono y Tarifa Joven sin doble descuento.
+ * El bono se aplica primero (esas unidades quedan a 0 €); la ventaja joven solo puede recaer en unidades NO cubiertas por el bono.
+ * Un bono incompleto no se aplica (`plan.faltan` dice qué añadir).
+ */
+export function cotizar(s: ProtoState, billete: Pick<Billete, 'tarifaJoven'> & Partial<Pick<Billete, 'ticket' | 'clase'>>, lineas: LineaPedido[], bono?: Bono | null, cafeteria?: CafeteriaId) {
+  const subtotal = totalLineas(s, lineas)
+  // 1) menú Clase Oro incluido (solo billete Oro en la cafetería Oro) · 2) bono sobre lo que queda · 3) Tarifa Joven sobre lo que queda
+  const oro = planMenuOro(s, billete, cafeteria, lineas)
+  const tras = oro.cubiertas.length ? restarLineas(lineas, oro.cubiertas) : lineas
+  const plan = bono ? planBono(s, bono, tras) : null
+  const aplicado = plan && plan.completo ? plan : null
+  const valorBono = aplicado?.valor ?? 0
+  const cubiertas = aplicado?.cubiertas ?? []
+  const dtoJoven = descuentoJoven(s, billete, aplicado ? restarLineas(tras, cubiertas) : tras)
+  const total = Math.max(0, Math.round((subtotal - oro.valor - valorBono - dtoJoven) * 100) / 100)
+  return { subtotal, plan, valorBono, cubiertas, dtoJoven, total, oro }
+}
+
+/** Bonos de un billete (comprados con él) que se pueden usar ahora. */
+export const bonosDeBillete = (s: ProtoState, ticket: string) => s.bonos.filter((b) => b.tipo === 'billete' && b.ticket === ticket && estadoBono(s, b) === 'disponible')
+
+/** Estadísticas para el manager: emitidos, canjeados, % de canje, ingresos anticipados y valor canjeado. */
+export function estadisticasBonos(s: ProtoState) {
+  const e = (b: Bono) => estadoBono(s, b)
+  const emitidos = s.bonos.length
+  const canjeados = s.bonos.filter((b) => e(b) === 'canjeado')
+  const deBillete = s.bonos.filter((b) => b.tipo === 'billete')
+  const fisicos = s.bonos.filter((b) => b.tipo === 'fisico')
+  return {
+    emitidos,
+    deBillete: deBillete.length,
+    fisicos: fisicos.length,
+    canjeados: canjeados.length,
+    disponibles: s.bonos.filter((b) => e(b) === 'disponible').length,
+    caducados: s.bonos.filter((b) => e(b) === 'caducado').length,
+    pctCanje: emitidos ? canjeados.length / emitidos : 0,
+    ingresosAnticipados: Math.round(deBillete.reduce((a, b) => a + b.precio, 0) * 100) / 100, // vendidos con el billete
+    ingresosFisicos: Math.round(fisicos.reduce((a, b) => a + b.precio, 0) * 100) / 100,
+    valorCanjeado: Math.round(canjeados.reduce((a, b) => a + (b.canjeadoEn?.valor ?? 0), 0) * 100) / 100,
+    pedidosConBono: s.pedidos.filter((p) => p.bono && p.estado !== 'cancelado').length,
+    porTipo: TIPOS_BONO.map((t) => ({
+      tipo: t,
+      emitidos: s.bonos.filter((b) => b.tipoId === t.id).length,
+      canjeados: canjeados.filter((b) => b.tipoId === t.id).length,
+    })),
+  }
+}
+
+/** Emite un bono (venta en físico o con el billete). Devuelve el bono creado. */
+export function emitirBono(tipoId: string, origen: BonoOrigen, ticket?: string): Bono {
+  let cuerpo = nuevoCuerpo()
+  while (state.bonos.some((b) => b.codigo === codigoBono(cuerpo))) cuerpo = nuevoCuerpo()
+  const bono = mkBono(tipoId, origen, cuerpo, ticket)
+  update((s) => ({ ...s, bonos: [...s.bonos, bono] }))
+  return bono
+}
 
 const SOLO_BEBIDA = ['cortado', 'solo']
 /** ¿Son todo bebidas? (por defecto, esos pedidos van «sin cubiertos ni bolsa»). */
@@ -567,7 +907,23 @@ export function login(ticket: string): Billete | null {
 
 export type ResultadoPedido =
   | { ok: true; pedido: Pedido; offline: boolean; duplicado: boolean }
-  | { ok: false; motivo: 'cerrado' | 'pausa' | 'franja-llena' | 'sin-stock'; detalle?: string }
+  | { ok: false; motivo: MotivoError; detalle?: string }
+export type MotivoError = 'solo-oro' | 'cerrado' | 'pausa' | 'franja-llena' | 'sin-stock' | 'bono-invalido' | 'bono-ajeno' | 'bono-usado' | 'bono-caducado' | 'bono-incompleto'
+
+/** Relee el estado de localStorage: otra pestaña puede haber canjeado un bono sin que haya llegado aún el aviso del canal. */
+function refrescarDesdeAlmacen() {
+  try {
+    const raw = localStorage.getItem(KEY)
+    if (!raw) return
+    const st = JSON.parse(raw) as ProtoState
+    if (st.version === 6 && st.bonos?.some((b) => b.estado !== 'disponible' && state.bonos.find((x) => x.codigo === b.codigo)?.estado === 'disponible')) {
+      state = recalcular(st)
+      emit()
+    }
+  } catch {
+    /* sin almacenamiento */
+  }
+}
 
 /**
  * Crea un pedido de forma idempotente: si ya existe uno con la misma clientKey, devuelve ese
@@ -581,13 +937,30 @@ export function crearPedido(input: {
   franja: number
   pago: Pedido['pago']
   sinPlastico?: boolean
+  bono?: string // código del bono a canjear en este pedido (de un solo uso)
+  canal?: 'barra'
+  mesa?: boolean // Clase Oro: servir en mi mesa del salón Oro
+  mesaRef?: string
   bot?: boolean
 }): ResultadoPedido {
+  if (input.bono) refrescarDesdeAlmacen()
   const s = state
   const existente = [...s.pedidos, ...s.pendientesOffline].find((p) => p.clientKey === input.clientKey)
   if (existente) return { ok: true, pedido: existente, offline: !s.pedidos.includes(existente), duplicado: true }
   if (!pedidosAbiertos(s)) return { ok: false, motivo: 'cerrado' }
+  // bono: debe existir, ser de este billete (si es de billete), estar disponible y el carrito debe contener lo que cubre
+  let bono: Bono | undefined
+  if (input.bono) {
+    const c = consultarBono(s, input.bono, input.billete.ticket)
+    if (!c.ok) return { ok: false, motivo: c.motivo === 'usado' ? 'bono-usado' : c.motivo === 'caducado' ? 'bono-caducado' : c.motivo === 'ajeno' ? 'bono-ajeno' : 'bono-invalido', detalle: input.bono }
+    bono = c.bono
+    const oroPrevio = planMenuOro(s, input.billete, input.cafeteria, input.lineas)
+    if (!planBono(s, bono, oroPrevio.cubiertas.length ? restarLineas(input.lineas, oroPrevio.cubiertas) : input.lineas).completo) return { ok: false, motivo: 'bono-incompleto', detalle: bono.nombre }
+  }
   if (s.ajustes.pausa[input.cafeteria]) return { ok: false, motivo: 'pausa' }
+  // la carta del salón Oro solo se sirve a billetes Oro y desde la cafetería Oro
+  const intruso = input.lineas.find((l) => producto(s, l.pid).soloOro && !(input.billete.clase === 'oro' && input.cafeteria === 'oro'))
+  if (intruso) return { ok: false, motivo: 'solo-oro', detalle: producto(s, intruso.pid).nombre }
   const ocupados = s.pedidos.filter((p) => p.cafeteria === input.cafeteria && p.franja === input.franja && p.estado !== 'cancelado').length
   if (ocupados >= s.ajustes.topePorFranja) return { ok: false, motivo: 'franja-llena' }
   for (const l of input.lineas) {
@@ -603,29 +976,44 @@ export function crearPedido(input: {
       return { ok: false, motivo: 'sin-stock', detalle: afectado ? producto(s, afectado.pid).nombre : ins.nombre }
     }
   }
-  const descuento = descuentoJoven(s, input.billete, input.lineas)
+  const cot = cotizar(s, input.billete, input.lineas, bono, input.cafeteria)
+  const descuento = cot.dtoJoven
+  const esOro = input.billete.clase === 'oro'
+  const mesa = !!input.mesa && esOro && input.cafeteria === 'oro'
   const pedido: Pedido = {
     id: s.siguienteId,
     clientKey: input.clientKey,
     ticket: input.billete.ticket,
     nombre: input.billete.nombre,
     lineas: input.lineas,
-    total: Math.round((totalLineas(s, input.lineas) - descuento) * 100) / 100,
+    total: cot.total,
     cafeteria: input.cafeteria,
     franja: input.franja,
     estado: 'recibido',
     prepedido: s.viaje.minuto < 0,
-    pago: input.pago,
+    pago: cot.total === 0 && bono ? 'bono' : cot.total === 0 && cot.oro.uds > 0 ? 'incluido' : input.pago,
+    ...(esOro ? { clase: 'oro' as const } : {}),
+    ...(cot.oro.uds > 0 ? { menuOro: { uds: cot.oro.uds, valor: cot.oro.valor, cubiertas: cot.oro.cubiertas } } : {}),
+    ...(mesa ? { servicio: 'mesa' as const, ...(input.mesaRef?.trim() ? { mesaRef: input.mesaRef.trim().slice(0, 24) } : {}) } : {}),
+    ...(bono ? { bono: { codigo: bono.codigo, nombre: bono.nombre, tipo: bono.tipo, valor: cot.valorBono, cubiertas: cot.cubiertas } } : {}),
+    ...(input.canal ? { canal: input.canal } : {}),
     ...(input.sinPlastico ? { sinPlastico: true } : {}),
     ...(descuento > 0 ? { tarifaJoven: true, descuentoJoven: descuento } : input.billete.tarifaJoven ? { tarifaJoven: true } : {}),
     bot: input.bot,
     t: { creado: Date.now(), recibido: Date.now() },
   }
   const offline = !s.ajustes.online && !input.bot
+  let conflicto = false
   update((st) => {
+    // un solo uso: se revalida dentro de la transacción y el bono queda canjeado (también si el pedido queda en cola offline)
+    if (bono && st.bonos.find((b) => b.codigo === bono!.codigo)?.estado !== 'disponible') {
+      conflicto = true
+      return st
+    }
     const neg: Record<string, number> = {}
     for (const [iid, q] of Object.entries(cons)) neg[iid] = -q
-    const conInv = aplicarMovimientos(st, neg, 'venta', `#${pedido.id}`)
+    // el canje descuenta insumos igual que una venta normal (movimiento «venta», pagado con bono)
+    const conInv = aplicarMovimientos(st, neg, 'venta', bono ? `#${pedido.id} · bono ${bono.codigo}` : `#${pedido.id}`)
     // productos sin escandallo (si los hubiera) mantienen el descuento directo
     const productos = conInv.productos.map((p) => {
       const l = input.lineas.find((x) => x.pid === p.id)
@@ -637,9 +1025,19 @@ export function crearPedido(input: {
       siguienteId: st.siguienteId + 1,
       pedidos: offline ? st.pedidos : [...st.pedidos, pedido],
       pendientesOffline: offline ? [...st.pendientesOffline, pedido] : st.pendientesOffline,
+      bonos: bono ? st.bonos.map((b) => (b.codigo === bono!.codigo ? { ...b, estado: 'canjeado' as const, canjeadoEn: { pedido: pedido.id, t: Date.now(), hora: horaDe(st, st.viaje.minuto), valor: cot.valorBono } } : b)) : st.bonos,
     }
   })
+  if (conflicto) return { ok: false, motivo: 'bono-usado', detalle: input.bono }
   return { ok: true, pedido, offline, duplicado: false }
+}
+
+/** Clase Oro: solicitud de soporte prioritario (incidencia o cambio). Llega al responsable como alerta destacada. */
+export function solicitarSoporteOro(billete: Pick<Billete, 'ticket' | 'nombre' | 'clase'>, motivo?: string) {
+  if (billete.clase !== 'oro') return false
+  const t = Date.now()
+  update((s) => ({ ...s, alertas: [...s.alertas, { id: t + 3, nivel: 'warn' as const, texto: `Soporte prioritario Clase Oro: ${billete.nombre} (${billete.ticket}) solicita ayuda${motivo ? ` · ${motivo}` : ''}`, t }].slice(-12) }))
+  return true
 }
 
 export function avanzarPedido(id: number) {
@@ -668,6 +1066,8 @@ export function cancelarPedido(id: number): boolean {
     const conInv = aplicarMovimientos(s, consumo(s, p.lineas), 'cancelacion', `#${id}`)
     return {
       ...conInv,
+      // el bono vuelve a estar disponible (si el pedido se cancela, el código no se pierde)
+      bonos: p.bono ? s.bonos.map((b) => (b.codigo === p.bono!.codigo && b.canjeadoEn?.pedido === id ? { ...b, estado: 'disponible' as const, canjeadoEn: undefined } : b)) : s.bonos,
       pedidos: s.pedidos.map((x) => (x.id === id ? { ...x, estado: 'cancelado', t: { ...x.t, cancelado: Date.now() } } : x)),
       productos: conInv.productos.map((pr) => {
         const l = p.lineas.find((x) => x.pid === pr.id)
@@ -687,6 +1087,32 @@ export function entregarPorQR(codigo: string): { ok: boolean; pedido?: Pedido; m
   if (p.estado === 'cancelado') return { ok: false, pedido: p, motivo: 'Pedido cancelado' }
   setEstadoPedido(p.id, 'entregado')
   return { ok: true, pedido: { ...p, estado: 'entregado' } }
+}
+
+/**
+ * Barra: canjea un bono físico para un pasajero sin móvil. Crea el pedido en la cafetería indicada (franja libre más próxima),
+ * pagado por completo con el bono; entra en el tablero como cualquier otro pedido, sin pasos extra para la tripulación.
+ */
+export function canjearBonoEnBarra(input: { codigo: string; nombre?: string; cafeteria: CafeteriaId; elecciones: string[]; clientKey?: string }): ResultadoPedido {
+  const s = state
+  const libre = franjas(s, input.cafeteria, 6).find((f) => !f.llena)
+  if (!libre) return { ok: false, motivo: s.ajustes.pausa[input.cafeteria] ? 'pausa' : 'franja-llena' }
+  const lineas: LineaPedido[] = []
+  for (const pid of input.elecciones) {
+    const l = lineas.find((x) => x.pid === pid)
+    if (l) l.qty += 1
+    else lineas.push({ pid, qty: 1 })
+  }
+  return crearPedido({
+    clientKey: input.clientKey ?? uid(),
+    billete: { ticket: 'BARRA', nombre: input.nombre?.trim() || 'Mostrador', idioma: 'es', plus: 0 },
+    lineas,
+    cafeteria: input.cafeteria,
+    franja: libre.idx,
+    pago: 'bono',
+    bono: input.codigo,
+    canal: 'barra',
+  })
 }
 
 export const qrDe = (p: Pedido) => `FOB:${p.id}:${p.clientKey}`
@@ -806,6 +1232,8 @@ function tick() {
   } else finDesde = null
 
   let next: ProtoState = { ...s, viaje: { ...s.viaje, minuto } }
+  // al llegar a puerto, los bonos sin canjear caducan
+  if (minuto >= s.viaje.duracionMin && next.bonos.some((b) => b.estado === 'disponible')) next = { ...next, bonos: next.bonos.map((b) => (b.estado === 'disponible' ? { ...b, estado: 'caducado' as const } : b)) }
 
   // barra automática para pedidos del bot (los del usuario los mueve la barra humana… o el auto-avance tras un tiempo)
   next = {
@@ -850,9 +1278,11 @@ function tick() {
   }
 }
 
+const ticketFalso = () => 'FO' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('')
+
 function botPedido() {
   const s = state
-  const disp = s.productos.filter((p) => disponible(s, p) > 0)
+  const disp = s.productos.filter((p) => disponible(s, p) > 0 && !p.soloOro)
   if (!disp.length) return
   const pick = (l: Producto[]) => l[Math.floor(Math.random() * l.length)]
   const tienda = disp.filter((p) => p.cat === 'Tienda')
@@ -874,12 +1304,35 @@ function botPedido() {
   const libres = franjas(s, cafeteria, 4).filter((f) => !f.llena)
   if (!libres.length) return
   const nombre = NOMBRES_BOT[Math.floor(Math.random() * NOMBRES_BOT.length)]
+  const ticketBot = ticketFalso()
+  // algún pasajero simulado paga con bono (~12 %): compra el menú, lo emite el billete o el mostrador y lo canjea
+  let bonoBot: string | undefined
+  if (Math.random() < 0.12) {
+    const tipo = TIPOS_BONO[Math.floor(Math.random() * TIPOS_BONO.length)]
+    const menu: LineaPedido[] = []
+    for (const c of tipo.cubre) {
+      const ok = c.pids.map((pid) => disp.find((p) => p.id === pid)).filter((p): p is Producto => !!p)
+      if (!ok.length) break
+      const p = pick(ok)
+      const ya = menu.find((l) => l.pid === p.id)
+      if (ya) ya.qty += c.qty
+      else menu.push({ pid: p.id, qty: c.qty })
+    }
+    if (menu.length >= 1 && tipo.cubre.every((c) => c.pids.some((pid) => menu.some((l) => l.pid === pid)))) {
+      const fisico = Math.random() < 0.4
+      bonoBot = emitirBono(tipo.id, fisico ? 'fisico' : 'billete', fisico ? undefined : ticketBot).codigo
+      lineas.splice(0, lineas.length, ...menu)
+    }
+  }
+  // otros pasajeros compraron bono con el billete y aún no lo han usado (para que el % de canje sea realista)
+  if (Math.random() < 0.2) emitirBono(TIPOS_BONO[Math.floor(Math.random() * TIPOS_BONO.length)].id, 'billete', ticketFalso())
   // «sin cubiertos ni bolsa»: por defecto en bebidas solas (como en la app), y a veces también en el resto
   const sinPlastico = soloBebidas(s, lineas) ? Math.random() < 0.8 : Math.random() < 0.3
   crearPedido({
     clientKey: uid(),
-    billete: { ticket: 'FO' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''), nombre, idioma: 'es', plus: 0, tarifaJoven: Math.random() < 0.2 },
+    billete: { ticket: ticketBot, nombre, idioma: 'es', plus: 0, tarifaJoven: Math.random() < 0.2 },
     lineas,
+    bono: bonoBot,
     cafeteria,
     franja: libres[0].idx,
     pago: Math.random() < 0.5 ? 'apple' : 'google',

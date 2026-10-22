@@ -196,3 +196,18 @@ export function ProductoArt({ nombre, color, size = 56 }: { nombre: string; colo
     </div>
   )
 }
+
+// ---------------------------------------------------------------- distintivo «Elaborado en Canarias»
+/** Ruta del archivo oficial del distintivo (public/logos/elaborado-en-canarias.png). Hay que obtenerlo de la marca; ver docs/PROTO_BRIEF.md. */
+export const LOGO_ELABORADO_SRC = 'logos/elaborado-en-canarias.png'
+
+/**
+ * Distintivo oficial «Elaborado en Canarias». NO se dibuja ni se imita: se muestra el archivo oficial si existe en public/logos/
+ * y, si no carga, aparece la etiqueta de texto `fallback` («Producto canario»). Su uso requiere autorización de la marca y solo
+ * puede acompañar a productos certificados.
+ */
+export function ElaboradoLogo({ fallback, height = 20 }: { fallback: ReactNode; height?: number }) {
+  const [fallo, setFallo] = useState(false)
+  if (fallo) return <>{fallback}</>
+  return <img className="fob-elab-logo" src={LOGO_ELABORADO_SRC} alt="Elaborado en Canarias" height={height} style={{ height, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} onError={() => setFallo(true)} />
+}

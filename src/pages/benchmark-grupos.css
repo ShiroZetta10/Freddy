@@ -1,0 +1,39 @@
+/* Cabecera de categorías de la matriz del Benchmark (prefijo bg-) */
+.bg-matrix { --bg-h1: 34px; }
+
+/* tonos sobrios por categoría: --bg-a fila de categoría, --bg-b fila de columnas (blanco sobre ambos, contraste > 9:1) */
+.bg-cat-tecnologias { --bg-a: #0b1f3f; --bg-b: #17335e; }
+.bg-cat-procesos { --bg-a: #12385f; --bg-b: #1d4a78; }
+.bg-cat-tendencias { --bg-a: #2a2f63; --bg-b: #393f7a; }
+.bg-cat-resultados { --bg-a: #1c4a4f; --bg-b: #285a60; }
+.bg-cat-otras { --bg-a: #3a4256; --bg-b: #49536a; }
+
+/* fila 1: categorías, fija arriba */
+.matrix thead tr.bg-row1 th { top: 0; }
+.matrix thead th.bg-cat { height: var(--bg-h1); box-sizing: border-box; padding: 0 8px; white-space: nowrap; }
+.matrix thead th.bg-cat { background: var(--bg-a); font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, .25); }
+
+/* fila 2: encabezados actuales, fija justo debajo de la fila 1 */
+.matrix thead tr.bg-row2 th { top: var(--bg-h1); background: var(--bg-b); }
+/* anula la regla th:first-child (columna fija) para la primera celda de la fila 2 */
+.matrix thead tr.bg-row2 th:first-child { left: auto; z-index: 2; text-align: center; min-width: 92px; padding: 10px 8px; }
+
+/* esquina y total ocupan las dos filas y siguen fijos */
+.matrix thead th.bg-corner { top: 0; left: 0; z-index: 4; background: var(--navy); }
+.matrix thead th.bg-total { top: 0; background: var(--navy); }
+
+/* separador visual entre grupos */
+.matrix thead th.bg-gstart { border-left: 2px solid rgba(255, 255, 255, .6); }
+.matrix td.bg-gstart { border-left: 2px solid #8c99b3; }
+
+/* leyenda */
+.bg-leyenda { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-size: 12.5px; color: var(--muted); }
+.bg-leyenda-item { display: flex; align-items: baseline; gap: 8px; line-height: 1.35; }
+.bg-leyenda-item strong { color: var(--navy); }
+.bg-swatch { flex: none; width: 10px; height: 10px; border-radius: 2px; background: var(--bg-a); transform: translateY(1px); }
+
+@media (max-width: 720px) {
+  .bg-matrix { --bg-h1: 32px; }
+  .matrix thead th.bg-cat { font-size: 11px; letter-spacing: .03em; }
+  .bg-leyenda { font-size: 12px; }
+}

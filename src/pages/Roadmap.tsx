@@ -1,0 +1,346 @@
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
+import Icon from '../components/Icon'
+import { HORIZONTES, IDEAS, REFERENCIAS_PAGINA, type Horizonte } from '../data/roadmap'
+import './roadmap.css'
+
+/* ------------------------------------------------------------------ maqueta: tarjeta + Plus Points */
+
+// Propuesta y valores ilustrativos: no son condiciones reales de Fred. Olsen Plus.
+const PREMIOS = [
+  { pts: 100, nombre: 'Café gratis', nota: 'En cualquier cafetería a bordo' },
+  { pts: 250, nombre: 'Upgrade de menú', nota: 'Del menú básico al completo' },
+  { pts: 500, nombre: 'Producto canario de la tienda', nota: 'A elegir entre la selección local' },
+  { pts: 1000, nombre: 'Descuento en tu próximo billete', nota: 'Propuesta: depende de Fred. Olsen' },
+]
+const MAX_PTS = PREMIOS[PREMIOS.length - 1].pts
+
+function MaquetaWallet() {
+  const [pts, setPts] = useState(180)
+  const [wallet, setWallet] = useState(false)
+  const siguiente = PREMIOS.find((p) => p.pts > pts)
+  const previo = [...PREMIOS].reverse().find((p) => p.pts <= pts)
+  const base = previo ? previo.pts : 0
+  const progreso = siguiente ? ((pts - base) / (siguiente.pts - base)) * 100 : 100
+  const add = (n: number) => setPts((v) => Math.min(MAX_PTS + 200, v + n))
+
+  return (
+    <div className="rm-wallet">
+      <div className="rm-wallet-left">
+        <div className="rm-pass" role="img" aria-label={`Tarjeta FredOnBoard de demostración con ${pts} Plus Points`}>
+          <div className="rm-pass-top">
+            <div>
+              <div className="rm-pass-brand">FredOnBoard</div>
+              <div className="rm-pass-sub">Fred. Olsen Plus</div>
+            </div>
+            <span className="rm-pass-demo">DEMO</span>
+          </div>
+          <div className="rm-pass-pts">
+            <span className="rm-pass-num">{pts}</span>
+            <span className="rm-pass-unit">Plus Points</span>
+          </div>
+          <div className="rm-bar" aria-hidden>
+            <div className="rm-bar-fill" style={{ width: `${progreso}%` }} />
+          </div>
+          <div className="rm-pass-next">
+            {siguiente ? `Te faltan ${siguiente.pts - pts} para: ${siguiente.nombre}` : 'Has desbloqueado todos los premios de la demo'}
+          </div>
+          <div className="rm-pass-bottom">
+            <div>
+              <div className="rm-pass-lbl">Socio</div>
+              <div className="rm-pass-name">Pasajero Demo</div>
+              <div className="rm-pass-lbl rm-mt">Nº socio</div>
+              <div className="rm-pass-name">FOP-000000</div>
+            </div>
+            <div className="rm-qr">
+              <QRCodeSVG value="FREDONBOARD-DEMO-NO-VALIDO" size={84} level="M" />
+            </div>
+          </div>
+        </div>
+        <button type="button" className="btn primary rm-addw" onClick={() => setWallet(true)}>
+          <Icon name="card" size={18} /> Añadir a la wallet
+        </button>
+        <p className="small muted rm-note" aria-live="polite">
+          {wallet
+            ? 'Demostración: no se genera ningún pase real. En producción se emitiría un pase para Apple Wallet y otro para Google Wallet.'
+            : 'El QR es de demostración y no identifica a ningún socio.'}
+        </p>
+      </div>
+
+      <div className="rm-wallet-right">
+        <div className="rm-sim">
+          <div className="small"><b>Simular compras a bordo</b> <span className="muted">(los puntos que sumaría el sistema de Fred. Olsen Plus)</span></div>
+          <div className="chips">
+            <button type="button" className="chip" onClick={() => add(25)}>+25</button>
+            <button type="button" className="chip" onClick={() => add(75)}>+75</button>
+            <button type="button" className="chip" onClick={() => add(150)}>+150</button>
+            <button type="button" className="chip" onClick={() => setPts(0)}>Reiniciar</button>
+          </div>
+        </div>
+        <ol className="rm-tiers" aria-label="Catálogo de recompensas por tramos">
+          {PREMIOS.map((p, i) => {
+            const ok = pts >= p.pts
+            return (
+              <li key={p.pts} className={'rm-tier' + (ok ? ' on' : '')}>
+                <span className="rm-tier-n">{i + 1}</span>
+                <span className="rm-tier-body">
+                  <b>{p.nombre}</b>
+                  <span className="small muted">{p.nota}</span>
+                </span>
+                <span className="rm-tier-pts">
+                  {ok ? <span className="tag green">Desbloqueado</span> : <span className="tag">{p.pts} pts</span>}
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+        <p className="small muted">
+          Premios, tramos y puntos son ilustrativos y una propuesta del equipo. Los Plus Points son los de Fred. Olsen Plus: FredOnBoard solo muestra el saldo y registra la compra; suma y canje los hace el sistema oficial.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ maqueta: «Antes de que se acabe» */
+
+type Prod = { id: string; nombre: string; precio: number; caduca: number; stock: number; rot: 'Alta' | 'Media' | 'Baja' }
+// Datos y precios de demostración (inventados para la maqueta).
+const PRODS: Prod[] = [
+  { id: 'a', nombre: 'Bocadillo de queso fresco', precio: 4.5, caduca: 20, stock: 9, rot: 'Baja' },
+  { id: 'b', nombre: 'Ensalada de la casa', precio: 5.2, caduca: 17, stock: 6, rot: 'Media' },
+  { id: 'c', nombre: 'Tarta del día', precio: 3.8, caduca: 23, stock: 12, rot: 'Media' },
+  { id: 'd', nombre: 'Fruta cortada', precio: 3.0, caduca: 14, stock: 4, rot: 'Alta' },
+]
+
+// Descuento escalonado ilustrativo según horas que quedan hasta la caducidad.
+function descTramo(horas: number, rot: Prod['rot']) {
+  if (horas <= 0) return -1
+  let d = horas <= 3 ? 40 : horas <= 6 ? 25 : horas <= 12 ? 10 : 0
+  if (d > 0 && rot === 'Baja') d += 5
+  if (d > 0 && rot === 'Alta') d -= 5
+  return d
+}
+const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €'
+
+function MaquetaCaducidad() {
+  const [hora, setHora] = useState(12)
+  const [x, setX] = useState(5)
+  const [y, setY] = useState(30)
+
+  const filas = useMemo(
+    () =>
+      PRODS.map((p) => {
+        const horas = p.caduca - hora
+        const tramo = descTramo(horas, p.rot)
+        const regla = horas > 0 && p.stock > x
+        const desc = tramo < 0 ? -1 : Math.max(tramo, regla ? y : 0)
+        return { ...p, horas, tramo, regla, desc }
+      }),
+    [hora, x, y],
+  )
+  const enOferta = filas.filter((f) => f.desc > 0)
+  const retirados = filas.filter((f) => f.desc < 0)
+
+  return (
+    <div className="rm-exp">
+      <div className="rm-exp-col">
+        <div className="rm-ctl">
+          <label htmlFor="rm-hora" className="small"><b>Hora simulada:</b> {hora}:00 h</label>
+          <input id="rm-hora" type="range" min={9} max={22} value={hora} onChange={(e) => setHora(Number(e.target.value))} />
+        </div>
+        <div className="rm-phone" aria-label="Maqueta de la carta en el móvil del pasajero">
+          <div className="rm-phone-head">Carta · Cafetería</div>
+          <div className="rm-phone-sec">
+            <Icon name="clock" size={16} /> Antes de que se acabe
+          </div>
+          {enOferta.length === 0 && <div className="small muted rm-phone-empty">Ahora mismo no hay productos con precio especial.</div>}
+          {enOferta.map((f) => (
+            <div key={f.id} className="rm-item">
+              <div>
+                <b>{f.nombre}</b>
+                <div className="small muted">{f.horas <= 3 ? `Se retira en ${f.horas} h` : f.horas <= 6 ? 'Caduca hoy' : 'Precio especial hoy'}</div>
+              </div>
+              <div className="rm-price">
+                <s className="muted small">{eur(f.precio)}</s>
+                <b>{eur(f.precio * (1 - f.desc / 100))}</b>
+                <span className="tag yellow">-{f.desc}%</span>
+              </div>
+            </div>
+          ))}
+          {retirados.length > 0 && <div className="small muted rm-phone-empty">Retirados de la carta por caducidad: {retirados.map((r) => r.nombre).join(', ')}.</div>}
+        </div>
+        <p className="small muted">Precios, horas y tramos de descuento de demostración (-40 / -25 / -10 % según las horas que quedan, ±5 puntos por rotación). Son una propuesta, no cifras de Fred. Olsen.</p>
+      </div>
+
+      <div className="rm-exp-col">
+        <div className="card flat rm-mgr">
+          <h3><Icon name="wrench" size={16} /> Vista del manager: regla automática</h3>
+          <p className="small">
+            Si el producto <b>caduca hoy</b> y quedan más de{' '}
+            <input className="rm-num" type="number" min={0} max={50} value={x} onChange={(e) => setX(Math.max(0, Number(e.target.value) || 0))} aria-label="Unidades mínimas X" />{' '}
+            unidades, aplicar un descuento del{' '}
+            <input className="rm-num" type="number" min={0} max={70} value={y} onChange={(e) => setY(Math.min(70, Math.max(0, Number(e.target.value) || 0)))} aria-label="Descuento Y en porcentaje" />{' '}
+            %.
+          </p>
+          <div className="rm-table" role="table" aria-label="Estado del inventario perecedero">
+            <div className="rm-tr rm-th" role="row">
+              <span role="columnheader">Producto</span><span role="columnheader">Caduca</span><span role="columnheader">Stock</span><span role="columnheader">Rotación</span><span role="columnheader">Precio hoy</span>
+            </div>
+            {filas.map((f) => (
+              <div key={f.id} className="rm-tr" role="row">
+                <span role="cell">{f.nombre}</span>
+                <span role="cell">{f.caduca}:00 h</span>
+                <span role="cell">{f.stock}</span>
+                <span role="cell">{f.rot}</span>
+                <span role="cell">
+                  {f.desc < 0 ? <span className="tag red">Retirado</span> : f.desc === 0 ? <span className="tag">Normal</span> : <span className="tag yellow">-{f.desc}%{f.regla && f.desc === y ? ' (regla)' : ''}</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="callout navy small">
+          Conecta con <b>En Armonía con el Mar</b> (menos desperdicio) y con el inventario por escandallo. Requiere <b>activar la función de perecederos</b>, que hoy no está activada en el sistema.
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ página */
+
+export default function Roadmap() {
+  const [filtro, setFiltro] = useState<Horizonte | 'Todas'>('Todas')
+  const [abierta, setAbierta] = useState<string | null>(null)
+  const visibles = IDEAS.filter((i) => filtro === 'Todas' || i.horizonte === filtro)
+  const grupos = HORIZONTES.filter((h) => visibles.some((i) => i.horizonte === h.id))
+
+  return (
+    <div className="rm">
+      <header className="page-head">
+        <div className="eyebrow">Hoja de ruta · Ideas a futuro</div>
+        <h1>Lo que FredOnBoard podría ser después del piloto</h1>
+        <p>
+          El MVP del piloto se limita a lo esencial: pedir sin cuenta (identificación por el localizador del billete), Click &amp; Collect y pre-pedido. Todo lo demás queda fuera a propósito: depende de integraciones con sistemas de Fred. Olsen, necesita datos que solo dará el piloto o exige decisiones de la naviera. Estas ideas están ordenadas por horizonte y ninguna incluye cifras que no se hayan medido: el esfuerzo es una estimación del equipo.
+        </p>
+      </header>
+
+      <section className="section">
+        <div className="section-title">
+          <h2>Ideas por horizonte</h2>
+          <p>Filtra por horizonte y abre una tarjeta para ver cómo funcionaría, qué necesita y cómo se mediría.</p>
+        </div>
+        <div className="chips rm-filter" role="group" aria-label="Filtrar por horizonte">
+          {(['Todas', ...HORIZONTES.map((h) => h.id)] as const).map((h) => (
+            <button key={h} type="button" className={'chip' + (filtro === h ? ' on' : '')} aria-pressed={filtro === h} onClick={() => setFiltro(h)}>
+              {h}
+            </button>
+          ))}
+        </div>
+
+        {grupos.map((g) => (
+          <div key={g.id} className="rm-group">
+            <h3 className="rm-group-h">{g.id}</h3>
+            <p className="small muted">{g.descripcion}</p>
+            <div className="grid g2">
+              {visibles.filter((i) => i.horizonte === g.id).map((i) => {
+                const open = abierta === i.id
+                return (
+                  <article key={i.id} className="card rm-idea" id={i.id}>
+                    <div className="rm-idea-head">
+                      <span className="rm-ico"><Icon name={i.icono} size={20} /></span>
+                      <div>
+                        <h3>{i.titulo}</h3>
+                        <div className="chips">
+                          <span className="tag green">{i.horizonte}</span>
+                          <span className="tag">Esfuerzo {i.esfuerzo.toLowerCase()} (est.)</span>
+                          {i.tickets.map((t) => <span key={t} className="tag yellow">Ticket {t}</span>)}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="small"><b>Problema.</b> {i.problema}</p>
+                    <p className="small"><b>Idea.</b> {i.idea}</p>
+                    <button type="button" className="btn light sm" aria-expanded={open} onClick={() => setAbierta(open ? null : i.id)}>
+                      {open ? 'Ocultar detalle' : 'Ver detalle'}
+                    </button>
+                    {open && (
+                      <div className="rm-detail">
+                        <h4>Cómo funciona</h4>
+                        <ol className="small">{i.comoFunciona.map((c) => <li key={c}>{c}</li>)}</ol>
+                        <div className="grid g2 rm-val">
+                          <div><h4>Valor para el pasajero</h4><p className="small">{i.valor.pasajero}</p></div>
+                          <div><h4>Valor para Fred. Olsen</h4><p className="small">{i.valor.fredolsen}</p></div>
+                        </div>
+                        <h4>Requisitos y dependencias</h4>
+                        <ul className="small">{i.requisitos.map((r) => <li key={r}>{r}</li>)}</ul>
+                        <h4>KPI</h4>
+                        <p className="small">{i.kpi}</p>
+                        {i.referencias.length > 0 && (
+                          <>
+                            <h4>Referencias</h4>
+                            <ul className="small">{i.referencias.map((r) => <li key={r.url}><a href={r.url} target="_blank" rel="noopener noreferrer">{r.t}</a></li>)}</ul>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section className="section" id="wallet">
+        <div className="section-title">
+          <h2>Maqueta: Tarjeta FredOnBoard en la wallet</h2>
+          <p>Una sola idea (tickets #4 y #7): la tarjeta en la wallet del móvil, conectada a Fred. Olsen Plus. No se crea un programa paralelo: se usan los Plus Points del programa existente, que ya tiene más de 397.000 socios.</p>
+        </div>
+        <div className="card">
+          <MaquetaWallet />
+        </div>
+        <div className="callout navy small rm-mt">
+          Inspirada en el modelo de acumulación y canje por tramos de Starbucks Rewards y MyMcDonald's Rewards. Sin logos ni marcas de Apple o Google en la maqueta.
+        </div>
+      </section>
+
+      <section className="section" id="caducidad">
+        <div className="section-title">
+          <h2>Maqueta: Antes de que se acabe</h2>
+          <p>Ticket #6. Mueve la hora y cambia la regla para ver cómo cambia la carta del pasajero y el criterio del manager.</p>
+        </div>
+        <div className="card">
+          <MaquetaCaducidad />
+        </div>
+      </section>
+
+      <section className="section" id="referencias">
+        <div className="section-title">
+          <h2>Referencias e inspiración</h2>
+          <p>Fuentes públicas consultadas para las ideas. Las condiciones de cada programa son las de cada empresa y no se trasladan tal cual.</p>
+        </div>
+        <ul className="rm-refs">
+          {REFERENCIAS_PAGINA.map((r) => (
+            <li key={r.url} className="card flat">
+              <a href={r.url} target="_blank" rel="noopener noreferrer">{r.t}</a>
+              <div className="small muted">{new URL(r.url).hostname}</div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="section">
+        <div className="callout navy rm-links">
+          <div><b>Sigue leyendo</b><div className="small muted">Cómo se implantaría el piloto y qué prototipo hay hoy.</div></div>
+          <div className="chips">
+            <Link className="btn ghost sm" to="/implementacion">Implementación</Link>
+            <Link className="btn ghost sm" to="/piloto">Piloto</Link>
+            <Link className="btn primary sm" to="/prototipo">Prototipo</Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}

@@ -464,3 +464,41 @@
 .br-eco { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: var(--fob-green-50); color: #1b6b60; }
 .br-joven { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: #fff; border: 1px solid var(--fob-navy-3); color: var(--fob-navy); }
 .br-shop-tag { margin-left: 6px; font-style: normal; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 999px; background: var(--fob-navy-50); color: var(--fob-navy-2); vertical-align: middle; }
+
+/* ---- bonos de consumo ---- */
+.br-bonobtn { margin-bottom: 6px; min-height: 48px; padding: 0 16px; font-size: 16px; }
+.br-bono { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: #fff; border: 1px solid var(--fob-navy-3); color: var(--fob-navy); }
+.br-bono b { letter-spacing: .05em; font-weight: 800; }
+.br-bono-modal { width: min(640px, 100%); }
+.br-bono-body { padding: 16px; overflow-y: auto; }
+.br-bono-f { display: grid; gap: 12px; }
+.br-bono-err { margin: 0; overflow: hidden; }
+.br-bono-card { display: grid; gap: 10px; padding: 14px; background: #fff; border: 1px solid var(--fob-line); border-radius: 14px; }
+.br-bono-card h3 { display: flex; align-items: center; gap: 8px; font-size: 18px; }
+.br-bono-card p { margin: 0; }
+.br-bono-grp { border: 0; padding: 0; margin: 0; min-width: 0; }
+.br-bono-grp legend { padding: 0; margin-bottom: 6px; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--fob-muted); }
+.br-bono-grp .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.br-bono-grp .opts button { min-height: 52px; padding: 0 16px; border-radius: 12px; border: 2px solid var(--fob-line); background: #fff; font-weight: 700; font-size: 15px; color: var(--fob-navy); text-align: left; }
+.br-bono-grp .opts button.on { border-color: var(--fob-navy); background: var(--fob-navy-50); box-shadow: inset 0 0 0 1px var(--fob-navy); }
+.br-bono-grp .opts button:disabled { opacity: .45; }
+.br-bono-grp .opts button em { font-style: normal; font-weight: 600; font-size: 12.5px; color: var(--fob-muted); }
+.br-bono-nombre { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--fob-navy); }
+.br-bono-nombre input { min-height: 48px; padding: 0 12px; font: inherit; font-size: 16px; border: 2px solid var(--fob-line); border-radius: 12px; background: #fff; }
+.br-bono-nombre input:focus { border-color: var(--fob-navy-3); outline: none; }
+.br-bono-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.br-bono-foot .fob-btn { min-height: 52px; padding: 0 24px; }
+.br-bono-ok { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 18px 8px; color: #135640; }
+.br-bono-ok strong { font-size: 20px; color: var(--fob-navy); }
+.br-bono-ok span { color: var(--fob-text); }
+.br-bono-ok .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.br-bono-ok .acts .fob-btn { min-height: 52px; padding: 0 20px; }
+@media (max-width: 760px) {
+  .br-bonobtn { position: fixed; right: 12px; bottom: calc(126px + env(safe-area-inset-bottom)); z-index: 90; box-shadow: 0 10px 26px rgba(11,52,120,.2); }
+}
+
+/* ---------- Pedidos Clase Oro (ticket #12): etiqueta y prioridad visual ---------- */
+.br-card.oro { border-color: var(--fob-navy); box-shadow: inset 5px 0 0 var(--fob-navy), var(--fob-shadow); }
+.br-oro { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: var(--fob-navy); color: #fff; }
+.br-mesa { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: #fff; border: 1.5px solid var(--fob-navy); color: var(--fob-navy); }
+.br-menu-oro { font-size: 12.5px; font-weight: 700; color: var(--fob-navy); }
