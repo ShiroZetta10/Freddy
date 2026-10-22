@@ -7,7 +7,6 @@ import AnalisisRedes from '../components/comunicacion/AnalisisRedes'
 import PlanRedes from '../components/comunicacion/PlanRedes'
 import CanalesSolucion from '../components/comunicacion/CanalesSolucion'
 import Personas from '../components/comunicacion/Personas'
-import Paneles from '../components/comunicacion/Paneles'
 import Campana from '../components/comunicacion/Campana'
 import { PersonaId } from '../data/comunicacion'
 import './comunicacion.css'
@@ -18,7 +17,6 @@ const PESTANAS = [
   { id: 'lanzamiento', t: 'Lanzamiento en redes' },
   { id: 'canales', t: 'Canales de la solución' },
   { id: 'personas', t: 'Buyer personas' },
-  { id: 'paneles', t: 'Paneles publicitarios' },
   { id: 'campana', t: 'Campaña de lanzamiento' },
 ] as const
 type Pestana = (typeof PESTANAS)[number]['id']
@@ -64,8 +62,10 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
   Antes: {
     resumen: 'El pasajero decide cuándo y qué pedirá. Es el momento de mayor conversión del pre-pedido.',
     puntos: [
-      { icono: 'receipt', canal: 'Email de confirmación del billete', texto: 'Bloque «Tu viaje con FredOnBoard» dentro del email que ya se envía. Sin cuenta: el localizador identifica al pasajero.' },
+      { icono: 'receipt', canal: 'Email de confirmación del billete', texto: 'Bloque «Pide tu desayuno antes de embarcar» con botón dentro del email que ya se envía. Sin cuenta: el localizador identifica al pasajero.' },
+      { icono: 'receipt', canal: 'Email recordatorio y newsletter Plus', texto: 'Banner y botón en el recordatorio previo al viaje, y una pieza de lanzamiento en la newsletter de Fred. Olsen Plus.' },
       { icono: 'phone', canal: 'WhatsApp de recordatorio', texto: 'Mensaje con la estructura de la plantilla actual de Fred. Olsen, con un enlace extra para pre-pedir antes del cierre.' },
+      { icono: 'phone', canal: 'SMS de recordatorio y de cambios de horario', texto: 'Una línea con enlace corto en los avisos que Fred. Olsen ya envía, con 160 caracteres como máximo y solo con consentimiento para la parte comercial.' },
       { icono: 'search', canal: 'Web, app y Fred. Olsen Plus', texto: 'Banner en «Mi reserva» y bloque en el área de socios Plus (397.000 socios) con los Plus Points del primer pedido.' },
       { icono: 'users', canal: 'Redes sociales', texto: 'Piezas cortas que explican el servicio en tres pasos, con producto canario como protagonista.' },
     ],
@@ -92,6 +92,8 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
       { icono: 'food', canal: 'Cartelería en la barra', texto: 'Cartel con el punto de recogida FredOnBoard y recordatorio de que la barra tradicional sigue igual.' },
       { icono: 'search', canal: 'Pantallas del barco', texto: 'Bucle con el QR, la carta del día y el producto canario destacado.' },
       { icono: 'bell', canal: 'Aviso «tu pedido está listo»', texto: 'Notificación o aviso dentro de la web con el QR de recogida.' },
+      { icono: 'phone', canal: 'SMS «tu pedido está listo»', texto: 'Alternativa para quien no tiene datos: lleva el número de pedido y el punto de recogida, sin enlace.' },
+      { icono: 'search', canal: 'Pantalla de pedidos listos y señalética', texto: 'Números de pedido en la cafetería y flechas hacia el punto de recogida FredOnBoard.' },
     ],
     textos: [
       { titulo: 'Cartel en la barra', lineas: ['Recoge aquí tu pedido FredOnBoard.', 'Enseña tu QR. Sin cola, sin cobro.', '¿Prefieres pedir en la barra? Seguimos aquí, como siempre.'] },
@@ -110,8 +112,8 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
 }
 
 const PUBLICOS = [
-  { id: 'res', icono: 'route', nombre: 'Residente frecuente', oir: 'Ahorra tiempo en un trayecto que repite: pide sin levantarte y recoge cuando esté listo. Recomprar es un clic.', canal: 'WhatsApp y email del billete; Fred. Olsen Plus' },
-  { id: 'tur', icono: 'search', nombre: 'Turista (ES / EN / DE)', oir: 'Pruebe producto canario sin hacer cola ni hablar con nadie. Todo en su idioma, sin instalar nada.', canal: 'Email de confirmación y QR de las mesas, trilingüe' },
+  { id: 'res', icono: 'route', nombre: 'Residente frecuente', oir: 'Ahorra tiempo en un trayecto que repite: pide sin levantarte y recoge cuando esté listo. Recomprar es un clic.', canal: 'WhatsApp, email y SMS del billete; Fred. Olsen Plus' },
+  { id: 'tur', icono: 'search', nombre: 'Turista (ES / EN / DE)', oir: 'Pruebe producto canario sin hacer cola ni hablar con nadie. Todo en su idioma, sin instalar nada.', canal: 'Email de confirmación y QR de las mesas, trilingüe; SMS en ES y EN' },
   { id: 'jov', icono: 'phone', nombre: 'Joven 12–25 (Tarifa Joven)', oir: 'Se pide como se pide todo: desde el móvil, dentro de On Board Club. Con ventajas ligadas a su billete.', canal: 'On Board Club, wifi a bordo y redes sociales' },
   { id: 'oro', icono: 'shield', nombre: 'Clase Oro', oir: 'Servicio sin fricción, a su ritmo y con atención personal si la prefiere.', canal: 'Email y personal de sala' },
   { id: 'may', icono: 'users', nombre: 'Persona mayor o sin móvil', oir: 'La barra sigue igual, con el trato de siempre. El servicio digital solo quita cola a los demás.', canal: 'Megafonía y cartelería en barra; personal de sala' },
@@ -129,6 +131,10 @@ const KPIS = [
   { k: 'Alcance', def: 'Pasajeros que ven al menos un mensaje del plan', meta: '70 % de los pasajeros del piloto' },
   { k: '% que escanea el QR', def: 'Escaneos únicos / pasajeros a bordo', meta: '15 %' },
   { k: '% que abre email / WhatsApp', def: 'Aperturas del bloque FredOnBoard', meta: '45 % email · 70 % WhatsApp' },
+  { k: 'Clics en el botón del email', def: 'Clics en «Pide tu desayuno antes de embarcar» / emails abiertos (confirmación, recordatorio y newsletter Plus)', meta: 'A fijar con los primeros envíos' },
+  { k: 'Clics en el enlace corto del SMS', def: 'Clics en fobd.es/XXXX / SMS entregados (recordatorio y cambios de horario)', meta: 'A fijar con los primeros envíos' },
+  { k: 'Recogida tras el SMS «pedido listo»', def: 'Pedidos recogidos tras el SMS / SMS enviados', meta: 'A fijar con los primeros envíos' },
+  { k: 'Bajas de email y SMS', def: 'Bajas por envío / envíos con la línea FredOnBoard. Si suben, se retira la línea', meta: 'Sin aumento respecto a los envíos actuales' },
   { k: 'Conversión a pedido', def: 'Pasajeros con pedido / pasajeros que abren FredOnBoard', meta: '20 %' },
   { k: '% primeros pedidos con incentivo', def: 'Primeros pedidos que usan los Plus Points de lanzamiento', meta: '50 % en la semana 1' },
   { k: 'Satisfacción', def: 'Valoración del servicio tras el viaje (referencia: 8,81 / 10, NPS 63,8 %)', meta: 'Igual o superior a 8,8 / 10' },
@@ -160,10 +166,9 @@ export default function Comunicacion() {
 
       {tab === 'redes' && <section className="section co-sub"><h2 className="section-title">8. Análisis de las redes sociales de Fred. Olsen Express</h2><AnalisisRedes /></section>}
       {tab === 'lanzamiento' && <section className="section co-sub"><h2 className="section-title">9. Plan de lanzamiento de FredOnBoard en redes</h2><PlanRedes /></section>}
-      {tab === 'canales' && <section className="section co-sub"><h2 className="section-title">10. Canales de la solución: WhatsApp y cartelería con QR</h2><CanalesSolucion /></section>}
+      {tab === 'canales' && <section className="section co-sub"><h2 className="section-title">10. Canales de la solución: WhatsApp, email, SMS y cartelería con QR</h2><CanalesSolucion /></section>}
       {tab === 'personas' && <section className="section co-sub"><h2 className="section-title">11. Buyer personas</h2><Personas id={persona} onChange={setPersona} /></section>}
-      {tab === 'paneles' && <section className="section co-sub"><h2 className="section-title">12. Paneles publicitarios por buyer persona</h2><Paneles id={persona} onChange={setPersona} /></section>}
-      {tab === 'campana' && <section className="section co-sub"><h2 className="section-title">13. Campaña de lanzamiento: piezas finales</h2><Campana /></section>}
+      {tab === 'campana' && <section className="section co-sub"><h2 className="section-title">12. Campaña de lanzamiento: piezas finales</h2><Campana /></section>}
 
       {tab === 'base' && (<>
       <section className="section">

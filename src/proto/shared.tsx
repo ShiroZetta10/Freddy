@@ -18,7 +18,13 @@ export function useFullscreen() {
   const toggle = useCallback(() => {
     const el = document.documentElement as HTMLElement & { webkitRequestFullscreen?: () => void }
     if (!document.fullscreenElement) {
-      if (el.requestFullscreen) el.requestFullscreen().catch(() => {})
+      // En barra y manager, al pasar a pantalla completa intentamos fijar la orientación horizontal (Android/Chrome).
+      const fijarHorizontal = () => {
+        if (!/#\/app\/(barra|manager)/.test(window.location.hash)) return
+        const o = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }
+        o?.lock?.('landscape').catch(() => {})
+      }
+      if (el.requestFullscreen) el.requestFullscreen().then(fijarHorizontal).catch(() => {})
       else el.webkitRequestFullscreen?.()
     } else document.exitFullscreen?.().catch(() => {})
   }, [])
@@ -43,7 +49,13 @@ export function FullscreenButton() {
 export function ProtoChrome({ titulo, children }: { titulo: string; children?: ReactNode }) {
   return (
     <header className="fob-chrome">
-      <Link to="/prototipo" className="fob-logo" style={{ color: '#fff', textDecoration: 'none' }} aria-label="Volver al prototipo">
+      <Link
+        to="/prototipo"
+        target={window.location.hash.includes('land=1') ? '_top' : undefined}
+        className="fob-logo"
+        style={{ color: '#fff', textDecoration: 'none' }}
+        aria-label="Volver al prototipo"
+      >
         <img className="fob-flag" src="logos/fo-bandera.png" alt="Fred. Olsen Express" />
         FredOnBoard
         <span style={{ fontWeight: 500, opacity: 0.7, fontSize: 12 }}>· {titulo}</span>

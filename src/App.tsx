@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Route, Routes, Link, useLocation } from 'react-router-dom'
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import Hub from './pages/Hub'
 import BenchmarkHome from './pages/BenchmarkHome'
 import Datos from './pages/Datos'
@@ -31,6 +31,28 @@ const BENCH_LINKS = [
   ['/simulador', 'Simulador'],
   ['/metodologia', 'Metodología'],
 ] as const
+/** Botón flotante para volver arriba: aparece al bajar un poco por la página. */
+function VolverArriba() {
+  const [ver, setVer] = useState(false)
+  useEffect(() => {
+    const f = () => setVer(window.scrollY > 600)
+    f()
+    window.addEventListener('scroll', f, { passive: true })
+    return () => window.removeEventListener('scroll', f)
+  }, [])
+  const subir = () => {
+    const reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: reducir ? 'auto' : 'smooth' })
+  }
+  return (
+    <button type="button" className={`to-top${ver ? ' on' : ''}`} onClick={subir} aria-label="Volver arriba" title="Volver arriba" tabIndex={ver ? 0 : -1}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
+  )
+}
+
 const BENCH_PATHS = ['/benchmark', '/datos', '/ranking', '/retos', '/simulador', '/metodologia']
 
 export default function App() {
@@ -125,6 +147,7 @@ export default function App() {
         <br />
         Benchmark elaborado con fuentes públicas (octubre 2026) y datos facilitados por la organización. Las cifras de proveedores se indican como tales.
       </footer>
+      <VolverArriba />
     </>
   )
 }

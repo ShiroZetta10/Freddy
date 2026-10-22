@@ -317,10 +317,231 @@ export const PERSONAS: Persona[] = [
   },
 ]
 
-export type FormatoPanel = 'mupi' | 'barra' | 'story' | 'wifi'
-export const FORMATOS: { id: FormatoPanel; nombre: string; donde: string }[] = [
-  { id: 'mupi', nombre: 'Mupi en terminal', donde: 'Terminal de Santa Cruz de Tenerife, sala de espera' },
-  { id: 'barra', nombre: 'Cartel en barra', donde: 'Punto de recogida FredOnBoard en la cafetería' },
-  { id: 'story', nombre: 'Story de Instagram 9:16', donde: 'Cuenta de Fred. Olsen Express' },
-  { id: 'wifi', nombre: 'Banner del portal wifi', donde: 'Portal de bienvenida de On Board Club' },
+// ---------------------------------------------------------------- paneles y piezas publicitarias
+
+export type Ambito = 'redes' | 'tierra' | 'barco'
+export const AMBITOS: { id: Ambito; nombre: string; desc: string }[] = [
+  { id: 'redes', nombre: 'Redes sociales', desc: 'Anuncios y publicaciones en los perfiles y campañas de pago de Fred. Olsen Express.' },
+  { id: 'tierra', nombre: 'Espacios físicos en tierra', desc: 'Carretera, estación marítima, rampas y pasarelas: ubicaciones propuestas, a confirmar con Fred. Olsen y con los propietarios del soporte.' },
+  { id: 'barco', nombre: 'Dentro del barco', desc: 'Señalética, cartelería y pantallas del Bajamar Express. Aquí el pasajero ya está a bordo: la pieza guía, no vende.' },
 ]
+
+export type FormatoPanel =
+  | 'story' | 'feed' | 'meta' | 'vertical' | 'youtube'
+  | 'mupi' | 'valla' | 'lona' | 'rampa'
+  | 'indicador' | 'suelo' | 'mesa' | 'pantalla' | 'barra' | 'mostrador' | 'wifi'
+
+export type FormatoInfo = {
+  id: FormatoPanel
+  ambito: Ambito
+  nombre: string
+  /** Etiqueta corta del selector. */
+  corto: string
+  /** true si el titular y la llamada a la acción cambian con la buyer persona. */
+  porPersona: boolean
+  medidas: string
+  ubicacion: string
+  publico: string
+  mensaje: string
+  momento: string
+  kpi: string
+}
+
+export const FORMATOS: FormatoInfo[] = [
+  // ---- redes
+  {
+    id: 'meta', ambito: 'redes', nombre: 'Banner de anuncio en Meta (Facebook e Instagram)', corto: 'Banner Meta', porPersona: true,
+    medidas: 'Horizontal 1200 × 628 px (1,91:1) y cuadrado 1080 × 1080 px (1:1)',
+    ubicacion: 'Anuncio de pago en Facebook e Instagram, segmentado por intereses y por residencia en Canarias (propuesta)',
+    publico: 'Residente frecuente y joven digital; versión en inglés y alemán para turistas',
+    mensaje: 'Titular de la persona + «Pide sin levantarte, recoge sin colas» + botón de llamada a la acción. Sin QR: en pantalla el botón lleva al enlace',
+    momento: 'Teaser en las semanas −2 y −1 (solo marca); lanzamiento en la semana 1; refuerzo con el producto canario',
+    kpi: 'Clics en el enlace sobre impresiones',
+  },
+  {
+    id: 'feed', ambito: 'redes', nombre: 'Post de feed de Instagram 1:1', corto: 'Post Instagram 1:1', porPersona: true,
+    medidas: '1080 × 1080 px (1:1), con zona segura de 80 px en cada borde',
+    ubicacion: 'Feed del perfil @fredolsenexpress (publicación orgánica; opción de promocionarla)',
+    publico: 'Residente digital y joven de 12 a 25',
+    mensaje: 'Una frase, un producto canario y el nombre del servicio. El pie de foto lleva el enlace de la biografía',
+    momento: 'Lanzamiento (semana 1) y refuerzo semanal con un producto distinto',
+    kpi: 'Guardados y compartidos por publicación',
+  },
+  {
+    id: 'story', ambito: 'redes', nombre: 'Story de Instagram 9:16', corto: 'Story 9:16', porPersona: true,
+    medidas: '1080 × 1920 px (9:16)',
+    ubicacion: 'Cuenta de Fred. Olsen Express; pegatina de enlace a On Board Club',
+    publico: 'Joven 12–25 y residente digital',
+    mensaje: 'Titular de la persona y botón. Una sola idea por story',
+    momento: 'Teaser en la semana −1, lanzamiento en la semana 1 y recordatorio el jueves antes del fin de semana',
+    kpi: 'Clics en el enlace sobre visualizaciones de la story',
+  },
+  {
+    id: 'vertical', ambito: 'redes', nombre: 'Anuncio vertical de TikTok y Reels con guion de 3 escenas', corto: 'Vídeo vertical', porPersona: true,
+    medidas: '1080 × 1920 px (9:16), 15 s; subtítulos incrustados, sin depender del sonido',
+    ubicacion: 'TikTok e Instagram Reels, orgánico y como anuncio de pago (propuesta)',
+    publico: 'Joven 12–25 y residente digital',
+    mensaje: 'Pedir y recoger en 15 segundos, contado con el gancho de cada persona',
+    momento: 'Teaser (escena 1 sola) en la semana −1; vídeo completo en el lanzamiento; variantes por persona en el refuerzo',
+    kpi: 'Visualizaciones completas sobre reproducciones',
+  },
+  {
+    id: 'youtube', ambito: 'redes', nombre: 'Cabecera del canal y miniatura del vídeo tutorial de YouTube', corto: 'Cabecera y miniatura YouTube', porPersona: true,
+    medidas: 'Cabecera 2560 × 1440 px, con zona visible en todos los dispositivos de 1546 × 423 px; miniatura 1280 × 720 px (16:9)',
+    ubicacion: 'Canal oficial de Fred. Olsen Express en YouTube; el tutorial de 45–60 s del plan de lanzamiento',
+    publico: 'Turista y quien se informa antes de viajar',
+    mensaje: 'Cómo pedir en tres pasos, con subtítulos en ES, EN y DE',
+    momento: 'Lanzamiento (semana 1); versión EN y DE en la semana 3',
+    kpi: 'Porcentaje de retención media del vídeo',
+  },
+  // ---- tierra
+  {
+    id: 'valla', ambito: 'tierra', nombre: 'Valla publicitaria de carretera', corto: 'Valla 8 × 3 m', porPersona: true,
+    medidas: '8 × 3 m (8:3), horizontal. Se lee a distancia y en pocos segundos: máximo siete palabras de titular',
+    ubicacion: 'Ubicación propuesta, no contratada: GC-2 en el tramo de acceso a Agaete, y TF-1 o autopista de acceso a Santa Cruz de Tenerife. Falta confirmar el soporte disponible',
+    publico: 'Residente frecuente que conduce hacia el puerto y turista en coche de alquiler',
+    mensaje: 'Titular de la persona, marca y una llamada corta. Sin QR: a esa velocidad no se escanea',
+    momento: 'Lanzamiento (semana 1) y refuerzo hasta la semana 4',
+    kpi: 'Búsquedas de la marca y visitas a On Board Club tras la campaña (medición indirecta)',
+  },
+  {
+    id: 'lona', ambito: 'tierra', nombre: 'Lona o cartel de pared en la estación marítima', corto: 'Lona de pared', porPersona: true,
+    medidas: 'Vertical 3:4; ejemplo de 3 × 4 m, medida final según la pared libre de la terminal',
+    ubicacion: 'Estación marítima de Santa Cruz de Tenerife, pared de la sala de espera o del acceso al embarque (propuesta); misma pieza en la terminal de Agaete',
+    publico: 'Pasajero que espera para embarcar, con tiempo de leer y escanear',
+    mensaje: 'Titular de la persona, tres pasos y QR grande',
+    momento: 'Lanzamiento (semana 1), antes del teaser de megafonía',
+    kpi: 'Escaneos del QR en terminal sobre pasajeros embarcados',
+  },
+  {
+    id: 'mupi', ambito: 'tierra', nombre: 'Mupi en terminal', corto: 'Mupi', porPersona: true,
+    medidas: 'Proporción 2:3 en vertical; la medida real depende del soporte de la terminal',
+    ubicacion: 'Terminal de Santa Cruz de Tenerife, sala de espera',
+    publico: 'Residente y turista antes de embarcar',
+    mensaje: 'Titular de la persona, avatar ilustrado y QR',
+    momento: 'Lanzamiento (semana 1) y refuerzo',
+    kpi: 'Escaneos del QR por pasajero embarcado',
+  },
+  {
+    id: 'rampa', ambito: 'tierra', nombre: 'Vinilo en la rampa de embarque o en la pasarela', corto: 'Vinilo de rampa', porPersona: true,
+    medidas: 'Banda panorámica 5:1; ejemplo de 5 × 1 m, adaptado a la altura de la barandilla o de la pared de la pasarela',
+    ubicacion: 'Pasarela o rampa de embarque del Bajamar Express en Santa Cruz de Tenerife (propuesta; depende de la autorización del puerto)',
+    publico: 'Pasajero que sube a pie, sin vehículo',
+    mensaje: 'Titular de la persona y una llamada a lo que ya puede hacer a bordo. Se lee caminando, así que sin QR',
+    momento: 'Lanzamiento (semana 1), fijo durante el piloto',
+    kpi: 'Pasajeros que dicen haberlo visto en la encuesta posviaje',
+  },
+  // ---- barco
+  {
+    id: 'indicador', ambito: 'barco', nombre: 'Indicador de pasillo «Recogida FredOnBoard →»', corto: 'Indicador de pasillo', porPersona: false,
+    medidas: 'Placa horizontal 5:2; ejemplo de 50 × 20 cm, colgada o a media altura',
+    ubicacion: 'Pasillos y entradas del salón que llevan al punto de recogida FredOnBoard de la cafetería',
+    publico: 'Todo pasajero con un pedido listo; no cambia por persona',
+    mensaje: 'Flecha, nombre del punto y «La barra de siempre sigue atendiendo»',
+    momento: 'Lanzamiento (semana 1); fijo',
+    kpi: 'Tiempo desde «pedido listo» hasta la recogida',
+  },
+  {
+    id: 'suelo', ambito: 'barco', nombre: 'Vinilo de suelo con flecha', corto: 'Vinilo de suelo', porPersona: false,
+    medidas: 'Vinilo antideslizante; ejemplo de 40 × 80 cm, una flecha cada pocos metros',
+    ubicacion: 'Suelo del recorrido hasta el punto de recogida (propuesta; debe cumplir normativa de seguridad y evacuación del barco)',
+    publico: 'Todo pasajero; no cambia por persona',
+    mensaje: 'Una flecha y «Recogida FredOnBoard»',
+    momento: 'Lanzamiento (semana 1); fijo',
+    kpi: 'Consultas de «dónde recojo» a la tripulación',
+  },
+  {
+    id: 'mesa', ambito: 'barco', nombre: 'Tarjeta de mesa', corto: 'Tarjeta de mesa', porPersona: false,
+    medidas: 'Tarjeta de sobremesa tipo díptico; proporción 4:5 por cara, ejemplo de 10 × 12,5 cm',
+    ubicacion: 'Mesas del salón y de la cafetería. No hay asiento asignado, así que va en la mesa y nunca en el asiento',
+    publico: 'Quien aún no ha pedido y está sentado en una mesa',
+    mensaje: 'Pide sin levantarte y recoge sin colas, con QR; en español e inglés',
+    momento: 'Lanzamiento (semana 1); fijo',
+    kpi: 'Escaneos del QR por mesa',
+  },
+  {
+    id: 'pantalla', ambito: 'barco', nombre: 'Pantalla de pedidos listos en la cafetería', corto: 'Pantalla de pedidos', porPersona: false,
+    medidas: 'Pantalla horizontal 16:9; ejemplo de 1920 × 1080 px',
+    ubicacion: 'Pantalla sobre el punto de recogida FredOnBoard, visible desde el salón (propuesta)',
+    publico: 'Todo pasajero con un pedido; no cambia por persona',
+    mensaje: 'Números de pedido en «Preparando» y «Listos». Los números de la maqueta son de ejemplo',
+    momento: 'Lanzamiento (semana 1); activa durante todo el viaje',
+    kpi: 'Pedidos recogidos sin consultar al personal',
+  },
+  {
+    id: 'barra', ambito: 'barco', nombre: 'Cartel en barra', corto: 'Cartel de barra', porPersona: true,
+    medidas: 'Horizontal 16:10; ejemplo de 40 × 25 cm',
+    ubicacion: 'Punto de recogida FredOnBoard en la cafetería',
+    publico: 'Pasajero con pedido y, sobre todo, quien prefiere la barra de siempre',
+    mensaje: 'Recoge aquí tu pedido, con el mensaje de la persona. La barra sigue atendiendo igual',
+    momento: 'Lanzamiento (semana 1); fijo',
+    kpi: 'Pedidos recogidos en el punto FredOnBoard',
+  },
+  {
+    id: 'mostrador', ambito: 'barco', nombre: 'Adhesivo para el mostrador de la tienda', corto: 'Adhesivo de mostrador', porPersona: true,
+    medidas: 'Circular de 20 cm de diámetro, adhesivo para cristal o para el frente del mostrador',
+    ubicacion: 'Mostrador de la tienda (a bordo o de la terminal, a confirmar con Fred. Olsen)',
+    publico: 'Pasajero que compra producto canario y puede añadirlo al pedido',
+    mensaje: 'Sello Elaborado en Canarias, «Hecho en Canarias, pedido en dos toques» y QR con la llamada a la acción de la persona',
+    momento: 'Refuerzo (semanas 2 a 4), con el producto destacado de cada semana',
+    kpi: 'Escaneos del QR en el mostrador',
+  },
+  {
+    id: 'wifi', ambito: 'barco', nombre: 'Banner del portal wifi', corto: 'Portal wifi', porPersona: true,
+    medidas: 'Banner horizontal adaptable al ancho del móvil',
+    ubicacion: 'Portal de bienvenida de On Board Club',
+    publico: 'Pasajero conectado al wifi gratuito del barco',
+    mensaje: 'Titular de la persona y botón a FredOnBoard dentro de On Board Club',
+    momento: 'Lanzamiento (semana 1); fijo',
+    kpi: 'Clics en el botón sobre conexiones al portal',
+  },
+]
+
+export type PiezaPersona = {
+  /** Frase de apoyo (segunda línea). */
+  linea: string
+  lema?: string
+  /** Llamada a la acción para piezas sin QR (valla, vinilo de rampa): remite a lo que se hace ya a bordo. */
+  cta2: string
+  /** Gancho de la escena 1 del vídeo vertical. */
+  gancho: string
+  /** Pie de foto del post de Instagram. */
+  pie: string
+}
+
+export const PIEZA_PERSONA: Record<PersonaId, PiezaPersona> = {
+  yaiza: { cta2: 'A bordo, pide desde tu mesa', linea: 'Pide sin levantarte, recoge sin colas.', lema: 'Lo nuestro viaja contigo', gancho: 'Son las 7:45 y tu café del barco ya está pedido.', pie: 'Tu café, listo cuando tú lo estés. Pide sin levantarte y recoge sin colas en el Bajamar Express. Enlace en la biografía.' },
+  hugo: { cta2: 'Ya a bordo, abre On Board Club', linea: 'Viaja, pide y recoge sin colas, desde el móvil.', lema: 'La sonrisa que acompaña cada viaje', gancho: 'POV: pides desde el grupo y no pierdes el sitio.', pie: 'El viaje, a tu ritmo. Pide desde el móvil, dentro de On Board Club, y recoge cuando esté listo. Enlace en la biografía.' },
+  anke: { cta2: 'On board: order from your table', linea: 'Order from your table. Taste the islands, no queue.', gancho: 'Taste the islands without queuing.', pie: 'Taste the islands. Order from your table and collect without queuing on the Bajamar Express. Link in bio. / Deutsch: Bestellen ohne Anstehen.' },
+  manuel: { cta2: 'A bordo, pregunta a nuestro equipo', linea: 'La barra sigue atendiendo igual. Pedir desde el móvil es una opción más.', lema: 'Contigo desde siempre', gancho: 'La barra de siempre sigue aquí. Y ahora, una opción más.', pie: 'La barra, como siempre. Si prefieres, también puedes pedir desde el móvil. Pregunta a nuestro equipo a bordo.' },
+  marta: { cta2: 'A bordo, pide sin interrumpirte', linea: 'Pide sin levantarte y sigue a lo tuyo.', lema: 'La sonrisa que acompaña cada viaje', gancho: 'Pide y sigue a lo tuyo.', pie: 'Tu tiempo, a bordo. Pide sin levantarte y recibe tu pedido sin interrumpirte. Enlace en la biografía.' },
+}
+
+// ---------------------------------------------------------------- email y SMS
+
+/** Fuentes consultadas para verificar los canales de correo y SMS (consulta 22/10/2026). */
+export const FUENTES_EMAIL_SMS = [
+  {
+    dato: 'Correo y teléfono en la reserva, y aviso de cambios',
+    cita: 'Preguntas frecuentes: «debes indicar un correo electrónico y teléfono» para informarte de posibles cambios en tu reserva; y «recibirás un sms y/o email con un código» para verificar tu identidad.',
+    url: 'https://www.fredolsen.es/es/preguntas-frecuentes',
+  },
+  {
+    dato: 'Confirmación de compra',
+    cita: 'Preguntas frecuentes: la documentación adicional se indica «en tu confirmación de compra», lo que confirma que existe ese envío.',
+    url: 'https://www.fredolsen.es/es/preguntas-frecuentes',
+  },
+  {
+    dato: 'Newsletter por email',
+    cita: 'Pie de la web: «No te pierdas las novedades de Fred. Olsen» con «Newsletter: Apúntate por email».',
+    url: 'https://www.fredolsen.es/es-es/mailing/mailing.aspx',
+  },
+  {
+    dato: 'Comunicaciones con los datos de contacto',
+    cita: 'Condiciones de transporte, apartado de protección de datos: uso de los datos de contacto «para posibles comunicaciones que se estimen oportunas».',
+    url: 'https://www.fredolsen.es/es/condiciones-de-transporte',
+  },
+]
+
+export const NO_VERIFICADO_EMAIL_SMS =
+  'No se ha encontrado en fredolsen.es una descripción pública del email recordatorio previo al viaje, del SMS de recordatorio de salida ni del boletín de Fred. Olsen Plus. Se tratan como «canal ya existente según el equipo». Tampoco aparece qué proveedor hace los envíos, y no se supone ninguno.'

@@ -155,3 +155,8 @@
   .im-value, .im-hitos, .im-actors { grid-template-columns: minmax(0, 1fr); }
   .im-block { padding: 16px; }
 }
+
+/* Texto del recuadro navy de ventas incrementales: siempre claro sobre el fondo oscuro */
+.card.im-hero { background: var(--navy); border: 0; }
+.im-hero, .im-hero .big, .im-hero .sub, .im-hero strong { color: #fff; }
+.im-hero .sub { opacity: 1; color: #d6e0f2; }

@@ -33,10 +33,12 @@ export const REF = {
   mcdonalds: { t: "MyMcDonald's Rewards: términos (Reino Unido)", url: 'https://www.mcdonalds.com/gb/en-gb/terms-and-conditions/my-mcdonalds-rewards-terms.html' },
   appleWallet: { t: 'Apple Developer: Wallet (PassKit)', url: 'https://developer.apple.com/documentation/passkit/wallet' },
   googleLoyalty: { t: 'Google Wallet API: tarjetas de fidelización', url: 'https://developers.google.com/wallet/retail/loyalty-cards' },
+  gatwick: { t: 'Gatwick Airport: Reserve & Collect (World Duty Free, reserva online y pago al recoger)', url: 'https://www.gatwickairport.com/shopping-directory/reserve-collect.html' },
+  onestock: { t: 'OneStock: Click & Collect frente a Reserve & Collect (cuándo se paga)', url: 'https://www.onestock-retail.com/blog/click-and-collect-reserve-collect-definitions/' },
   tgtg: { t: 'NYC Food Policy Center: Too Good To Go', url: 'https://www.nycfoodpolicy.org/community-spotlight-too-good-to-go/' },
 }
 
-export const REFERENCIAS_PAGINA: Referencia[] = [REF.starbucks, REF.mcdonalds, REF.appleWallet, REF.googleLoyalty, REF.tgtg]
+export const REFERENCIAS_PAGINA: Referencia[] = [REF.starbucks, REF.mcdonalds, REF.appleWallet, REF.googleLoyalty, REF.tgtg, REF.gatwick, REF.onestock]
 
 export const IDEAS: IdeaFutura[] = [
   {
@@ -188,5 +190,38 @@ export const IDEAS: IdeaFutura[] = [
     esfuerzo: 'Medio',
     referencias: [REF.starbucks],
     tickets: [],
+  },
+  {
+    id: 'catalogo-tienda',
+    titulo: 'Catálogo de la tienda a bordo: reserva y recogida antes de desembarcar',
+    icono: 'box',
+    problema:
+      'Hoy la tienda solo se descubre al pasar por ella. En el prototipo hay una categoría «Tienda» pequeña dentro de la carta, pero no hay un catálogo completo, ni forma de reservar un artículo y asegurarse de que seguirá disponible, ni de elegir si se paga desde el móvil o en el mostrador. Y en la última hora del trayecto coinciden las prisas del desembarque con las colas.',
+    idea:
+      'Un catálogo de la tienda separado de la carta de restauración, con fotos, stock real y precios de Ágora. El pasajero reserva artículos desde el móvil, elige pagar en la app o en el mostrador de la tienda y los recoge antes de bajarse del barco. La reserva se retiene hasta unos minutos antes de llegar y, si no se paga ni se recoge, el artículo se libera. La tienda también recomienda productos de ocasión o de temporada.',
+    comoFunciona: [
+      'El pasajero abre «Tienda» en On Board Club y ve el catálogo con foto, precio y disponibilidad real, con filtros como «Producto canario», «Recuerdos» o «Temporada».',
+      'Pulsa «Reservar» y elige: «Pagar ahora en la app» o «Pagar en el mostrador». Al reservar, el artículo se descuenta del stock disponible.',
+      'La reserva queda retenida hasta X minutos antes de llegar (X es un parámetro a definir con la naviera). Si no está pagada o recogida en ese momento, se libera y vuelve al stock.',
+      'La app muestra el estado («Reservado, recoge en la tienda antes de las HH:MM») y un QR. El personal lo escanea en el mostrador, cobra si procede y entrega el artículo; también puede avisarse por notificación.',
+      'Las recomendaciones cambian con la ocasión o temporada (Navidad, Carnaval, verano), con una sección «Elaborado en Canarias», novedades y regalos.',
+      'Convive con la carta de restauración: son dos secciones distintas, cada una con su mostrador. Las reservas de tienda se preparan en momentos valle (por ejemplo, durante la travesía) para no sumar carga a la hora punta de la barra.',
+    ],
+    valor: {
+      pasajero: 'Ver qué hay antes de hacer cola, asegurar el artículo que quiere y recogerlo sin prisas antes de desembarcar, pagando donde le resulte más cómodo.',
+      fredolsen: 'Más venta en tienda a bordo, una visión del stock real que evita vender lo agotado, menos cola en el mostrador en la hora de llegada y un escaparate para el producto canario.',
+    },
+    requisitos: [
+      'Catálogo, fotos y stock de la tienda en Ágora (u otro sistema): a validar si hoy están cargados con el detalle necesario.',
+      'Espacio y personal de mostrador de tienda para la recogida y el cobro, y un procedimiento de escaneo del QR.',
+      'Regla de retención y liberación de reservas (X minutos antes de llegar) aprobada por la naviera.',
+      'Si se paga en la app, pasarela de pago y cierre de caja coherente con Ágora, que sigue siendo la fuente de verdad.',
+      'Criterios de recomendación por temporada y selección de producto canario definidos por el equipo comercial.',
+    ],
+    kpi: 'Reservas recogidas frente a reservas liberadas sin recoger, y ventas de tienda por salida frente a una línea base medida antes.',
+    horizonte: 'Escalado',
+    esfuerzo: 'Medio',
+    referencias: [REF.gatwick, REF.onestock],
+    tickets: ['#22'],
   },
 ]

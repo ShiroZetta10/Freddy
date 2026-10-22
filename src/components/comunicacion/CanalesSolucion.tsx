@@ -1,6 +1,9 @@
 import { QRCodeSVG } from 'qrcode.react'
+import { Emails, FuentesEmailSms, SmsList } from './EmailSms'
 
 export const urlPrototipo = () => window.location.href.split('#')[0] + '#/app/pasajero'
+/** Pantalla de elegir perfil del prototipo: es el destino de los QR de las piezas nuevas. */
+export const urlInicio = () => window.location.href.split('#')[0] + '#/app/inicio'
 
 function Cartel({ tipo }: { tipo: 'mesa' | 'barra' | 'salon' }) {
   const url = urlPrototipo()
@@ -22,13 +25,35 @@ function Cartel({ tipo }: { tipo: 'mesa' | 'barra' | 'salon' }) {
   )
 }
 
+const RESUMEN = [
+  { canal: 'WhatsApp de check-in', lleva: 'Una línea con el enlace al pre-pedido', estado: 'Ya existe según el equipo (se añade una línea a la plantilla actual)', medir: 'Aperturas y clics en el enlace' },
+  { canal: 'Email de confirmación de compra', lleva: 'Bloque «Pide tu desayuno antes de embarcar» y botón con el localizador', estado: 'Verificado: la web oficial cita la confirmación de compra', medir: 'Clics en el botón sobre emails abiertos' },
+  { canal: 'Email recordatorio previo al viaje', lleva: 'Banner y botón con el localizador', estado: 'Ya existe según el equipo; no verificado en la web', medir: 'Clics en el botón y pre-pedidos' },
+  { canal: 'Newsletter de Fred. Olsen Plus', lleva: 'Pieza de lanzamiento con botón', estado: 'Verificado: newsletter por email en la web oficial; el boletín Plus lo indica el equipo', medir: 'Clics y bajas por envío' },
+  { canal: 'SMS de recordatorio y de cambios de horario', lleva: 'Una línea con enlace corto (fobd.es/XXXX, dominio de ejemplo)', estado: 'Verificado: la web pide teléfono y correo para avisar de cambios; los recordatorios los indica el equipo', medir: 'Clics en el enlace corto y bajas' },
+  { canal: 'SMS «tu pedido está listo»', lleva: 'Número de pedido y punto de recogida, sin enlace', estado: 'Nuevo; alternativa para quien no tiene datos', medir: 'Pedidos recogidos tras el SMS' },
+  { canal: 'Cartelería con QR', lleva: 'QR en mesas, barra y salón', estado: 'Nuevo, dentro del barco', medir: 'Escaneos por zona' },
+]
+
 export default function CanalesSolucion() {
   const url = urlPrototipo()
   return (
     <>
       <p className="lead">
-        Dos canales propios de la solución, con ejemplo visual. Los dos llevan al mismo prototipo de pasajero, sin cuenta ni descargas.
+        Canales propios de la solución, con ejemplo visual: WhatsApp, email, SMS y cartelería con QR. Todos llevan al mismo prototipo de pasajero, sin
+        cuenta ni descargas.
       </p>
+
+      <div className="matrix-wrap" style={{ maxHeight: 'none', marginBottom: 20 }}>
+        <table className="co-table co-table-min">
+          <thead><tr><th>Canal</th><th>Qué lleva de FredOnBoard</th><th>Estado</th><th>Qué se mide</th></tr></thead>
+          <tbody>
+            {RESUMEN.map((r) => (
+              <tr key={r.canal}><td>{r.canal}</td><td>{r.lleva}</td><td>{r.estado}</td><td>{r.medir}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className="grid g2" style={{ alignItems: 'start' }}>
         <div className="card">
@@ -78,6 +103,30 @@ export default function CanalesSolucion() {
         <figure><Cartel tipo="barra" /><figcaption>Cartel de barra</figcaption></figure>
         <figure><Cartel tipo="salon" /><figcaption>Mupi del salón</figcaption></figure>
       </div>
+
+      <h3 className="co-canal-t">c) Email</h3>
+      <p className="small muted">
+        Se apoya en los correos que Fred. Olsen ya envía: la confirmación de compra, el recordatorio previo al viaje y su newsletter. FredOnBoard añade un
+        bloque con un botón, y el localizador permite entrar sin cuenta.
+      </p>
+      <Emails url={urlInicio()} />
+
+      <h3 className="co-canal-t">d) Avisos por SMS</h3>
+      <p className="small muted">
+        Se añade una línea con enlace corto a los avisos que Fred. Olsen ya envía (recordatorio de salida y cambios de horario o incidencias). El dominio{' '}
+        <b>fobd.es</b> y el código XXXX son <span className="co-supuesto">ejemplo</span>: hay que registrar un enlace corto real. En las incidencias no se
+        hace promoción: el enlace solo sirve para mantener el pedido ya hecho. El SMS «tu pedido está listo» es una alternativa para quien no tiene datos
+        móviles ni wifi: lleva el número de pedido y no necesita enlace.
+      </p>
+      <SmsList />
+      <div className="callout navy" style={{ marginTop: 16 }}>
+        <b>Cómo se envían.</b> Se apoyan en los envíos de correo y SMS que Fred. Olsen ya tiene en marcha. No se supone ningún proveedor ni plataforma: la
+        integración se define con su equipo. El SMS de recordatorio y de cambios es un aviso de servicio ya existente; la línea de FredOnBoard, la newsletter y
+        el SMS de pedido listo solo se envían a quien haya dado su consentimiento, con una baja sencilla en cada envío (enlace de baja en el email; en el SMS,
+        el mecanismo que ya use Fred. Olsen). Para mantener los 160 caracteres, los SMS van sin tildes en á, í, ó y ú: con ellas el mensaje pasa a Unicode y el
+        límite baja a 70.
+      </div>
+      <FuentesEmailSms />
     </>
   )
 }

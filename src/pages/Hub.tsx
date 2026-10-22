@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ENTREGABLES, ESTADO_LABEL } from '../data/entregables'
 import Icon from '../components/Icon'
 import { BARRERAS, EJES_CANARIOS } from '../data/canarias'
+import { EQUIPO, REPO } from '../data/equipo'
 
 const tagClass = { listo: 'green', borrador: 'yellow', 'en-preparacion': '' } as const
 
@@ -88,6 +89,65 @@ export default function Hub() {
             ))}
           </div>
         </div>
+
+        <section className="section" id="equipo" aria-labelledby="equipo-titulo">
+          <div className="section-title">
+            <h2 id="equipo-titulo">Conoce al equipo</h2>
+            <p>
+              Somos Shiro, talento canario en Zetta10. El código de esta web y del prototipo está en{' '}
+              <a href={REPO} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+              .
+            </p>
+          </div>
+          <div className="grid g4 eq-grid">
+            {EQUIPO.map((m) => {
+              const iniciales = m.nombre
+                .split(' ')
+                .slice(0, 2)
+                .map((p) => p[0])
+                .join('')
+              return (
+                <article key={m.nombre} className="card eq-card">
+                  <div className="eq-foto" aria-hidden>
+                    <span>{iniciales}</span>
+                    {m.github && (
+                      <img
+                        src={`https://github.com/${m.github}.png?size=160`}
+                        alt=""
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                    )}
+                  </div>
+                  <h3>{m.nombre}</h3>
+                  <div className="eq-rol">{m.rol}</div>
+                  <p className="small muted">{m.detalle}</p>
+                  <div className="eq-links">
+                    {m.github && (
+                      <a href={`https://github.com/${m.github}`} target="_blank" rel="noreferrer" aria-label={`GitHub de ${m.nombre}`}>
+                        GitHub
+                      </a>
+                    )}
+                    {m.linkedin && (
+                      <a href={m.linkedin} target="_blank" rel="noreferrer" aria-label={`LinkedIn de ${m.nombre}`}>
+                        LinkedIn
+                      </a>
+                    )}
+                    {m.web && (
+                      <a href={m.web} target="_blank" rel="noreferrer" aria-label={`Web de ${m.nombre}`}>
+                        Web
+                      </a>
+                    )}
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </section>
 
         <Link to="/stack" className="card faq-banner section">
           <div>

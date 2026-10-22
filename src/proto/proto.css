@@ -114,3 +114,7 @@ body.fob-body { background: #e9edf3; }
 .fob-elegir-card:hover, .fob-elegir-card:focus-visible { border-color: #0b3478; }
 .fob-elegir-disp { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #8a5a00; }
 .fob .fob-elegir-reset { margin-top: 18px; background: none; border: 1px solid #0b3478; color: #0b3478; border-radius: 8px; padding: 10px 14px; font: inherit; font-weight: 700; cursor: pointer; }
+
+/* Barra y manager en un móvil en vertical: iframe apaisado girado 90° (al girar el móvil vuelve a la vista normal). */
+.fob-rotado { position: fixed; inset: 0; overflow: hidden; background: #0b3478; }
+.fob-rotado iframe { position: absolute; top: 0; left: 100vw; width: 100vh; width: 100dvh; height: 100vw; border: 0; transform: rotate(90deg); transform-origin: top left; background: #e9edf3; }

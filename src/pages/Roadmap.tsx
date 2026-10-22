@@ -209,6 +209,135 @@ function MaquetaCaducidad() {
   )
 }
 
+/* ------------------------------------------------------------------ maqueta: catálogo de la tienda */
+
+type Cat = 'Producto canario' | 'Recuerdos' | 'Temporada'
+type Temp = 'Navidad' | 'Carnaval' | 'Verano'
+type Art = { id: string; nombre: string; precio: number; stock: number; cat: Cat[]; temp?: Temp[]; nota: string }
+// Productos genéricos, precios y stock ilustrativos (no son los de Ágora ni de Fred. Olsen).
+const ARTS: Art[] = [
+  { id: 'mojo', nombre: 'Mojo picón (frasco)', precio: 4.5, stock: 24, cat: ['Producto canario'], nota: 'Elaborado en Canarias' },
+  { id: 'gofio', nombre: 'Gofio de trigo (1 kg)', precio: 3.2, stock: 18, cat: ['Producto canario'], nota: 'Elaborado en Canarias' },
+  { id: 'miel', nombre: 'Miel de palma', precio: 8.9, stock: 3, cat: ['Producto canario'], temp: ['Navidad'], nota: 'Elaborado en Canarias' },
+  { id: 'queso', nombre: 'Queso curado', precio: 9.5, stock: 7, cat: ['Producto canario'], temp: ['Navidad'], nota: 'Elaborado en Canarias' },
+  { id: 'vino', nombre: 'Vino canario (botella)', precio: 12.0, stock: 10, cat: ['Producto canario'], temp: ['Navidad'], nota: 'Elaborado en Canarias' },
+  { id: 'camiseta', nombre: 'Camiseta Fred. Olsen', precio: 14.9, stock: 15, cat: ['Recuerdos'], temp: ['Verano'], nota: 'Recuerdo' },
+  { id: 'gorra', nombre: 'Gorra Fred. Olsen', precio: 11.5, stock: 9, cat: ['Recuerdos'], temp: ['Verano'], nota: 'Recuerdo' },
+  { id: 'peluche', nombre: 'Peluche del barco', precio: 9.9, stock: 12, cat: ['Recuerdos'], temp: ['Navidad'], nota: 'Regalo' },
+  { id: 'iman', nombre: 'Imán de las islas', precio: 3.0, stock: 40, cat: ['Recuerdos'], nota: 'Recuerdo' },
+  { id: 'guia', nombre: 'Guía de las islas', precio: 7.5, stock: 6, cat: ['Recuerdos'], nota: 'Novedad' },
+  { id: 'crema', nombre: 'Crema solar', precio: 10.9, stock: 14, cat: ['Temporada'], temp: ['Verano'], nota: 'De temporada' },
+  { id: 'antifaz', nombre: 'Antifaz y confeti de Carnaval', precio: 2.9, stock: 30, cat: ['Temporada'], temp: ['Carnaval'], nota: 'De temporada' },
+  { id: 'turron', nombre: 'Surtido de dulces navideños', precio: 6.8, stock: 0, cat: ['Temporada', 'Producto canario'], temp: ['Navidad'], nota: 'De temporada' },
+]
+const CATS: (Cat | 'Todo')[] = ['Todo', 'Producto canario', 'Recuerdos', 'Temporada']
+const TEMPS: Temp[] = ['Navidad', 'Carnaval', 'Verano']
+const LLEGADA = '09:15' // llegada ilustrativa
+
+function MaquetaTienda() {
+  const [cat, setCat] = useState<Cat | 'Todo'>('Todo')
+  const [temp, setTemp] = useState<Temp>('Navidad')
+  const [sel, setSel] = useState<string | null>(null)
+  const [pago, setPago] = useState<'app' | 'mostrador'>('app')
+  const [res, setRes] = useState<{ id: string; pago: 'app' | 'mostrador' } | null>(null)
+
+  const lista = ARTS.filter((a) => cat === 'Todo' || a.cat.includes(cat))
+  const reco = ARTS.filter((a) => a.temp?.includes(temp) && a.stock > 0).slice(0, 3)
+  const art = ARTS.find((a) => a.id === (res ? res.id : sel))
+  const stockDe = (a: Art) => (res && res.id === a.id ? a.stock - 1 : a.stock)
+
+  return (
+    <div className="rm-exp">
+      <div className="rm-exp-col">
+        <div className="rm-ctl">
+          <label htmlFor="rm-temp" className="small"><b>Temporada simulada</b></label>
+          <select id="rm-temp" className="rm-sel" value={temp} onChange={(e) => setTemp(e.target.value as Temp)}>
+            {TEMPS.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+        <div className="rm-phone" aria-label="Maqueta del catálogo de la tienda en el móvil del pasajero">
+          <div className="rm-phone-head">Tienda a bordo</div>
+          <div className="rm-phone-sec"><Icon name="megaphone" size={16} /> Recomendado ahora · {temp}</div>
+          <div className="rm-reco">
+            {reco.map((a) => (
+              <button key={a.id} type="button" className="rm-reco-i" onClick={() => { if (!res) setSel(a.id) }}>
+                <b>{a.nombre}</b>
+                <span className="small muted">{eur(a.precio)}</span>
+              </button>
+            ))}
+          </div>
+          <div className="chips rm-cats" role="group" aria-label="Filtrar el catálogo">
+            {CATS.map((c) => (
+              <button key={c} type="button" className={'chip' + (cat === c ? ' on' : '')} aria-pressed={cat === c} onClick={() => setCat(c)}>{c}</button>
+            ))}
+          </div>
+          <div className="rm-lista">
+            {lista.map((a) => {
+              const st = stockDe(a)
+              const on = (res ? res.id : sel) === a.id
+              return (
+                <button key={a.id} type="button" disabled={st <= 0 || !!res} className={'rm-art' + (on ? ' on' : '')} aria-pressed={on} onClick={() => setSel(a.id)}>
+                  <span className="rm-art-img" aria-hidden><Icon name="box" size={20} /></span>
+                  <span className="rm-art-body">
+                    <b>{a.nombre}</b>
+                    <span className="small muted">{a.nota}</span>
+                  </span>
+                  <span className="rm-price">
+                    <b>{eur(a.precio)}</b>
+                    {st <= 0 ? <span className="tag red">Agotado</span> : st <= 5 ? <span className="tag yellow">Quedan {st}</span> : <span className="tag">En stock</span>}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <p className="small muted">Productos, precios y stock ilustrativos: en producción vendrían de Ágora (u otro sistema), que sigue siendo la fuente de verdad.</p>
+      </div>
+
+      <div className="rm-exp-col">
+        <div className="card flat rm-mgr">
+          <h3><Icon name="receipt" size={16} /> {res ? 'Tu reserva' : 'Reservar un artículo'}</h3>
+          {!art && <p className="small muted">Elige un artículo del catálogo para reservarlo.</p>}
+          {art && !res && (
+            <>
+              <p className="small"><b>{art.nombre}</b> · {eur(art.precio)} <span className="muted">(precio ilustrativo)</span></p>
+              <fieldset className="rm-pago">
+                <legend className="small"><b>¿Cómo prefieres pagar?</b></legend>
+                <label className={'rm-opt' + (pago === 'app' ? ' on' : '')}>
+                  <input type="radio" name="rm-pago" checked={pago === 'app'} onChange={() => setPago('app')} /> Pagar ahora en la app
+                </label>
+                <label className={'rm-opt' + (pago === 'mostrador' ? ' on' : '')}>
+                  <input type="radio" name="rm-pago" checked={pago === 'mostrador'} onChange={() => setPago('mostrador')} /> Pagar en el mostrador
+                </label>
+              </fieldset>
+              <button type="button" className="btn primary rm-addw" onClick={() => setRes({ id: art.id, pago })}>Reservar</button>
+            </>
+          )}
+          {art && res && (
+            <>
+              <div className="callout navy small" aria-live="polite">
+                Reservado · recoge en la tienda antes de las 09:05 · se libera a las 09:10 si no lo recoges
+              </div>
+              <div className="rm-res">
+                <div className="rm-qr"><QRCodeSVG value={`FREDONBOARD-TIENDA-DEMO-${art.id}`} size={104} level="M" /></div>
+                <div className="small">
+                  <b>{art.nombre}</b><br />
+                  {res.pago === 'app' ? <span className="tag green">Pagado en la app</span> : <span className="tag yellow">Pago pendiente en el mostrador</span>}
+                  <div className="muted rm-mt">Llegada ilustrativa: {LLEGADA}. Muestra este QR en el mostrador de la tienda. QR de demostración, no válido.</div>
+                </div>
+              </div>
+              <button type="button" className="btn light sm" onClick={() => { setRes(null); setSel(null) }}>Cancelar y liberar la reserva</button>
+            </>
+          )}
+        </div>
+        <div className="callout navy small">
+          Es un catálogo <b>separado de la carta de restauración</b>, con su propio mostrador. Las reservas se preparan en momentos valle y la retención se libera sola: cualquier artículo sin pagar ni recoger vuelve al stock antes de la llegada.
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------------ página */
 
 export default function Roadmap() {
@@ -313,6 +442,16 @@ export default function Roadmap() {
         </div>
         <div className="card">
           <MaquetaCaducidad />
+        </div>
+      </section>
+
+      <section className="section" id="maqueta-tienda">
+        <div className="section-title">
+          <h2>Maqueta: Catálogo de la tienda a bordo</h2>
+          <p>Ticket #22. Filtra el catálogo, cambia la temporada simulada, reserva un artículo y elige cómo pagar.</p>
+        </div>
+        <div className="card">
+          <MaquetaTienda />
         </div>
       </section>
 
