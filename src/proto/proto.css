@@ -118,3 +118,22 @@ body.fob-body { background: #e9edf3; }
 /* Barra y manager en un móvil en vertical: iframe apaisado girado 90° (al girar el móvil vuelve a la vista normal). */
 .fob-rotado { position: fixed; inset: 0; overflow: hidden; background: #0b3478; }
 .fob-rotado iframe { position: absolute; top: 0; left: 100vw; width: 100vh; width: 100dvh; height: 100vw; border: 0; transform: rotate(90deg); transform-origin: top left; background: #e9edf3; }
+
+/* Demo en móvil: pestañas y cada perfil a su tamaño real, escalado al ancho */
+.fob-demo-tabs { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 10px 12px; background: #e9edf3; }
+.fob-demo-tabs button { border: 1px solid #d5dce8; background: #fff; border-radius: 10px; padding: 8px 4px; font: inherit; font-weight: 800; font-size: 14px; color: #0b3478; display: grid; gap: 1px; cursor: pointer; }
+.fob-demo-tabs button small { font-weight: 600; font-size: 11px; color: #5d6779; }
+.fob-demo-tabs button.on { background: #0b3478; border-color: #0b3478; color: #fff; }
+.fob-demo-tabs button.on small { color: #c9d7f2; }
+.fob-demo-tip { margin: 0; padding: 0 14px 10px; font-size: 12.5px; color: #5d6779; }
+.fob-demo-movil { padding: 0 12px 90px; }
+.fob-demo-movil section[hidden] { display: none; }
+.fob-demo-movil .fob-demo-marco { width: auto; height: auto; max-width: 100%; margin: 0 auto; }
+.fob-demo-movil .fob-demo-phone.fob-demo-marco { border-width: 8px; border-radius: 30px; max-width: 406px; }
+.fob-demo-movil .fob-demo-tablet.fob-demo-marco { border-width: 8px; border-radius: 16px; }
+.fob-escalado { position: relative; width: 100%; overflow: hidden; }
+.fob-escalado iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: top left; background: #fff; display: block; }
+.fob-demo-movil .fob-demo-marco.girado { width: fit-content; }
+.fob-demo-movil section { display: flex; flex-direction: column; }
+@media (max-width: 1000px) { .fob-chrome .fob-logo { min-width: 0; } }
+.fob-demo-movil .fob-demo-marco:not(.girado) { width: 100%; }
