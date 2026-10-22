@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import ValidadoDataX from '../components/ValidadoDataX'
 import { Link } from 'react-router-dom'
 import { CartesianGrid, Legend, Line, LineChart, ReferenceArea, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Icon from '../components/Icon'
@@ -249,6 +250,7 @@ export default function Piloto() {
           cumplen, lo contamos.
         </p>
       </div>
+      <ValidadoDataX que="Este plan de piloto" />
 
       {/* 2. Ficha */}
       <section className="section" style={{ marginTop: 0 }}>

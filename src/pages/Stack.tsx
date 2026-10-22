@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import ValidadoDataX from '../components/ValidadoDataX'
 import { STACK } from '../data/faq'
 import {
   DISENO_PRINCIPAL,
@@ -118,6 +119,7 @@ export default function Stack() {
           estándares abiertos (React, TypeScript, Node.js, PostgreSQL, API HTTP/JSON), así que cualquier equipo de IT puede mantenerlo.
         </p>
       </div>
+      <ValidadoDataX que="Este stack técnico" />
 
       <section className="section">
         <div className="section-title">
