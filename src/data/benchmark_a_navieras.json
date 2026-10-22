@@ -1,0 +1,1698 @@
+{
+ "benchmark": "A",
+ "grupo": "Navieras",
+ "generado": "2026-10-22",
+ "verticales": [
+  {
+   "id": "digital_app",
+   "nombre": "App / web propia",
+   "descripcion": "App o web propia, funcionalidades y valoración en stores"
+  },
+  {
+   "id": "pedido_movil",
+   "nombre": "Pedido móvil a bordo",
+   "descripcion": "Pedido/pago móvil a bordo, at-seat, pre-order, click & collect"
+  },
+  {
+   "id": "oferta_fyb",
+   "nombre": "Oferta F&B",
+   "descripcion": "Oferta gastronómica a bordo, formatos, producto local"
+  },
+  {
+   "id": "conectividad",
+   "nombre": "Conectividad",
+   "descripcion": "Wifi a bordo, Starlink, portal cautivo"
+  },
+  {
+   "id": "pagos_fidelizacion",
+   "nombre": "Pagos y fidelización",
+   "descripcion": "Medios de pago, wallets, club de fidelización, puntos"
+  },
+  {
+   "id": "experiencia_abordo",
+   "nombre": "Experiencia a bordo",
+   "descripcion": "Entretenimiento, confort, accesibilidad, clases premium"
+  },
+  {
+   "id": "innovacion",
+   "nombre": "Innovación",
+   "descripcion": "Proyectos digitales recientes 2023-2026, IA, sostenibilidad aplicada"
+  },
+  {
+   "id": "satisfaccion",
+   "nombre": "Satisfacción y reconocimiento",
+   "descripcion": "Premios, encuestas independientes (EPSI, TripAdvisor, Trustpilot, World Travel Awards), valoración y % de uso de la app."
+  }
+ ],
+ "empresas": [
+  {
+   "id": "fred-olsen-express",
+   "nombre": "Fred. Olsen Express",
+   "sector": "naviera",
+   "pais": "España (Canarias)",
+   "logo_texto": "FO",
+   "resumen": "Naviera canaria con récord de 4 M de pasajeros en 2025. Opera Santa Cruz de Tenerife-Agaete con los trimaranes Bajamar y Bañaderos Express (1.100 pax). Es la base de comparación: buena conectividad, producto local y mejor percepción pública que Armas, pero sin pedido móvil y con una app mal valorada.",
+   "click_collect": "No tiene. La app solo cubre billetes, horarios, notificaciones y pago con puntos Tarjeta Plus; no hay pedido ni pago móvil de cafetería (ver investigación previa).",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 2,
+     "evidencia": "App iOS/Android con horarios, compra de billetes, pago con puntos y push. App Store España 2,0/5 con 46 valoraciones (v5.3, 01/11/2025). Trustpilot recoge fallos de web/app: códigos de reserva que no se recuperan y logins que fallan.",
+     "fuente": "https://apps.apple.com/es/app/fred-olsen-express/id716585432"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "No hay evidencia de pedido desde el asiento ni de pago móvil de cafetería. [I] Es una funcionalidad nueva, no una mejora.",
+     "fuente": "https://www.fredolsen.es/en/fast-ferry-tenerife-gran-canaria"
+    },
+    "oferta_fyb": {
+     "puntuacion": 3,
+     "evidencia": "Cafeterías con marcas canarias y productos KM0 (acuerdos con GMR y otras entidades del sector primario, según contenido patrocinado de Diario de Avisos). Catering es lo peor valorado del Bajamar Express en DirectFerries (3,8/5 sobre solo 5 reseñas).",
+     "fuente": "https://www.directferries.es/fred_olsen_express_bajamar_express.htm"
+    },
+    "conectividad": {
+     "puntuacion": 4,
+     "evidencia": "Wifi gratuita de alta velocidad, mejorada con Starlink en 2025 («atractivo esencial para muchos pasajeros»), y On Board Club (películas, series y juegos en el móvil).",
+     "fuente": "https://rtvc.es/fred-olsen-record-4-millones-pasajeros-el-2025/"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Tarjeta Plus / My Fred. Olsen con Plus Points, canjeables en la app para billetes. No hay evidencia de uso de puntos en cafetería.",
+     "fuente": "https://apps.apple.com/es/app/fred-olsen-express/id716585432"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 4,
+     "evidencia": "Clase Oro, boutique, terraza, enchufes, TV y juegos. Certificación de accesibilidad universal en toda la flota (2023). Trustpilot recoge quejas puntuales de asistencia a familias en embarque y espacios para mascotas.",
+     "fuente": "https://www.fredolsen.es/en/fast-ferry-tenerife-gran-canaria"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Starlink, detección de fauna marina y hoja de ruta ambiental 2023-2025; ISO 9001 e ISO 45001 renovadas (mayo 2026). No se han hallado hackathons ni proyectos de pedido a bordo.",
+     "fuente": "https://diariodeavisos.elespanol.com/canariasenred/fred-olsen-express-unica-naviera-en-espana-de-pasajeros-y-carga-con-certificaciones-iso-en-calidad-y-seguridad-laboral/"
+    },
+    "satisfaccion": {
+     "puntuacion": 3,
+     "evidencia": "Trustpilot (fredolsen.es) 4,0/5 sobre 163 reseñas (61 % cinco estrellas, 23 % una estrella; la empresa no invita a reseñar, posible sesgo). App Store 2,0/5 (46). DirectFerries Bajamar Express 4,2/5 (5 reseñas), catering 3,8. Premios: Mejor Iniciativa Empresarial en Transporte, Premios Atlántico Hoy 2024; reconocimiento de gestión de desarrollo sostenible del Cabildo de Tenerife. No se halló encuesta independiente tipo EPSI.",
+     "fuente": "https://uk.trustpilot.com/review/fredolsen.es"
+    }
+   },
+   "buenas_practicas": [
+    "Producto KM0 y marcas canarias como seña de identidad",
+    "Wifi gratuita que permite pedir sin depender de la cobertura móvil",
+    "Accesibilidad universal certificada en toda la flota",
+    "Responder a reseñas negativas (55 % en Trustpilot) como base de una cultura de feedback"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros 2025",
+     "valor": "4 M (récord, +10 % vs 2024)",
+     "fuente": "https://rtvc.es/fred-olsen-record-4-millones-pasajeros-el-2025/"
+    },
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "4,0/5 (163 reseñas; 143 en los últimos 12 meses)",
+     "fuente": "https://uk.trustpilot.com/review/fredolsen.es"
+    },
+    {
+     "etiqueta": "App Store España",
+     "valor": "2,0/5 (46 valoraciones)",
+     "fuente": "https://apps.apple.com/es/app/fred-olsen-express/id716585432"
+    },
+    {
+     "etiqueta": "DirectFerries Bajamar Express",
+     "valor": "Global 4,2/5 y catering 3,8/5 (5 reseñas)",
+     "fuente": "https://www.directferries.es/fred_olsen_express_bajamar_express.htm"
+    },
+    {
+     "etiqueta": "Premio Atlántico Hoy 2024",
+     "valor": "Mejor Iniciativa Empresarial en la categoría de Transporte",
+     "fuente": "https://www.que.es/2024/06/27/fred-olsen-express-es-galardonada-en-los-premios-atlantico-hoy-por-su-contribucion-al-transporte-en-canarias/"
+    },
+    {
+     "etiqueta": "Certificaciones",
+     "valor": "ISO 9001 e ISO 45001 renovadas (8/05/2026), única naviera de pasaje y carga en España con ambas por Aenor (según la propia empresa)",
+     "fuente": "https://diariodeavisos.elespanol.com/canariasenred/fred-olsen-express-unica-naviera-en-espana-de-pasajeros-y-carga-con-certificaciones-iso-en-calidad-y-seguridad-laboral/"
+    }
+   ],
+   "aplicacion_fred_olsen": "Punto de partida: añadir pedido web/PWA sobre la wifi existente y enlazar con Plus Points. Capitalizar la brecha de percepción con Armas (4,0 vs 1,7 en Trustpilot) y reparar la app (2,0/5) antes de cargarla.",
+   "riesgos_o_limites": "La app actual tiene una valoración baja: no cargar la nueva función sobre ella sin garantías de estabilidad. Trustpilot es una muestra pequeña y autoseleccionada.",
+   "confianza": "alta",
+   "en_tablero": true
+  },
+  {
+   "id": "balearia-canarias-armas",
+   "nombre": "Baleària Canarias (ex Naviera Armas Trasmediterránea)",
+   "sector": "naviera",
+   "pais": "España (Canarias)",
+   "logo_texto": "BC",
+   "resumen": "Baleària comunicó el 18/05/2026 que tomaba el control efectivo de los activos de Armas Trasmediterránea en Canarias (rutas interinsulares y Canarias-Península), tras anunciar la compra en agosto de 2025; opera como Baleària Canarias y la marca Armas Trasmediterránea convive durante una transición. Siguió el cierre de los activos del Estrecho y Alborán (1/07/2026: 4 buques, ~250 empleados) y la compra de Transportes Intercanarios (23/07/2026; transporte terrestre y servicios portuarios, fundada en 1976, ~60 personas, familia Armas). Anuncia 45 M€ en 3 años para calidad, confort y digitalización de la flota: es el competidor directo que puede copiar el servicio.",
+   "click_collect": "No se ha encontrado pedido móvil a bordo en los buques de Canarias. La app del grupo permite reservar con antelación extras y servicios opcionales y Easy Pass (QR) para embarcar, verificar residencia y pagar en 4 rutas canarias. En el grupo, el único pedido es por pantallas táctiles en dos buques (ver Baleària grupo).",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "La web de Baleària Canarias remite a la app del grupo: reservas, tarjetas de embarque digitales, avisos en tiempo real, ofertas flash y login biométrico con Baleària Club. Easy Pass (QR) en Playa Blanca-Corralejo, Santa Cruz de Tenerife-Las Palmas, San Sebastián de La Gomera-Los Cristianos y Santa Cruz de La Palma-Los Cristianos. App Store (Italia) 4,8/5 con solo 9 valoraciones.",
+     "fuente": "https://www.balearia.com/es/web/baleariacanarias/viaja-con-app"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "Sin evidencia de pedido móvil de comida en las rutas canarias; solo reserva anticipada de extras y servicios opcionales en la app. [I] Hueco libre.",
+     "fuente": "https://www.balearia.com/es/web/baleariacanarias/viaja-con-app"
+    },
+    "oferta_fyb": {
+     "puntuacion": 2,
+     "evidencia": "Buques convencionales con cafetería y restaurante (p. ej. Volcán de Tamasite: cafetería toda la travesía con bebidas y snacks, restaurante autoservicio y restaurante estándar en horas punta, según DirectFerries); la oferta varía por buque y temporada. Baleària Club ofrece «desayuno gratis» como ventaja. En Trustpilot de Armas hay una crítica a la calidad de las comidas.",
+     "fuente": "https://www.directferries.de/naviera_armas_volcan_de_tamasite.htm"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "Marie Curie y Sicilia (Huelva-Canarias) con wifi combinada Hispasat + Starlink (oct. 2024, Eurona); Volcán de Tamasite figura con wifi a bordo. Ferryhopper indica que la mayoría de buques tienen wifi, normalmente con posible coste extra.",
+     "fuente": "https://alicanteplaza.es/alicanteplaza/balearia-y-eurona-se-unen-para-mejorar-la-experiencia-de-conectividad-a-bordo-con-un-servicio-wifi-pionero"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 4,
+     "evidencia": "Baleària Club integrado en Baleària Canarias: puntos dobles por compras en la app, canje por descuentos, upgrades o servicios a bordo; Easy Pass para pagar con QR.",
+     "fuente": "https://www.balearia.com/es/web/baleariacanarias/viaja-con-app"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 3,
+     "evidencia": "Fast ferry Mercedes Pinto (Santa Cruz de Tenerife-Las Palmas-Morro Jable) presentado como el buque más innovador de Baleària Canarias, con valoración 9,14/10 en su web (dato propio, sin verificar). Plazas para mascotas según acomodación.",
+     "fuente": "https://www.balearia.com/es/web/baleariacanarias/rutas-horarios/ferry-a-tenerife"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "45 M€ en 3 años (calidad, confort y digitalización), Easy Pass y nuevo fast ferry dual-fuel Mercedes Pinto. [I] Aún sin servicios F&B digitales desplegados.",
+     "fuente": "https://www.balearia.com/es/sala-prensa/notas-prensa/balearia-toma-el-control-efectivo-de-armas-trasmediterranea-en-canarias-y-consolida-su-liderazgo-en-espana"
+    },
+    "satisfaccion": {
+     "puntuacion": 2,
+     "evidencia": "Trustpilot de armastrasmediterranea.com: 1,7/5 sobre 27 reseñas (88 % una estrella; retrasos, atención al cliente, estado de buques; perfil sin reclamar, muestra pequeña). Baleària Canarias muestra en su web 9,14/10 para el Mercedes Pinto (dato propio). Sin encuestas independientes ni premios específicos de Canarias. La marca de grupo sí tiene 8,2 y Trustpilot 4,2 (ver Baleària grupo): la integración puede elevar la percepción.",
+     "fuente": "https://se.trustpilot.com/review/armastrasmediterranea.com"
+    }
+   },
+   "buenas_practicas": [
+    "Integración de la marca Baleària Canarias con el ecosistema digital del grupo (Club, app, Easy Pass)",
+    "Easy Pass: un único QR para embarque, residencia y pago en rutas interinsulares",
+    "Ventaja de Club como desayuno gratis a bordo"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Control efectivo de Canarias",
+     "valor": "Nota de prensa de 18/05/2026; marca Baleària Canarias coexiste con Armas Trasmediterránea en transición",
+     "fuente": "https://www.balearia.com/es/sala-prensa/notas-prensa/balearia-toma-el-control-efectivo-de-armas-trasmediterranea-en-canarias-y-consolida-su-liderazgo-en-espana"
+    },
+    {
+     "etiqueta": "Estrecho y Alborán",
+     "valor": "Cierre anunciado 1/07/2026: 4 buques (JJ Sister, Almariya, Volcán de Timanfaya, Ciudad de Málaga), ~250 empleados",
+     "fuente": "https://www.balearia.com/en/press-room/press-releases/balearia-completes-acquisition-naviera-armas-trasmediterranea-incorporating-assets-in-strait-and-alboran-regions"
+    },
+    {
+     "etiqueta": "Transportes Intercanarios",
+     "valor": "Comprada a la familia Armas el 23/07/2026; transporte terrestre/servicios portuarios, ~60 personas y >500 vehículos y unidades",
+     "fuente": "https://www.shippax.com/en/news/baleria-canarias-acquires-transportes-intercanarios.aspx"
+    },
+    {
+     "etiqueta": "Inversión Canarias",
+     "valor": "45 M€ en 3 años",
+     "fuente": "https://www.balearia.com/es/sala-prensa/notas-prensa/balearia-toma-el-control-efectivo-de-armas-trasmediterranea-en-canarias-y-consolida-su-liderazgo-en-espana"
+    },
+    {
+     "etiqueta": "Trustpilot Armas Trasmediterránea",
+     "valor": "1,7/5 (27 reseñas)",
+     "fuente": "https://se.trustpilot.com/review/armastrasmediterranea.com"
+    },
+    {
+     "etiqueta": "Grupo post-integración",
+     "valor": "Más de 50 buques, ~4.500 empleados, >8 M pasajeros, >1.000 M€",
+     "fuente": "https://www.balearia.com/es/sala-prensa/notas-prensa/balearia-toma-el-control-efectivo-de-armas-trasmediterranea-en-canarias-y-consolida-su-liderazgo-en-espana"
+    }
+   ],
+   "aplicacion_fred_olsen": "Ventana de diferenciación: lanzar pedido móvil antes de que Baleària Canarias traslade sus servicios Smart Ship. Argumento de jurado: urgencia competitiva, con la ventaja de percepción actual de Fred. Olsen (Trustpilot 4,0 vs 1,7).",
+   "riesgos_o_limites": "Datos muy escasos del servicio canario real y de restauración; la oferta F&B cambia por buque. Trustpilot de Armas es una muestra pequeña. No inferir qué servicios del grupo llegarán a Canarias.",
+   "confianza": "media",
+   "en_tablero": true
+  },
+  {
+   "id": "balearia-grupo",
+   "nombre": "Baleària (grupo, Baleares/Estrecho)",
+   "sector": "naviera",
+   "pais": "España",
+   "logo_texto": "BA",
+   "resumen": "Referente ibérico en digitalización a bordo: Smart Ships con tarjeta de embarque QR que abre el camarote, WhatsApp, entretenimiento y pedido por pantallas táctiles en autoservicio. Baleària Club con 710.000 socios, satisfacción de pasajeros 8,2 (dosier 2026) y Trustpilot 4,2 con más de 20.000 reseñas. Tras integrar Armas Trasmediterránea (2026) supera los 1.000 M€ de facturación.",
+   "click_collect": "Parcial. En el autoservicio de dos buques (Hypatia de Alejandría y Marie Curie) se pide en pantallas táctiles, se paga con tarjeta y se recibe un ticket para recoger la comida. No es pedido desde el asiento con el móvil. Extras y servicios opcionales se pueden reservar con antelación desde la app.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App con reservas, tarjetas de embarque, check-in, puntos Club, avisos y login biométrico. App Store (Italia) 4,8/5 con 9 valoraciones, v3.0.48.4: muestra pequeña y sin dato de España/Google Play. La página de la app no menciona pedido a bordo ni wifi.",
+     "fuente": "https://apps.apple.com/it/app/bale%C3%A0ria-viaggia-in-traghetto/id476264273"
+    },
+    "pedido_movil": {
+     "puntuacion": 3,
+     "evidencia": "Pedido en pantallas táctiles con ticket para recogida en dos buques; pre-reserva de extras en app. No hay pedido desde el asiento.",
+     "fuente": "https://www.ferryhopper.com/es/blog/ferry-news/balearia-smart-ship-ferries-services"
+    },
+    "oferta_fyb": {
+     "puntuacion": 3,
+     "evidencia": "Según su dosier 2026, la restauración prioriza productos locales y ofrece opciones vegana, celíaca y, en algunas rutas, halal. Trustpilot recoge quejas sobre calidad y variedad de la comida a bordo.",
+     "fuente": "https://www.balearia.com/documents/d/guest/dosier-corporativo-balearia-2026_esp-1-"
+    },
+    "conectividad": {
+     "puntuacion": 4,
+     "evidencia": "Wifi con bonos y WhatsApp gratuito durante el trayecto; wifi Hispasat + Starlink en 4 buques desde oct. 2024 (Eurona). Trustpilot incluye críticas puntuales de wifi poco fiable en camarote.",
+     "fuente": "https://alicanteplaza.es/alicanteplaza/balearia-y-eurona-se-unen-para-mejorar-la-experiencia-de-conectividad-a-bordo-con-un-servicio-wifi-pionero"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 4,
+     "evidencia": "Baleària Club (710.000 socios): puntos dobles en compras en la app, canjeables por descuentos, upgrades o servicios a bordo. Easy Pass (QR) para embarcar, verificar residencia y pagar.",
+     "fuente": "https://www.balearia.com/es/viajar-con-balearia/la-app-de-balearia"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 4,
+     "evidencia": "Tarjeta QR como llave de camarote, plataforma de cine/series/libros por bonos, Smart TV en algunos camarotes y vídeo de mascotas en las «casitas de calma».",
+     "fuente": "https://www.ferryhopper.com/es/blog/ferry-news/balearia-smart-ship-ferries-services"
+    },
+    "innovacion": {
+     "puntuacion": 4,
+     "evidencia": "Línea Smart Ship sostenida, Starlink, aplicación de carga y compra de Armas Trasmediterránea (2026) con 45 M€ para Canarias. Chatbot y acceso QR a alojamientos según su dosier 2026.",
+     "fuente": "https://www.balearia.com/documents/d/guest/dosier-corporativo-balearia-2026_esp-1-"
+    },
+    "satisfaccion": {
+     "puntuacion": 4,
+     "evidencia": "Dosier corporativo 2026: satisfacción de pasajeros 8,2 (escala no indicada, dato propio) y 710.000 socios Club. Trustpilot (balearia.com) 4,2/5 sobre 20.175 reseñas (56 % cinco estrellas, 10 % una; responde al 93 % de las negativas). Distintivo Top Employer (empleador). No se hallaron premios de cliente 2025-2026 ni encuesta independiente; valoración de la app solo con 9 reseñas en App Store Italia.",
+     "fuente": "https://uk.trustpilot.com/review/balearia.com"
+    }
+   },
+   "buenas_practicas": [
+    "Ticket QR de recogida tras pedir en pantalla, para evitar cobro y colas en barra",
+    "Puntos dobles al comprar desde la app: incentiva la adopción",
+    "Easy Pass: un único QR para embarque, identidad y pago",
+    "Canje de puntos por servicios a bordo",
+    "Responder al 93 % de reseñas negativas en Trustpilot"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Baleària Club",
+     "valor": "710.000 socios (dosier 2026)",
+     "fuente": "https://www.balearia.com/documents/d/guest/dosier-corporativo-balearia-2026_esp-1-"
+    },
+    {
+     "etiqueta": "Satisfacción de pasajeros",
+     "valor": "8,2 (dosier 2026; escala no especificada)",
+     "fuente": "https://www.balearia.com/documents/d/guest/dosier-corporativo-balearia-2026_esp-1-"
+    },
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "4,2/5 (20.175 reseñas)",
+     "fuente": "https://uk.trustpilot.com/review/balearia.com"
+    },
+    {
+     "etiqueta": "Buques con pedido en pantalla",
+     "valor": "2 (Hypatia de Alejandría y Marie Curie)",
+     "fuente": "https://www.ferryhopper.com/es/blog/ferry-news/balearia-smart-ship-ferries-services"
+    },
+    {
+     "etiqueta": "Grupo tras integrar Armas",
+     "valor": "Más de 50 buques, ~4.500 empleados, >8 M pasajeros, >1.000 M€ de facturación",
+     "fuente": "https://www.economiademallorca.com/articulo/empresas/balearia-supera-1000mE-facturacion-culminar-compra-armas-trasmediterranea/20260701142540121158.html"
+    }
+   ],
+   "aplicacion_fred_olsen": "Copiar el patrón «pedir y pagar, recibir QR y recoger» llevándolo al móvil; puntos dobles por pedir en la app como gancho de adopción; QR único en barra.",
+   "riesgos_o_limites": "Su pedido es en pantallas fijas, no en el móvil: no es una referencia directa de at-seat. La cifra 8,2 es dato propio sin escala ni metodología. Datos del artículo de Ferryhopper (terceros), sin fecha precisa.",
+   "confianza": "media",
+   "en_tablero": true
+  },
+  {
+   "id": "stena-line",
+   "nombre": "Stena Line",
+   "sector": "naviera",
+   "pais": "Suecia / Reino Unido",
+   "logo_texto": "ST",
+   "resumen": "Gran operador de ferris del norte de Europa. Su app agrupa reservas, información a bordo y puntos Stena MORE. No se encontró pedido a bordo por móvil.",
+   "click_collect": "No verificado. La página de la app no menciona pedido ni pre-order de comida.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App con reservas, horarios, posición del buque y hora estimada de llegada, información a bordo y tarjeta de socio. No se encontró valoración en stores.",
+     "fuente": "https://www.stenaline.co.uk/stena-line-app"
+    },
+    "pedido_movil": {
+     "puntuacion": 0,
+     "evidencia": "No se encontró pedido ni pre-order de comida. No se pudo cargar la página de comida y bebida a bordo.",
+     "fuente": "https://www.stenaline.co.uk/stena-line-app"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos verificados en este benchmark.",
+     "fuente": "https://www.stenaline.co.uk/customer-service/on-board/what-food-and-drink-can-i-buy-on-board"
+    },
+    "conectividad": {
+     "puntuacion": 4,
+     "evidencia": "Contrato con Nowhere Networks (enlace radio línea de vista a costa) para 32 buques a Q1 2023 y hasta 38. Marlink actualizó previamente su VSAT.",
+     "fuente": "https://www.rivieramm.com/news-content-hub/stena-line-to-install-high-speed-wifi-on-38-ships-74103"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Stena MORE: puntos, ventajas y tarjeta de socio accesibles desde la app.",
+     "fuente": "https://www.stenaline.co.uk/stena-line-app"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos verificados.",
+     "fuente": "https://www.stenaline.co.uk/stena-line-app"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Inversión en conectividad a gran escala en 2022-2023. [I] Sin proyectos de F&B digital hallados.",
+     "fuente": "https://www.rivieramm.com/news-content-hub/stena-line-to-install-high-speed-wifi-on-38-ships-74103"
+    },
+    "satisfaccion": {
+     "puntuacion": 2,
+     "evidencia": "Trustpilot (Stena Line Group) 2,3/5 sobre 97 reseñas, calificado «Poor»; perfiles por país separados. Sin encuesta independiente ni premios recientes hallados.",
+     "fuente": "https://uk.trustpilot.com/review/stenaline.com"
+    }
+   },
+   "buenas_practicas": [
+    "Seguimiento de posición y hora de llegada en la app: da contexto al pasajero y puede anclar avisos de pedido"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Conectividad",
+     "valor": "Hasta 38 buques con Nowhere Networks (dic. 2022)",
+     "fuente": "https://www.rivieramm.com/news-content-hub/stena-line-to-install-high-speed-wifi-on-38-ships-74103"
+    },
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "2,3/5 (97 reseñas)",
+     "fuente": "https://uk.trustpilot.com/review/stenaline.com"
+    }
+   ],
+   "aplicacion_fred_olsen": "Usar la hora estimada de llegada como disparador: avisar de cuándo cierra el pedido antes de atracar.",
+   "riesgos_o_limites": "Poca información útil sobre F&B móvil; no usar como referencia de pedido.",
+   "confianza": "baja",
+   "en_tablero": false
+  },
+  {
+   "id": "dfds",
+   "nombre": "DFDS",
+   "sector": "naviera",
+   "pais": "Dinamarca",
+   "logo_texto": "DF",
+   "resumen": "Gran operador europeo (Mar del Norte, Báltico, Canal). Ganó en 2025 los World Travel Awards «World's Leading Ferry Operator» y «Europe's Leading Ferry Operator». Ofrece wifi gratuita en el Canal y pre-reserva de comidas con vales; su app está centrada en carga y check-in.",
+   "click_collect": "Pre-reserva de comidas (buffet 7 Seas en Klaipeda-Karlshamn y Klaipeda-Kiel): se añade al reservar o desde Mis reservas y se entregan vales en el check-in. No es pedido desde el asiento. Además tiene Reserve & Collect de duty free (página propia).",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 2,
+     "evidencia": "App «DFDS - Ferries & Terminals» (v2.7.0): horarios, alertas de retraso/cancelación, check-in por QR en quioscos, info de restaurantes/cabinas/wifi y beneficios RoadKings para conductores; muy orientada a carga. App Store 3,0/5 sobre solo 2 valoraciones (muestra insignificante). La web ganó premios de sector (2021 y 2024).",
+     "fuente": "https://apps.apple.com/app/id1447470946"
+    },
+    "pedido_movil": {
+     "puntuacion": 3,
+     "evidencia": "Pre-reserva de comidas con ahorro frente al precio a bordo, canjeable con vales en el check-in. Formato pre-order, no at-seat. Solo en rutas del Báltico (Klaipeda-Karlshamn, Klaipeda-Kiel) según su página.",
+     "fuente": "https://www.dfds.com/en/passenger-ferries/offers/pre-catering"
+    },
+    "oferta_fyb": {
+     "puntuacion": 3,
+     "evidencia": "Buffet 7 Seas con desayuno, comida y cena en rutas del Báltico; el descuento por pre-reserva no está cuantificado en la página.",
+     "fuente": "https://www.dfds.com/en/passenger-ferries/offers/pre-catering"
+    },
+    "conectividad": {
+     "puntuacion": 4,
+     "evidencia": "Wifi gratuita e ilimitada en todas las travesías Dover-Calais (100 min) y Dover-Dunkerque, con enlace direccional de largo alcance en vez de satélite. En rutas largas (Copenhague-Oslo, Ámsterdam-Newcastle) es de pago por paquetes, gratis en cabinas Commodore.",
+     "fuente": "https://dfds.com/en-gb/passenger-ferries/onboard/dover-calais/wifi"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 0,
+     "evidencia": "Solo se verificó RoadKings Club para conductores de carga; no hay datos de club de pasajeros.",
+     "fuente": "https://apps.apple.com/app/id1447470946"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos verificados en este benchmark.",
+     "fuente": "https://www.dfds.com/en-gb/passenger-ferries/ferry-extras/extras-onboard/pre-book-meals"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Wifi direccional gratuita en el Canal y web distinguida como «World's Leading Ferry Operator Website» en 2024 (también «Europe's Leading» web). [I] No se hallaron proyectos de pedido móvil.",
+     "fuente": "https://www.dfds.com/en/about/media/news/dfds-retains-title-as-worlds-leading-ferry-operator"
+    },
+    "satisfaccion": {
+     "puntuacion": 4,
+     "evidencia": "World Travel Awards 2025: ganador de «World's Leading Ferry Operator» y «Europe's Leading Ferry Operator» (en esta última, frente a Brittany Ferries, Color Line, CORSICA linea, Irish Ferries, P&O y Stena). WTA es un premio de votación de profesionales/público, no una encuesta independiente de satisfacción. El premio «mejor web» 2025 NO se pudo verificar (sí en 2024 y 2021).",
+     "fuente": "https://www.worldtravelawards.com/award-worlds-leading-ferry-operator-2025"
+    }
+   },
+   "buenas_practicas": [
+    "Descuento por pre-reservar: mueve la demanda a canales digitales y la hace previsible",
+    "Vales en el check-in: puente simple entre reserva y barra",
+    "Wifi gratuita ilimitada en travesía corta (Dover-Calais, 100 min): elimina la barrera de conexión"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "World Travel Awards 2025",
+     "valor": "World's Leading Ferry Operator y Europe's Leading Ferry Operator (ganador)",
+     "fuente": "https://www.worldtravelawards.com/award-europes-leading-ferry-operator-2025"
+    },
+    {
+     "etiqueta": "World Travel Awards 2024",
+     "valor": "4 premios: World's Leading y Europe's Leading Ferry Operator (14.º año consecutivo el mundial) y mejor web mundial y europea",
+     "fuente": "https://www.dfds.com/en/about/media/news/dfds-retains-title-as-worlds-leading-ferry-operator"
+    },
+    {
+     "etiqueta": "Mejor web del sector 2025",
+     "valor": "No verificado: la web de DFDS (fr-be/informations-voyageurs) solo enlaza a «Récompenses» sin detallar; el perfil WTA no lista web 2025",
+     "fuente": "https://www.worldtravelawards.com/profile-27351-dfds"
+    },
+    {
+     "etiqueta": "Wifi Dover-Calais",
+     "valor": "Gratuita e ilimitada (travesía de 100 min)",
+     "fuente": "https://dfds.com/en-gb/passenger-ferries/onboard/dover-calais/wifi"
+    },
+    {
+     "etiqueta": "Pre-reserva de comidas",
+     "valor": "Klaipeda-Karlshamn y Klaipeda-Kiel (7 Seas); importe no publicado",
+     "fuente": "https://www.dfds.com/en/passenger-ferries/offers/pre-catering"
+    },
+    {
+     "etiqueta": "App Store",
+     "valor": "3,0/5 (2 valoraciones)",
+     "fuente": "https://apps.apple.com/app/id1447470946"
+    }
+   ],
+   "aplicacion_fred_olsen": "Ofrecer pre-pedido al comprar el billete (o antes del embarque) con ventana de recogida y vale/QR; apoyarse en wifi gratuita, como DFDS en el Canal, para que el pedido no dependa de datos móviles.",
+   "riesgos_o_limites": "Modelo de travesías largas con buffet; en 80 min la pre-reserva del billete es menos frecuente. Los premios WTA son de votación, útiles como señal de marca pero no como medida de satisfacción.",
+   "confianza": "media",
+   "en_tablero": true
+  },
+  {
+   "id": "tallink-silja",
+   "nombre": "Tallink Silja",
+   "sector": "naviera",
+   "pais": "Estonia / Finlandia",
+   "logo_texto": "TS",
+   "resumen": "Líder del Báltico con 5,5 M de pasajeros en 2025 y el 48 % de sus ingresos procedentes de restaurante y tienda a bordo. Es la referencia en retail marítimo y cuenta con una app muy bien valorada.",
+   "click_collect": "No verificado. La app muestra horarios de ocio y apertura de tiendas sin conexión, pero no se confirmó pedido móvil. Existe un caso de proveedor (Datalogic) de compra en autoservicio a bordo, que no se pudo leer.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 4,
+     "evidencia": "App con check-in, tarjeta de embarque (Apple Wallet), notificaciones, tarjeta digital Club One e información de entretenimiento y tiendas sin conexión. App Store: 4,8/5 con 94 valoraciones.",
+     "fuente": "https://apps.apple.com/us/app/tallink-silja-line/id1107519850"
+    },
+    "pedido_movil": {
+     "puntuacion": 2,
+     "evidencia": "[I] Autoservicio y compras en tienda, pero sin pedido móvil verificado.",
+     "fuente": "https://www.tallink.com/on-board/tax-free-shopping/campaign-catalogues"
+    },
+    "oferta_fyb": {
+     "puntuacion": 4,
+     "evidencia": "Restaurantes y tiendas suponen el 48 % de los ingresos 2025. Tallink Duty Free es el nº 20 mundial en travel retail (282 M€ en 2024) y nº 1 entre ferris.",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "No se encontró información verificable de wifi en esta búsqueda.",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 4,
+     "evidencia": "Club One con 3,6 M de socios, accesible desde la app.",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/interim-reports/2026/tallink-grupp-q2-2026-presentation-v2.pdf"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos verificados.",
+     "fuente": "https://www.tallink.com/on-board/new-flavours"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Autocheck-in y billetes en móvil; venta a bordo cae 1,0 M€ interanual en el T2 2026 por la confianza del consumidor. [I] Sin proyectos de pedido móvil hallados.",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/interim-reports/2026/tallink-grupp-q2-2026-presentation-v2.pdf"
+    },
+    "satisfaccion": {
+     "puntuacion": 3,
+     "evidencia": "EPSI Laivaliikenne 2026: Tallink Silja 75,0 global (media 75,9; la más baja de 4 operadores) pero la mejor en Finlandia-Suecia (77,8 vs 75,8 de Viking Line). App Store 4,8/5 (94 valoraciones). Sin reseñas en Trustpilot.",
+     "fuente": "https://www.epsi-finland.org/wp-content/uploads/2026/05/epsi-laivaliikenne-2026-study-summary.pdf"
+    }
+   },
+   "buenas_practicas": [
+    "Información de ocio y tiendas disponible sin conexión",
+    "Tarjeta de socio y puntos siempre accesibles desde la app",
+    "Tratar F&B y retail como motor de ingresos"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros 2025",
+     "valor": "5.531.132",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf"
+    },
+    {
+     "etiqueta": "Ingresos restaurante + tienda 2025",
+     "valor": "48 % del total",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf"
+    },
+    {
+     "etiqueta": "Club One",
+     "valor": "3,6 M de socios",
+     "fuente": "https://image.tallink.com/image/upload/grupp/documents/interim-reports/2026/tallink-grupp-q2-2026-presentation-v2.pdf"
+    },
+    {
+     "etiqueta": "EPSI 2026 por ruta",
+     "valor": "Finlandia-Suecia 77,8; Finlandia-Estonia 75,5 (media de ruta 76,4 y 75,6)",
+     "fuente": "https://www.epsi-finland.org/wp-content/uploads/2026/05/epsi-laivaliikenne-2026-study-summary.pdf"
+    }
+   ],
+   "aplicacion_fred_olsen": "Argumento de negocio para el jurado: el gasto a bordo es el motor de ingresos del sector y se está debilitando; reducir fricción en barra defiende ese margen. Modo sin conexión para menú y tiendas.",
+   "riesgos_o_limites": "El modelo de crucero largo con duty free no se traslada a 80 min sin impuestos especiales.",
+   "confianza": "media",
+   "en_tablero": false
+  },
+  {
+   "id": "molslinjen",
+   "nombre": "Molslinjen (Aarhus-Odden)",
+   "sector": "naviera",
+   "pais": "Dinamarca",
+   "logo_texto": "MO",
+   "resumen": "Operador danés de ferris rápidos. Su app permite pre-pedir comida y bebida en la ruta Aarhus-Odden para saltarse la cola. Es el análogo más cercano encontrado a un trayecto corto (80-90 min).",
+   "click_collect": "Sí, en parte: la app permite pre-pedir comida y bebida en Aarhus-Odden para evitar la cola. No se verificó el mecanismo exacto de recogida ni la tasa de adopción.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 4,
+     "evidencia": "App con 4,5/5 sobre 42 valoraciones en App Store: reservas, perfiles con acompañantes, vehículos y tarjetas, aviso de cambios de salida y tiempo estimado de conducción al puerto.",
+     "fuente": "https://apps.apple.com/app/id665224819"
+    },
+    "pedido_movil": {
+     "puntuacion": 4,
+     "evidencia": "Pre-pedido de comida y bebida en Aarhus-Odden desde la app, para evitar colas. Funcionalidad limitada a una ruta.",
+     "fuente": "https://apps.apple.com/app/id665224819"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin detalles de la oferta (la página solo enlaza una cafetería de marca).",
+     "fuente": "https://www.molslinjen.com/timetable/aarhus-to-odden"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "No se encontró información.",
+     "fuente": "https://www.molslinjen.com/timetable/aarhus-to-odden"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Tarjetas guardadas en el perfil, tarjeta de viaje y acuerdo de pendulares. Las notas de versión 11.0 citan una nueva solución de pago digital.",
+     "fuente": "https://apps.apple.com/app/id665224819"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.molslinjen.com/timetable/aarhus-to-odden"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Iteración continua de la app (v13.8) con rediseño y ampliación a la ruta Helsingør-Helsingborg.",
+     "fuente": "https://apps.apple.com/app/id665224819"
+    },
+    "satisfaccion": {
+     "puntuacion": 4,
+     "evidencia": "Trustpilot 4,0/5 sobre 3.207 reseñas (652 en 12 meses); App Store 4,5/5 (42 valoraciones, dato previo).",
+     "fuente": "https://uk.trustpilot.com/review/molslinjen.dk"
+    }
+   },
+   "buenas_practicas": [
+    "Pre-pedido integrado en la app de reservas, no en una app aparte",
+    "Perfil con tarjetas guardadas para pagar con un toque",
+    "Empezar con una sola ruta antes de escalar"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Valoración App Store",
+     "valor": "4,5/5 (42 valoraciones)",
+     "fuente": "https://apps.apple.com/app/id665224819"
+    },
+    {
+     "etiqueta": "Duración Aarhus-Odden",
+     "valor": "80-90 min (la web da ambas cifras)",
+     "fuente": "https://www.molslinjen.com/timetable/aarhus-to-odden"
+    },
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "4,0/5 (3.207 reseñas)",
+     "fuente": "https://uk.trustpilot.com/review/molslinjen.dk"
+    }
+   ],
+   "aplicacion_fred_olsen": "Validación de que un trayecto de 80 min admite pre-pedido y de que se puede lanzar como piloto en una sola ruta (Santa Cruz-Agaete).",
+   "riesgos_o_limites": "Sin cifras de uso ni de ingresos. La ficha de App Store con 42 valoraciones es una muestra pequeña.",
+   "confianza": "media",
+   "en_tablero": false
+  },
+  {
+   "id": "corsica-ferries",
+   "nombre": "Corsica Ferries",
+   "sector": "naviera",
+   "pais": "Francia / Italia",
+   "logo_texto": "CF",
+   "resumen": "Operadora de Córcega con transformación digital en 2026: móvil como llave de camarote, tarjetas de embarque, club y pago fraccionado. Despliega la plataforma VAVE de nube a bordo en 5 buques.",
+   "click_collect": "No tiene (verificado). El artículo de 2026 sobre su digitalización no menciona pedido a bordo.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App con acceso a camarotes con el móvil, tarjetas de embarque, modificación de la travesía y notificaciones en tiempo real.",
+     "fuente": "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "No se menciona pedido a bordo. VAVE admite sistemas de retail y reservas a bordo, aunque no se confirma su uso para pedir.",
+     "fuente": "https://thedigitalship.com/news/maritime-satellite-communications/corsica-ferries-takes-vave/"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "Anunció (nov. 2025) VAVE de Telenor/MCP en 5 buques: nube local con GSM y wifi, mensajería, avisos a móviles concretos, TV y juegos; el contenido en servidor local limita costes VSAT.",
+     "fuente": "https://thedigitalship.com/news/maritime-satellite-communications/corsica-ferries-takes-vave/"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Corsica Club en la app y pago de reservas en 2, 3 o 4 plazos.",
+     "fuente": "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Nube a bordo y avisos personalizados al móvil; llave de camarote en el teléfono.",
+     "fuente": "https://thedigitalship.com/news/maritime-satellite-communications/corsica-ferries-takes-vave/"
+    },
+    "satisfaccion": {
+     "puntuacion": 2,
+     "evidencia": "Trustpilot (corsica-ferries.fr) 2,7/5 sobre 532 reseñas (47 % una estrella): limpieza de camarotes, cambios de horario y atención en recepción; el embarque y desembarque se valoran bien. Perfil sin invitaciones a reseñar, posible sesgo.",
+     "fuente": "https://au.trustpilot.com/review/corsica-ferries.fr"
+    }
+   },
+   "buenas_practicas": [
+    "Servidor local a bordo que reduce el consumo de satélite",
+    "Avisos dirigidos a cada móvil (ej. «tu pedido está listo»)"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "VAVE",
+     "valor": "5 buques, anunciado 5/11/2025",
+     "fuente": "https://thedigitalship.com/news/maritime-satellite-communications/corsica-ferries-takes-vave/"
+    },
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "2,7/5 (532 reseñas)",
+     "fuente": "https://au.trustpilot.com/review/corsica-ferries.fr"
+    }
+   ],
+   "aplicacion_fred_olsen": "Para el pedido: notificaciones directas al móvil por la wifi del buque; arquitectura local para no depender del satélite.",
+   "riesgos_o_limites": "No hay pedido; solo inspira la infraestructura. VAVE sirve como arquitectura, no como producto F&B.",
+   "confianza": "media",
+   "en_tablero": false
+  },
+  {
+   "id": "viking-line",
+   "nombre": "Viking Line",
+   "sector": "naviera",
+   "pais": "Finlandia",
+   "logo_texto": "VL",
+   "resumen": "Competidor de Tallink en el Báltico y referente de satisfacción: primero en el EPSI Rating 2025 en todas sus rutas y de nuevo primero global en 2026. Su app la usa el 78 % de sus pasajeros: check-in QR, vales de comida, cabina con el móvil, tiendas y pre-pedido de bebidas.",
+   "click_collect": "Parcial. La app permite consultar tiendas y precios con antelación y hacer pre-pedido de bebidas para compras a bordo; con el QR en quioscos de terminal se obtienen tarjetas de embarque, vales de comida y llaves de cabina. No se verificó pedido de comida desde el asiento.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 4,
+     "evidencia": "App gratuita (Android/iOS): reservas, tarjeta Viking Line Club digital, saldo y nivel, check-in QR, tarjetas de embarque, programa a bordo, horarios de restaurantes/spa, visita virtual 360° y llave de cabina en el móvil (Viking Glory y XPRS). 78 % de pasajeros la usa (+9 pp en un año). App Store 1,9/5 con solo 9 valoraciones (muestra pequeña, contraste con el uso masivo).",
+     "fuente": "https://apps.apple.com/app/id954827314"
+    },
+    "pedido_movil": {
+     "puntuacion": 3,
+     "evidencia": "Pre-pedido de bebidas para compras a bordo desde la app y tiendas consultables en el móvil; vales de comida en el check-in. Sin pedido at-seat verificado.",
+     "fuente": "https://apps.apple.com/app/id954827314"
+    },
+    "oferta_fyb": {
+     "puntuacion": 4,
+     "evidencia": "Restaurantes buffet que sirven a más de 1 M de pasajeros al año; más del 70 % de ingredientes de la región del Báltico, huevos de gallinas camperas desde 2022 y pollo con certificación ECC previsto para 2028 (marzo 2025).",
+     "fuente": "https://cyprusshippingnews.com/2025/03/17/viking-line-switching-to-responsibly-raised-chicken-in-its-buffet-restaurants/"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "La app enlaza a una página «Internet on board» (no cargable). En 2018 la app daba acceso inmediato a la wifi sin usuario ni contraseña. [I] Sin datos recientes verificados de tipo de wifi o precio.",
+     "fuente": "https://cruiseandferry.net/articles/viking-line-adds-new-features-to-mobile-app-for-passengers"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 4,
+     "evidencia": "Viking Line Club digital dentro de la app, con saldo de puntos, nivel y ofertas de socio.",
+     "fuente": "https://apps.apple.com/app/id954827314"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 4,
+     "evidencia": "Llave de cabina con el móvil, visita virtual 360° del buque, buques nuevos (Viking Glory) con restaurantes a la carta; check-in sin colas con QR.",
+     "fuente": "https://www.sales.vikingline.com/onboard/viking-line-app/"
+    },
+    "innovacion": {
+     "puntuacion": 4,
+     "evidencia": "Llave de cabina en el teléfono, pre-pedido de bebidas y tiendas abiertas en el móvil; compromiso de sostenibilidad en F&B (pollo ECC 2028, café reciclado, 2025).",
+     "fuente": "https://cyprusshippingnews.com/2025/03/17/viking-line-switching-to-responsibly-raised-chicken-in-its-buffet-restaurants/"
+    },
+    "satisfaccion": {
+     "puntuacion": 5,
+     "evidencia": "EPSI Rating 2025 (18/06/2025, ~1.100 encuestados): primera en satisfacción en todas sus rutas (Finlandia-Suecia 77,6 vs 75,9 media; Estonia 76,4), primera en lealtad, relación calidad-precio 80,0 vs 78,3 y 78 % usa la app (+9 pp). EPSI 2026 (19/05/2026, 1.238 encuestados): primera global 76,8 vs 75,9, calidad-precio 79,7 vs 77,5, Helsinki-Tallin 78,1 (mejor ruta); 78 % usuarios activos de la app.",
+     "fuente": "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351"
+    }
+   },
+   "buenas_practicas": [
+    "Una sola app que cubre check-in, vales de comida, llave de cabina, tiendas y club: 78 % de adopción",
+    "Consultar tienda y precios antes de embarcar para dirigir la compra a bordo",
+    "Vales de comida emitidos en el check-in (QR) para evitar cobros en barra",
+    "Medir satisfacción con encuesta independiente (EPSI) y comunicarla"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "EPSI 2025: satisfacción Finlandia-Suecia",
+     "valor": "77,6 (media del sector 75,9); Estonia 76,4",
+     "fuente": "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351"
+    },
+    {
+     "etiqueta": "EPSI 2025: calidad-precio",
+     "valor": "80,0 vs 78,3 de media (confirmado)",
+     "fuente": "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351"
+    },
+    {
+     "etiqueta": "Uso de la app",
+     "valor": "78 % de pasajeros (+9 pp en un año, 2025); 78 % usuarios activos en 2026",
+     "fuente": "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351"
+    },
+    {
+     "etiqueta": "EPSI 2026 global",
+     "valor": "76,8 vs 75,9 (primera); en la ruta Finlandia-Suecia Tallink Silja fue mejor (77,8 vs 75,8)",
+     "fuente": "https://www.epsi-finland.org/wp-content/uploads/2026/05/epsi-laivaliikenne-2026-study-summary.pdf"
+    },
+    {
+     "etiqueta": "App Store",
+     "valor": "1,9/5 (9 valoraciones)",
+     "fuente": "https://apps.apple.com/app/id954827314"
+    }
+   ],
+   "aplicacion_fred_olsen": "Replicar el modelo «una app/PWA para todo»: billete + pedido + puntos; el QR del pedido como vale. Medir uso de la función (objetivo: adopción, no descargas).",
+   "riesgos_o_limites": "EPSI mide el mercado finlandés (rutas largas con cabina); el margen sobre la media es pequeño (~1 punto). La valoración 1,9/5 en App Store sobre 9 reseñas no es representativa. No se verificó pedido de comida desde el asiento.",
+   "confianza": "alta",
+   "en_tablero": true
+  },
+  {
+   "id": "condor-ferries",
+   "nombre": "Condor Ferries",
+   "sector": "naviera",
+   "pais": "Reino Unido / Islas del Canal",
+   "logo_texto": "CO",
+   "resumen": "Ferry rápido entre Reino Unido, Islas del Canal y Francia. Usa un sistema de buzzer para que los pasajeros de la Horizon Lounge esperen en su asiento hasta que su comida está lista. Es pedido sin cola, pero sin móvil.",
+   "click_collect": "Parcial: buzzer en la Horizon Lounge. El pasajero pide en barra, vuelve a su asiento y recibe un aviso cuando la comida está lista. No hay pedido ni pago móvil verificado.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 0,
+     "evidencia": "Sin información verificada.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "pedido_movil": {
+     "puntuacion": 2,
+     "evidencia": "Buzzer en la Horizon Lounge; elimina la espera en la cola pero no el pedido en barra.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 3,
+     "evidencia": "Zona premium Horizon Lounge con asiento mejorado y servicio sin esperas.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "innovacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    },
+    "satisfaccion": {
+     "puntuacion": 0,
+     "evidencia": "Feefo muestra 4.571 reseñas históricas pero Condor ya no es cliente activo y no hay puntuación vigente; sin premio ni encuesta verificable.",
+     "fuente": "https://feefo.com/en-GB/reviews/condor-ferries"
+    }
+   },
+   "buenas_practicas": [
+    "Avisar al pasajero (buzzer) para que no tenga que quedarse en la cola",
+    "Vincular la espera sin cola al asiento premium"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Mensaje de marca",
+     "valor": "«No need to wait around anymore»",
+     "fuente": "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did"
+    }
+   ],
+   "aplicacion_fred_olsen": "El móvil como buzzer: aviso push o pantalla en el asiento cuando el pedido está listo. Barato y sin necesidad de personal adicional.",
+   "riesgos_o_limites": "Es un sistema físico limitado a un salón; no es pedido móvil.",
+   "confianza": "baja",
+   "en_tablero": false
+  },
+  {
+   "id": "po-ferries",
+   "nombre": "P&O Ferries",
+   "sector": "naviera",
+   "pais": "Reino Unido",
+   "logo_texto": "PO",
+   "resumen": "Operador del Canal. Su app de 2018 sustituyó los billetes en papel e incluía guía del buque y avisos de ofertas de bares, restaurantes y tiendas. Sin evidencia de pedido a bordo.",
+   "click_collect": "No verificado. El artículo de lanzamiento (2018) solo cita avisos de ofertas a bordo.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App con billete móvil, estado del puerto, guía interactiva del buque y ofertas (2018).",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "Sin evidencia de pedido a bordo en la app.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 0,
+     "evidencia": "Solo cambio de divisa sin comisión.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "innovacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos recientes.",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    "satisfaccion": {
+     "puntuacion": 0,
+     "evidencia": "Sin dato de satisfacción verificable en la búsqueda rápida (el WTA 2025 la cita solo como nominada frente a DFDS).",
+     "fuente": "https://www.worldtravelawards.com/award-worlds-leading-ferry-operator-2025"
+    }
+   },
+   "buenas_practicas": [
+    "Avisar de las ofertas de a bordo antes de embarcar"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Lanzamiento de la app",
+     "valor": "18 junio 2018",
+     "fuente": "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience"
+    },
+    {
+     "etiqueta": "Reserve & Collect de duty free (World Duty Free)",
+     "valor": "Sí: reservar online hasta 1 mes antes, recoger y pagar a bordo; actualmente solo en Hull-Rotterdam; reservar ≥7 días antes desbloquea más productos online",
+     "fuente": "https://www.poferries.com/en/routes/hull-to-rotterdam/onboard/shopping"
+    },
+    {
+     "etiqueta": "Irish Ferries (solo referencia)",
+     "valor": "Click & Collect de duty free (Aelia): pedir por adelantado, recoger a bordo, en Dublín-Holyhead, Rosslare-Pembroke y Dover-Calais",
+     "fuente": "https://help.irishferries.com/en/support/solutions/articles/80001128070-duty-free-shopping"
+    },
+    {
+     "etiqueta": "Nominación WTA 2025",
+     "valor": "Nominada a World's Leading y Europe's Leading Ferry Operator 2025 (ganó DFDS)",
+     "fuente": "https://www.worldtravelawards.com/award-europes-leading-ferry-operator-2025"
+    }
+   ],
+   "aplicacion_fred_olsen": "Avisos pre-embarque de ofertas (ej. desayuno de la mañana) para dirigir demanda a la barra.",
+   "riesgos_o_limites": "Información de 2018; sin evidencia actual.",
+   "confianza": "baja",
+   "en_tablero": false
+  },
+  {
+   "id": "bc-ferries",
+   "nombre": "BC Ferries",
+   "sector": "naviera",
+   "pais": "Canadá",
+   "logo_texto": "BF",
+   "resumen": "Gran operador de trayectos cortos en Columbia Británica. Su primera app oficial (mar. 2023) cubre reservas, check-in y estado de salidas, sin pedido de comida mencionado.",
+   "click_collect": "No tiene (en lo hallado). El artículo de lanzamiento de la app no cita pedido de comida.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App con reservas, check-in con código de barras, favoritos, reserva rápida, estado de salidas y espacio estimado en cubierta.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "Sin pedido de comida en el lanzamiento de la app (13/03/2023).",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "innovacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    "satisfaccion": {
+     "puntuacion": 0,
+     "evidencia": "BC Ferries publica informes de encuesta de clientes (el más reciente, junio de 2026, PDF de 28 páginas) pero no se pudo leer la cifra.",
+     "fuente": "https://www.bcferries.com/about/cst_archive.html"
+    }
+   },
+   "buenas_practicas": [
+    "Información en tiempo real de espacio disponible en la app"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Lanzamiento de la app",
+     "valor": "13 marzo 2023",
+     "fuente": "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/"
+    },
+    {
+     "etiqueta": "Informe de satisfacción de clientes",
+     "valor": "Último informe publicado: junio 2026 (cifra no extraída)",
+     "fuente": "https://www.bcferries.com/about/cst_archive.html"
+    }
+   ],
+   "aplicacion_fred_olsen": "Información de capacidad en tiempo real para anticipar picos de demanda en barra.",
+   "riesgos_o_limites": "Sin evidencia de F&B móvil; incluida solo como contraste.",
+   "confianza": "baja",
+   "en_tablero": false
+  },
+  {
+   "id": "hurtigruten",
+   "nombre": "Hurtigruten",
+   "sector": "crucero",
+   "pais": "Noruega",
+   "logo_texto": "HU",
+   "resumen": "Línea costera/expedición noruega. Su app a bordo ofrece programa diario, reservas de excursiones y servicios, pero no pedido de comida ni pago confirmados.",
+   "click_collect": "No verificado: la página de la app no menciona pedido de comida, pago ni wifi.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App tras embarcar: mis reservas, programa del día, servicios a bordo e información del buque.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "Sin pedido de comida en la descripción de la app.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "oferta_fyb": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "conectividad": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "innovacion": {
+     "puntuacion": 0,
+     "evidencia": "Sin datos.",
+     "fuente": "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app"
+    },
+    "satisfaccion": {
+     "puntuacion": 4,
+     "evidencia": "Which? Recommended Provider (marzo 2026, Ocean Cruises); Telegraph Travel Awards 2025 (mejor línea de pequeños buques) y The Travel Awards 2025 (The Times) mejor operador de cruceros oceánicos. Trustpilot 3,7/5 sobre 525 reseñas, polarizado (39 % una estrella). Premios de la línea de cruceros/expedición, no del servicio costero.",
+     "fuente": "https://www.hurtigruten.com/en-gb/why-hurtigruten/our-history/awards-accolades"
+    }
+   },
+   "buenas_practicas": [
+    "Programa del día dentro de la app, con acceso solo tras embarcar"
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Trustpilot",
+     "valor": "3,7/5 (525 reseñas)",
+     "fuente": "https://br.trustpilot.com/review/hurtigruten.com"
+    }
+   ],
+   "aplicacion_fred_olsen": "Mostrar horarios de apertura de barra y cierre de pedidos dentro del mismo flujo.",
+   "riesgos_o_limites": "Modelo de crucero; sin valor directo como referencia de pedido.",
+   "confianza": "baja",
+   "en_tablero": false
+  },
+  {
+   "id": "brittany-ferries",
+   "nombre": "Brittany Ferries",
+   "sector": "naviera",
+   "pais": "Francia / Reino Unido",
+   "logo_texto": "BF",
+   "en_tablero": true,
+   "resumen": "Naviera francesa de cruceros-ferry (12 líneas Canal de la Mancha, Irlanda y España) con más de 1,2 millones de pasajeros en verano de 2025. Es la referencia europea en reputación y fidelidad de marca, y su restauración a bordo es multiformato (à la carte, self-service, café), pero su capa digital de pedido es muy modesta. Útil como espejo de cómo se construye satisfacción sin pedido móvil.",
+   "click_collect": "No tiene pedido móvil a bordo. Lo más cercano: promoción Food Pass (crédito de comida de 25 GBP a Francia / 40 GBP a España al reservar un retorno en tarifa Flexi) y una reserva de mesa en pruebas, solo para socios Club Voyage, dentro de la app (notas de versión 1.5.5/1.5.7).",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 3,
+     "evidencia": "App gratuita (v1.6.0) con reserva, notificaciones, recordatorios previos a la travesía e info de restauración, ocio e instalaciones del barco; reserva de mesa en pruebas para Club Voyage. En la App Store no tiene valoraciones suficientes para mostrar nota.",
+     "fuente": "https://apps.apple.com/us/app/-/id6448023132"
+    },
+    "pedido_movil": {
+     "puntuacion": 2,
+     "evidencia": "No hay pedido a bordo desde el móvil. Existen la reserva de mesa en pruebas (Club Voyage) y el Food Pass prepagado; el FAQ oficial no menciona pre-reserva de comida en los puntos de venta.",
+     "fuente": "https://www.brittany-ferries.co.uk/offers/free-food-pass"
+    },
+    "oferta_fyb": {
+     "puntuacion": 4,
+     "evidencia": "En el Bretagne: restaurante à la carte (Les Abers), self-service (La Baule), café (La Gerbe de Locronan), dos bares y boutiques. Which? da 3 estrellas en comida y bebida al conjunto del Reino Unido y 2 en varias rutas; la oferta es amplia pero la calidad percibida es media.",
+     "fuente": "https://www.directferries.com/brittany_ferries_bretagne.htm"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "Un agregador secundario indica 90 minutos gratis por pasajero y paquetes de pago (de 4 a 28 USD); Direct Ferries dice que se vende «Wi-Fi time» en información; una nota antigua de ITTN decía gratis en zonas públicas. [I] Información contradictoria entre fuentes y sin fuente oficial actual; se puntúa como estándar.",
+     "fuente": "https://seatwifi.com/brittany-ferries-ferry-wifi-cost"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Club Voyage (programa de fidelidad citado en la app); tiendas a bordo aceptan euros y libras, efectivo o tarjeta, con precios en ambas monedas. Sin datos públicos de puntos ni de pago móvil.",
+     "fuente": "https://apps.apple.com/us/app/-/id6448023132"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 4,
+     "evidencia": "Cruceros-ferry con camarotes y entretenimiento (cabaret, piano bar, zona infantil). Which? valora los camarotes de Portsmouth–Saint-Malo con 5 estrellas y la naviera es «Which? Recommended Provider» con 71 % de satisfacción en el Reino Unido (1.081 respuestas).",
+     "fuente": "https://www.which.co.uk/reviews/ferries/article/best-and-worst-ferries-for-2024-aZBMl6S5heSv"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "Nuevos buques híbridos GNL-eléctricos Saint-Malo (feb 2025) y Guillaume de Normandie, objetivo -30 % de emisiones en 2030. En digital, solo la app informativa y el piloto de reserva de mesa; sin IA ni pedido móvil.",
+     "fuente": "https://www.actunautique.com/2025/10/un-ete-2025-sous-le-signe-de-la-croissance-et-de-la-transition-energetique-pour-brittany-ferries.html"
+    },
+    "satisfaccion": {
+     "puntuacion": 5,
+     "evidencia": "Trustpilot 4,5/5 con 95.330 opiniones (74 % de 5 estrellas) y respuesta al 97 % de las negativas; «Mejor Compañía de Ferry» de lectores de The Telegraph durante una década según su web corporativa; British Travel Awards 2025 a mejor ferry; encuesta propia mensual desde hace más de 15 años. Sin porcentaje de uso de la app ni nota de app.",
+     "fuente": "https://corporate.brittany-ferries.com/en/service-satisfaction.aspx"
+    }
+   },
+   "buenas_practicas": [
+    "Medir satisfacción cada mes durante más de 15 años y publicarla (barómetro) como activo de marca.",
+    "Responder a casi todas las reseñas negativas en menos de 24 h (97 % en Trustpilot).",
+    "Prepagar crédito de comida ligado a una tarifa (Food Pass) para trasladar gasto antes del embarque.",
+    "Probar la reserva de mesa solo con socios del club antes de abrirla a todos (piloto acotado)."
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros verano 2025 (jun-sep)",
+     "valor": "más de 1,2 millones en 12 líneas (+3 %)",
+     "fuente": "https://www.actunautique.com/2025/10/un-ete-2025-sous-le-signe-de-la-croissance-et-de-la-transition-energetique-pour-brittany-ferries.html"
+    },
+    {
+     "etiqueta": "Trustpilot (UK)",
+     "valor": "4,5/5 con 95.330 opiniones",
+     "fuente": "https://nz.trustpilot.com/review/www.brittany-ferries.co.uk"
+    },
+    {
+     "etiqueta": "Which? 2024, satisfacción Reino Unido",
+     "valor": "71 % (1.081 respuestas); comida y bebida 3 estrellas",
+     "fuente": "https://www.which.co.uk/reviews/ferries/article/best-and-worst-ferries-for-2024-aZBMl6S5heSv"
+    },
+    {
+     "etiqueta": "Telegraph Travel Awards",
+     "valor": "«Best Ferry Company», una década según la naviera; premios fundados en 1998; en 2019 era su 7.º año consecutivo",
+     "fuente": "https://brittanyferriesnewsroom.com/brittany-ferries-voted-the-best-seven-times-running/"
+    },
+    {
+     "etiqueta": "Food Pass (promoción 2026)",
+     "valor": "25 GBP a Francia, 40 GBP a España con retorno Flexi",
+     "fuente": "https://www.brittany-ferries.co.uk/offers/free-food-pass"
+    }
+   ],
+   "aplicacion_fred_olsen": "Copiar la lógica de piloto acotado: lanzar el Click & Collect primero a un grupo cerrado (residentes/bono canario o socios) antes de abrirlo a todo el pasaje. Reutilizar el Food Pass como bono prepagado de consumo ligado al billete en un trayecto de 80 min. Publicar un barómetro propio de satisfacción para dar credibilidad al servicio nuevo.",
+   "riesgos_o_limites": "No copiar el modelo de restaurante à la carte y bares en directo, pensado para travesías nocturnas de 8-24 h. Su capa digital es informativa, no transaccional. Su fama viene de camarotes y experiencia, no de la app.",
+   "confianza": "media"
+  },
+  {
+   "id": "corsica-linea",
+   "nombre": "Corsica Linea",
+   "sector": "naviera",
+   "pais": "Francia",
+   "logo_texto": "CL",
+   "en_tablero": true,
+   "resumen": "Naviera privada de Ajaccio (desde 2016) que une Marsella con Córcega y el norte de África, con unos 900.000 pasajeros al año y 350 M EUR de facturación en 2025. Destaca por reconocimiento (Travelers' Choice y 4,4/5 en Avis Vérifiés), pero no se ha encontrado app de pasajero ni pedido móvil. Sirve de contraejemplo: buena satisfacción con digital básico.",
+   "click_collect": "No tiene. No se encontró app móvil de pasajero ni pedido a bordo en fuentes oficiales; la web ofrece zona de cliente y pago fraccionado, y las reseñas mencionan comidas prepagadas en la reserva.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 2,
+     "evidencia": "El FAQ oficial no menciona app ni billete móvil y solo lista web, formulario y teléfono; hay zona de cliente (Mon compte) y pago en cuotas. [I] No se encontró app propia en las tiendas.",
+     "fuente": "https://www.corsicalinea.com/plus/faq?question=peut-on-utiliser-telephone-montrer-billet"
+    },
+    "pedido_movil": {
+     "puntuacion": 1,
+     "evidencia": "Sin pedido móvil. Solo se observan menús prepagados en la reserva (mencionados en reseñas) y plataforma de ocio con catálogo digital de productos (Moment, 2019), sin pago.",
+     "fuente": "https://www.moment.tech/news/corsica-linea-partners-with-moment"
+    },
+    "oferta_fyb": {
+     "puntuacion": 3,
+     "evidencia": "A Galeotta: restaurante de servicio completo, oferta de comida rápida, bar central y bar «paillote». Reseñas: servicio de restaurante bien valorado, pero alguna menciona opciones limitadas y caras y poca variedad en el desayuno.",
+     "fuente": "https://www.corsicalinea.com/app/uploads/2026/06/230601-Dossier-Presse-Inauguration-A-Galeotta-060123-1.pdf"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "Wi-Fi en toda la flota con FMC GlobalSat: portal informativo gratuito y cuatro paquetes de pago (mensajería, redes, navegación y videollamadas, streaming), a contratar antes de la salida y pagar online (agosto 2026).",
+     "fuente": "https://observalgerie.com/2026/08/13/voyage/corsica-linea-propose-une-nouvelle-offre-a-ses-passagers/"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Visa, Mastercard y Amex (desde 60 EUR), pago en cuotas sin intereses con 20 % de entrada. Programa Linea FID solo en Francia–Argelia: 10 puntos por euro fuera de verano y bono de 80 EUR a los 10.000 puntos (desde 13/02/2026). Sin fidelización para Córcega.",
+     "fuente": "https://observalgerie.com/2026/08/25/voyage/traversees-france-algerie-corsica-linea-double-les-avantages-de-son-programme-de-fidelite/"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 3,
+     "evidencia": "Plataforma de ocio Moment en toda la flota (películas, juegos y sección infantil en el propio móvil, sin dispositivos de la naviera), TV en camarote, zona infantil y recreativa; reseñas elogian personal, limpieza y puntualidad.",
+     "fuente": "https://www.moment.tech/news/corsica-linea-partners-with-moment"
+    },
+    "innovacion": {
+     "puntuacion": 3,
+     "evidencia": "A Galeotta (ene 2023) es el primer ferry a GNL que sirve a Córcega; segundo E-Flexer previsto para 2026 según fuente secundaria; objetivo -40 % de CO2 en 2030. Lo digital es de pasajero estándar (Wi-Fi de pago, ocio sin app propia).",
+     "fuente": "https://www.corsicalinea.com/app/uploads/2026/06/230601-Dossier-Presse-Inauguration-A-Galeotta-060123-1.pdf"
+    },
+    "satisfaccion": {
+     "puntuacion": 4,
+     "evidencia": "Travelers' Choice 2025 de TripAdvisor (tercera certificación tras 2022 y 2024), 90 % de satisfacción en mayo-junio y 95 % en acogida de la tripulación; Avis Vérifiés 4,4/5 con 104.475 opiniones. Sin nota de app ni % de uso de app.",
+     "fuente": "https://www.corsicalinea.com/en/actualite/travelers-choice-2025-corsica-linea-de-nouveau-certifiee-par-tripadvisor/"
+    }
+   },
+   "buenas_practicas": [
+    "Ofrecer un portal de Wi-Fi gratuito con información del viaje y vender la conexión de pago antes de la salida.",
+    "Usar el correo transaccional como canal publicitario: billete (95 % de apertura), embarque día anterior (80 %) y bienvenida (80 %).",
+    "Medir satisfacción con tercero verificado (Avis Vérifiés, TripAdvisor) y comunicar los porcentajes.",
+    "Plataforma de ocio en el móvil del pasajero sin hardware a bordo (modelo Moment)."
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros anuales",
+     "valor": "unos 900.000 (unos 600.000 en Córcega)",
+     "fuente": "https://www.corsicalinea.com/app/uploads/2026/06/PLAQUETTE-LA-REGIE-CORSICA-LINEA_compressed.pdf"
+    },
+    {
+     "etiqueta": "Facturación 2025",
+     "valor": "350 M EUR",
+     "fuente": "https://www.corsicalinea.com/app/uploads/2026/06/PLAQUETTE-LA-REGIE-CORSICA-LINEA_compressed.pdf"
+    },
+    {
+     "etiqueta": "Aperturas de correo",
+     "valor": "billete 95 %, embarque D-1 80 %, bienvenida 80 %, newsletter 38 %",
+     "fuente": "https://www.corsicalinea.com/app/uploads/2026/06/PLAQUETTE-LA-REGIE-CORSICA-LINEA_compressed.pdf"
+    },
+    {
+     "etiqueta": "Avis Vérifiés",
+     "valor": "4,4/5 sobre 104.475 opiniones (desde 2017)",
+     "fuente": "https://www.avis-verifies.com/avis-clients/corsicalinea.com"
+    },
+    {
+     "etiqueta": "Travelers' Choice 2025",
+     "valor": "90 % satisfacción, 95 % acogida tripulación, 6 barcos en la línea con Córcega, top 10 % de TripAdvisor",
+     "fuente": "https://www.corsicalinea.com/en/actualite/travelers-choice-2025-corsica-linea-de-nouveau-certifiee-par-tripadvisor/"
+    }
+   ],
+   "aplicacion_fred_olsen": "Usar el correo de confirmación y el del día anterior como puerta de entrada al Click & Collect (enlace al pedido web sin app), aprovechando aperturas del 80-95 % que Corsica Linea ya demuestra. Además, medir y publicar satisfacción con un tercero verificado desde el primer día del servicio.",
+   "riesgos_o_limites": "Poca evidencia digital de pasajero: no usarla como referencia de pedido móvil. Fidelización limitada a la ruta Argelia. Travesías largas (Marsella–Córcega 5-12 h) con restaurante tradicional, no aplicable a 80 min.",
+   "confianza": "media"
+  },
+  {
+   "id": "eckero-line",
+   "nombre": "Eckerö Line",
+   "sector": "naviera",
+   "pais": "Finlandia / Estonia (Helsinki–Tallin)",
+   "logo_texto": "EL",
+   "en_tablero": true,
+   "resumen": "Naviera finlandesa-alandesa con un solo buque de pasaje, MS Finlandia, en Helsinki–Tallin (unas 2 h 20 min) y 2,07 millones de pasajeros en 2024. Es el caso más cercano en formato (travesía corta, un barco, app propia) y el más transparente en cifras de adopción. Su app integra check-in, llave de camarote y añadido de comidas a la reserva.",
+   "click_collect": "Pre-pedido, no at-seat: en la web y la app se añaden comidas (buffet), camarotes o asientos Horizon a la reserva, y existe un pre-pedido de tienda (alcohol, confitería). La tarjeta de embarque lleva información personalizada de comida. No se encontró pedido durante la travesía.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 4,
+     "evidencia": "App nativa (Digia, jun 2021) con reservas, tarjeta de embarque con QR, llave de camarote, chatbot en estonio y añadido de comidas, camarotes o lounge. Según el caso de Supercharge, el 25 % de los check-ins y 385 reservas diarias pasan por la app. En App Store: 5,0 con solo 3 valoraciones, sin valor estadístico.",
+     "fuente": "https://supercharge.io/us/work/details/ecker%C3%B6-line-streamlined-ferry-trips-with-digital-travel-companion"
+    },
+    "pedido_movil": {
+     "puntuacion": 2,
+     "evidencia": "Pre-pedido de comida en la reserva (comprar a bordo es más caro, según la propia naviera) y pre-pedido de tienda. Sin pedido ni recogida durante la travesía. Los Horizon Seats se compran en la reserva o en información, sin servicio al asiento.",
+     "fuente": "https://www.eckeroline.com/en-eating-onboard"
+    },
+    "oferta_fyb": {
+     "puntuacion": 4,
+     "evidencia": "Buffet Eckerö (comida finlandesa de temporada, menú cambia 5-6 veces al año, opciones sin gluten y sin lactosa, bebidas incluidas) y Bistro-cafetería Satama (desayuno, ensaladas, hamburguesas, pasteles). En 2026 renovaron las líneas de servicio del buffet para acortar colas y añadieron unas 150 plazas en Satama.",
+     "fuente": "https://www.eckeroline.com/eckero-line-is-renewing"
+    },
+    "conectividad": {
+     "puntuacion": 3,
+     "evidencia": "Un agregador secundario indica Wi-Fi gratuito; la web oficial solo menciona Wi-Fi más rápido en los Horizon Seats. [I] Estándar del sector, sin datos de proveedor ni velocidad.",
+     "fuente": "https://www.eckeroline.com/eckero-line-is-renewing"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 3,
+     "evidencia": "Usa la tarjeta S-Etukortti del grupo minorista S como fidelización externa (Horizon Seats a 8 EUR en vez de 10 EUR). No tiene programa propio ni puntos propios documentados.",
+     "fuente": "https://www.eckeroline.com/horizon-seats"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 4,
+     "evidencia": "Horizon Seats: 150 plazas reservables de pago en cubierta 9 con vistas, mesa abatible, USB, Wi-Fi mejor y máquina de café; además lounge, Captain's Lounge, música en directo y zona infantil.",
+     "fuente": "https://www.eckeroline.com/horizon-seats"
+    },
+    "innovacion": {
+     "puntuacion": 4,
+     "evidencia": "MS Finlandia será el primer buque híbrido del golfo de Finlandia con batería (enero 2026, ahorro de combustible de cerca del 3 %, 500-600 t/año); app con información personalizada de comida y chatbot; asientos de pago como producto nuevo.",
+     "fuente": "https://www.eckeroline.com/blog/eckero-lines-ms-finlandia-to-be-the-first-partly-electrified-passenger-ship-on-the-gulf-of-finland"
+    },
+    "satisfaccion": {
+     "puntuacion": 2,
+     "evidencia": "Evidencia débil: Trustpilot 2,2/5 con solo 14 opiniones (la empresa no invita a reseñar, no representativo), app con 3 valoraciones. No se hallaron premios ni encuestas independientes. Sí hay un dato de adopción: 25 % de check-ins por app (Supercharge).",
+     "fuente": "https://nz.trustpilot.com/review/www.eckeroline.fi"
+    }
+   },
+   "buenas_practicas": [
+    "Mostrar en la tarjeta de embarque información personalizada de comida (la reserva ya pagada).",
+    "Vender el asiento reservado como producto (Horizon Seats 10 EUR) y añadirlo en la misma reserva.",
+    "Reformar la línea de servicio físico (más líneas, nuevo layout) además de digitalizar para reducir colas.",
+    "Decir abiertamente que la comida comprada a bordo es más cara que la prepagada con el billete."
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros 2024",
+     "valor": "2.069.812 (2023: 2.058.510)",
+     "fuente": "https://www.eckeroline.com/blog/eckero-line-passenger-and-freight-volumes-increased-in-2024"
+    },
+    {
+     "etiqueta": "Check-ins por la app",
+     "valor": "25 % (385 reservas diarias en app)",
+     "fuente": "https://supercharge.io/us/work/details/ecker%C3%B6-line-streamlined-ferry-trips-with-digital-travel-companion"
+    },
+    {
+     "etiqueta": "Descargas de la app en su lanzamiento",
+     "valor": "más de 20.000 (2021, en plena pandemia)",
+     "fuente": "https://digia.com/en/customers/eckero-line"
+    },
+    {
+     "etiqueta": "Usuarios de la app (dato contradictorio)",
+     "valor": "4.000 diarios en una sección y 4.000 mensuales en otra de la misma página de Supercharge",
+     "fuente": "https://supercharge.io/us/work/details/ecker%C3%B6-line-streamlined-ferry-trips-with-digital-travel-companion"
+    },
+    {
+     "etiqueta": "Horizon Seats",
+     "valor": "150 plazas, 10 EUR por trayecto (8 EUR con S-Etukortti)",
+     "fuente": "https://www.eckeroline.com/horizon-seats"
+    }
+   ],
+   "aplicacion_fred_olsen": "Es el modelo más trasladable: añadir el pedido del Click & Collect dentro del flujo de reserva y mostrarlo en la tarjeta de embarque/QR. Ofrecer un asiento con carga y mesa como paquete «asiento + pedido» para zona de recogida. Medir y publicar el porcentaje de check-ins o pedidos por móvil como KPI.",
+   "riesgos_o_limites": "La app pesa más en check-in y reserva que en F&B; sin pedido móvil real a bordo. Su satisfacción pública es débil o inexistente. La cifra de usuarios del caso de Supercharge es inconsistente y es material de proveedor, no verificada por la naviera.",
+   "confianza": "media"
+  },
+  {
+   "id": "attica-group",
+   "nombre": "Attica Group (Superfast, Blue Star, Hellenic Seaways, Anek)",
+   "sector": "naviera",
+   "pais": "Grecia",
+   "logo_texto": "AG",
+   "en_tablero": true,
+   "resumen": "Mayor grupo naviero de pasaje griego, con 37 buques a 31/12/2025, 6,96 millones de pasajeros y 756,9 M EUR de facturación en 2025. Su app seamore (2025) unifica reserva, check-in y Seasmiles en cuatro marcas, y firmó Starlink para toda la flota. Tiene la fidelización más completa del benchmark, pero sin pedido móvil a bordo.",
+   "click_collect": "No tiene pedido a bordo. Sí vende comidas con el billete (web, app seamore, call center o agencia, hasta 20 % de descuento) y paquetes de Wi-Fi; la app añadió «servicios adicionales» en la v1.0.35.",
+   "evaluacion": {
+    "digital_app": {
+     "puntuacion": 4,
+     "evidencia": "seamore (lanzada en 2025): un solo login para Superfast, Blue Star, Hellenic Seaways y Anek; pasajeros, vehículos y mascotas guardados, web check-in, historial, taxi Freenow y parking Parkaround en Pireo, biometría. Versión iOS 1.0.37 con lanzamientos frecuentes. En App Store, sin valoraciones suficientes para mostrar nota.",
+     "fuente": "https://www.attica-group.com/en/press-releases/attica-group-elevates-passenger-travel-experience-through-seamore-mobile-app"
+    },
+    "pedido_movil": {
+     "puntuacion": 2,
+     "evidencia": "Prepago de comidas con el billete con descuento de hasta el 20 % (web, seamore, teléfono o agencias); no se encontró pedido ni recogida a bordo. Existe la plataforma de infoentretenimiento @sea con portal digital a bordo.",
+     "fuente": "https://www.superfast.com/en-gb/faqs-frequently-asked-questions-superfast-ferries/available-onboard-services"
+    },
+    "oferta_fyb": {
+     "puntuacion": 3,
+     "evidencia": "Restaurante à la carte con tres platos de menú (cerdo, pollo, vegetal) en Superfast, y compras en bares, self-service y restaurantes à la carte que suman puntos. [I] Sin detalle público por buque ni producto local.",
+     "fuente": "https://www.bluestarferries.com/en-gb/faqs-frequently-asked-questions-blue-star-ferries/seasmiles-loyalty-programme"
+    },
+    "conectividad": {
+     "puntuacion": 4,
+     "evidencia": "Contrato de 5 años (+5 opcionales) con Orbyt Global y Telenor Maritime por 7 M EUR en toda la flota con Starlink LEO combinado con GEO, 4G y 5G (dic 2024, finalización prevista en 2025). Paquetes prepago de 5 a 14 EUR en rutas nacionales y gratis en rutas del Sarónico. No se verificó el despliegue completo.",
+     "fuente": "https://www.attica-group.com/en/press-releases/nees-ypersyghkhrones-ypiresies-wifi-onboard"
+    },
+    "pagos_fidelizacion": {
+     "puntuacion": 5,
+     "evidencia": "Seasmiles: tres niveles (Blue, Silver, Gold), 1 seasmile por euro gastado en bares, restaurantes y tiendas a bordo, canje en app/web/teléfono/agencias, descuentos de hasta 30 % en billetes y hasta 35 % en más de 350 socios; quioscos a bordo; pagos IRIS en la app. Distinguido como mayor programa de fidelización del transporte marítimo griego.",
+     "fuente": "https://www.bluestarferries.com/en-gb/faqs-frequently-asked-questions-blue-star-ferries/seasmiles-loyalty-programme"
+    },
+    "experiencia_abordo": {
+     "puntuacion": 0,
+     "evidencia": "No se obtuvo información verificable y específica de ocio y confort a bordo en las fuentes consultadas; solo la infoplataforma @sea (premio Oro en Tourism Awards 2020).",
+     "fuente": "https://www.superfast.com/de-de/nachrichten-ankundigungen/2020/seven-awards-for-attica-group-in-tourism-awards-2020"
+    },
+    "innovacion": {
+     "puntuacion": 4,
+     "evidencia": "Programa de digitalización (unos 7 M EUR gastados y unos 9 M restantes, con impacto estimado en EBITDA de 5-7 M EUR para mejorar experiencia y aumentar ingresos a bordo) y fijación dinámica de precios (4-5 M EUR de EBITDA). Starlink en flota y app seamore en 2025. Plan de 2026: vender 6 buques viejos y comprar 3 más nuevos.",
+     "fuente": "https://www.attica-group.com/storage/media/press-releases/company-presentation-february-2025-wgq4-9lqF.pdf"
+    },
+    "satisfaccion": {
+     "puntuacion": 3,
+     "evidencia": "Reconocimientos de marketing y fidelización (21 premios en Tourism & Travel Marketing Awards, mayo 2025; Seasmiles plata en 2020) pero sin encuesta independiente de satisfacción de pasajeros ni nota de app ni % de uso de app. [I] Puntuación por premios, no por clientes.",
+     "fuente": "https://www.hellenicseaways.gr/en-gb/news/2025/1605-attica-group-honoured-with-21-awards-at-the-tourism-travel-marketing-awards-2025"
+    }
+   },
+   "buenas_practicas": [
+    "Un único login y una única app para cuatro marcas, con perfil de pasajeros, vehículos y mascotas guardado.",
+    "Premiar con puntos cada euro gastado en bares, restaurantes y tiendas a bordo (1 € = 1 punto).",
+    "Dar descuento (hasta 20 % en restaurante, 10 % en Wi-Fi) por comprarlos con el billete.",
+    "Sumar servicios de puerta a puerta (taxi, parking) en la propia app.",
+    "Publicar notas de versión frecuentes que añaden servicios (1.0.35 servicios adicionales)."
+   ],
+   "datos_clave": [
+    {
+     "etiqueta": "Pasajeros 2025",
+     "valor": "6,96 millones (-4,5 %)",
+     "fuente": "https://www.attica-group.com/en/press-releases/financial-results-for-the-fiscal-year-2025"
+    },
+    {
+     "etiqueta": "Facturación y resultado 2025",
+     "valor": "756,9 M EUR de ingresos; pérdida neta de 33,7 M EUR; flota de 37 buques",
+     "fuente": "https://www.attica-group.com/en/press-releases/financial-results-for-the-fiscal-year-2025"
+    },
+    {
+     "etiqueta": "Wi-Fi Starlink en flota",
+     "valor": "7 M EUR de inversión, 5 años + 5 opcionales",
+     "fuente": "https://www.hellenicshippingnews.com/attica-group-chooses-orbyt-global-and-telenor-maritime-to-deliver-the-industrys-best-onboard-connectivity/"
+    },
+    {
+     "etiqueta": "Programa de digitalización",
+     "valor": "unos 7 M EUR gastados, unos 9 M restantes, impacto EBITDA 5-7 M EUR (presentación feb 2025)",
+     "fuente": "https://www.attica-group.com/storage/media/press-releases/company-presentation-february-2025-wgq4-9lqF.pdf"
+    },
+    {
+     "etiqueta": "Seasmiles",
+     "valor": "billetes hasta 30 % y socios hasta 35 % (más de 350); puntos válidos 24 meses",
+     "fuente": "https://www.bluestarferries.com/en-gb/faqs-frequently-asked-questions-blue-star-ferries/seasmiles-loyalty-programme"
+    }
+   ],
+   "aplicacion_fred_olsen": "Conectar el Click & Collect al programa de fidelización existente: que cada pedido sume puntos y que el cupón de prepago funcione como descuento al reservar el billete (modelo 20 % de Superfast). Mantener un solo perfil de usuario entre web, app y pedido para no pedir datos otra vez.",
+   "riesgos_o_limites": "No tiene pedido móvil a bordo ni cifras de uso de la app: no es referencia de at-seat. Programa multimarca y red de socios griegos no replicable. Grupo con pérdidas en 2025 por costes ambientales; la app no tiene nota pública.",
+   "confianza": "media"
+  }
+ ],
+ "tendencias": [
+  {
+   "titulo": "El gasto a bordo es el motor de ingresos del pasaje marítimo",
+   "descripcion": "En Tallink, restaurante y tienda supusieron el 48 % de los ingresos de 2025, por delante de los billetes (29 %).",
+   "fuente": "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf"
+  },
+  {
+   "titulo": "Presión sobre el gasto: el consumo a bordo se resiente",
+   "descripcion": "Tallink atribuye a la débil confianza del consumidor la caída de 1,0 M€ en venta a bordo del T2 2026 pese a que restaurante y tienda representan el 49 % de los ingresos. Reducir fricción en la compra gana valor.",
+   "fuente": "https://image.tallink.com/image/upload/grupp/documents/interim-reports/2026/tallink-grupp-q2-2026-presentation-v2.pdf"
+  },
+  {
+   "titulo": "Conectividad por satélite LEO como base de los servicios digitales",
+   "descripcion": "Baleària (con Eurona, 2024), Fred. Olsen (2025) y Corsica Ferries (VAVE, nov. 2025) mejoran la conectividad con Starlink o nubes locales; Stena apostó antes por enlace radio a costa.",
+   "fuente": "https://alicanteplaza.es/alicanteplaza/balearia-y-eurona-se-unen-para-mejorar-la-experiencia-de-conectividad-a-bordo-con-un-servicio-wifi-pionero"
+  },
+  {
+   "titulo": "La app como llave, billete y monedero",
+   "descripcion": "Corsica Ferries usa el móvil de llave de camarote; Baleària ofrece Easy Pass (QR) para embarcar, verificar identidad y pagar; Tallink guarda el billete en Apple Wallet.",
+   "fuente": "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html"
+  },
+  {
+   "titulo": "Pre-pedido y pre-reserva como primer paso hacia el pedido móvil",
+   "descripcion": "DFDS vende comidas por adelantado con ahorro, y Molslinjen permite pre-pedir en una ruta corta. Pocas navieras han llegado al pedido en asiento.",
+   "fuente": "https://apps.apple.com/app/id665224819"
+  },
+  {
+   "titulo": "Proveedores de pedido QR dirigidos específicamente a ferris",
+   "descripcion": "Jamezz comercializa pedido por QR desde asiento/camarote sin descargar app, kioscos y tablets para tripulación. Declara hasta +35 % de ingresos F&B por travesía y hasta -70 % de colas (cifras del proveedor, no verificadas).",
+   "fuente": "https://jamezz.com/industries/ferries"
+  },
+  {
+   "titulo": "Fidelización integrada con compras a bordo",
+   "descripcion": "Baleària Club da puntos dobles por comprar en la app y los canjea por servicios a bordo; Club One tiene 3,6 M de socios; Stena MORE y Viking Line muestran puntos en la app.",
+   "fuente": "https://www.balearia.com/es/viajar-con-balearia/la-app-de-balearia"
+  },
+  {
+   "titulo": "Consolidación y presión competitiva en Canarias",
+   "descripcion": "Baleària anuncia 45 M€ en tres años para digitalización, confort y flota tras integrar Armas.",
+   "fuente": "https://www.balearia.com/en/press-room/press-releases/balearia-takes-effective-control-armas-trasmediterranea-canary-islands-consolidates-leadership-spain"
+  },
+  {
+   "titulo": "Asiento reservado de pago como nuevo producto a bordo",
+   "descripcion": "Eckerö Line vende 150 Horizon Seats en cubierta 9 a 10 EUR por trayecto (8 EUR con tarjeta S), con vistas, mesa, USB y Wi-Fi mejor, reservables en la misma compra del billete. Convierte el asiento en producto y deja el pedido de comida como complemento natural de esa zona.",
+   "fuente": "https://www.eckeroline.com/horizon-seats"
+  },
+  {
+   "titulo": "App de grupo multimarca con servicios de puerta a puerta",
+   "descripcion": "Attica Group unifica cuatro navieras con un solo login en seamore, incorpora taxi (Freenow) y parking (Parkaround) y actualiza cada pocas semanas. El pasajero pasa a ser cliente de un ecosistema y no de un barco.",
+   "fuente": "https://www.hellenicseaways.gr/en-gb/seamore"
+  },
+  {
+   "titulo": "Nuevos buques híbridos y de GNL como parte del relato de marca",
+   "descripcion": "Brittany Ferries (Saint-Malo y Guillaume de Normandie, GNL-eléctricos), Corsica Linea (A Galeotta, primer ferry a GNL en Córcega) y Eckerö Line (batería en MS Finlandia, enero 2026) comunican la sostenibilidad junto con la experiencia a bordo.",
+   "fuente": "https://www.eckeroline.com/blog/eckero-lines-ms-finlandia-to-be-the-first-partly-electrified-passenger-ship-on-the-gulf-of-finland"
+  },
+  {
+   "titulo": "La app con alta adopción es el diferencial de satisfacción",
+   "descripcion": "Viking Line lidera el EPSI 2025 y 2026 y el 78 % de sus pasajeros usa la app (+9 pp en 2025), que integra check-in QR, vales de comida, llave de cabina, tiendas y club. La diferencia con la media del sector es pequeña (~1 punto), pero sostenida.",
+   "fuente": "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351"
+  },
+  {
+   "titulo": "Reserva online con recogida a bordo en retail marítimo",
+   "descripcion": "P&O (World Duty Free, Hull-Rotterdam) e Irish Ferries (Aelia, 3 rutas) permiten pedir antes de embarcar y recoger a bordo: es un precedente directo de click & collect en ferris, aunque limitado a duty free.",
+   "fuente": "https://help.irishferries.com/en/support/solutions/articles/80001128070-duty-free-shopping"
+  },
+  {
+   "titulo": "Consolidación en Canarias: Baleària compra Armas y su logística",
+   "descripcion": "Control efectivo de los activos canarios (18/05/2026), cierre de Estrecho y Alborán (1/07/2026) y compra de Transportes Intercanarios (23/07/2026): Baleària construye un grupo integrado pasaje-carga-logística terrestre en el archipiélago.",
+   "fuente": "https://www.shippax.com/en/news/baleria-canarias-acquires-transportes-intercanarios.aspx"
+  }
+ ],
+ "insights": [
+  {
+   "titulo": "El at-seat móvil es un hueco real en navieras",
+   "descripcion": "En los 17 operadores revisados no se verificó ningún pedido desde el asiento con el móvil. Baleària usa pantallas fijas con ticket, Molslinjen pre-pedido y Condor un buzzer.",
+   "accion_para_solucion": "Presentar la solución como primera en pedido a bordo con el móvil en Canarias, con claridad sobre qué demuestran los benchmarks y qué no."
+  },
+  {
+   "titulo": "El patrón ganador es «pedir y pagar, recibir QR y recoger»",
+   "descripcion": "El ticket QR de recogida de Baleària y los vales de DFDS evitan cobrar en barra.",
+   "accion_para_solucion": "Diseñar un QR/número de pedido único que la barra escanea en segundos; sin cobro ni datos que teclear."
+  },
+  {
+   "titulo": "Un aviso reemplaza la cola",
+   "descripcion": "Condor ya usa buzzers y Corsica Ferries puede enviar avisos a móviles concretos con VAVE.",
+   "accion_para_solucion": "Notificación o pantalla de estado «tu pedido está listo» sobre la wifi existente; pedido en cola con tiempo estimado."
+  },
+  {
+   "titulo": "Lanzar sin descargar app",
+   "descripcion": "La app de Fred. Olsen tiene 2,0/5 en App Store, mientras que Jamezz opera por QR sin descarga y Tallink o Molslinjen superan 4,5/5 con apps integradas.",
+   "accion_para_solucion": "PWA/web ligera abierta desde un QR en el asiento, con login opcional vía Tarjeta Plus."
+  },
+  {
+   "titulo": "La fidelización mueve la adopción",
+   "descripcion": "Baleària da puntos dobles por comprar en su app; Club One mueve 3,6 M de socios.",
+   "accion_para_solucion": "Sumar Plus Points al primer pedido y permitir canjear puntos por café o bollería canaria."
+  },
+  {
+   "titulo": "Pre-pedido para suavizar picos",
+   "descripcion": "DFDS y Molslinjen ya aplican pre-reserva. Con 1.100 pasajeros en 80 min, la demanda se concentra al zarpar.",
+   "accion_para_solucion": "Ventanas de recogida escalonadas (ej. «10:05-10:10») asignadas automáticamente para repartir carga en barra sin ampliar plantilla."
+  },
+  {
+   "titulo": "Diseñar para conectividad inestable",
+   "descripcion": "Jamezz guarda pedidos en local cuando el wifi es limitado; Corsica Ferries mantiene contenido en servidor a bordo; Tallink muestra horarios sin conexión.",
+   "accion_para_solucion": "Menú cacheado y cola local de pedidos; el flujo debe funcionar aunque falle el enlace satélite en tramos concretos."
+  },
+  {
+   "titulo": "Producto canario como diferenciador de F&B",
+   "descripcion": "Baleària también presume de producto local y de opciones vegana, celíaca y halal. La catering del Bajamar es lo peor valorado (3,8/5, 5 reseñas).",
+   "accion_para_solucion": "Menú digital con etiquetas KM0, alérgenos y filtros dietéticos que Fred. Olsen ya puede ofrecer; sirve de gancho UX y de identidad."
+  },
+  {
+   "titulo": "Urgencia competitiva defendible ante el jurado",
+   "descripcion": "Baleària Canarias tiene 45 M€ y un ecosistema (Club, Easy Pass, Smart Ship) que puede trasladar a Canarias.",
+   "accion_para_solucion": "Incluir en el pitch un plan de piloto en 1 buque en pocas semanas, y mostrar cómo escalar al resto de la flota."
+  },
+  {
+   "titulo": "El correo del día anterior es un canal con aperturas del 80-95 %",
+   "descripcion": "Corsica Linea publica que su correo de billete se abre el 95 %, el de embarque del día anterior el 80 % y el de bienvenida el 80 %, frente al 38 % de su newsletter. Son datos de la propia naviera para vender publicidad, pero muestran dónde está la atención del pasajero.",
+   "accion_para_solucion": "Incluir en los correos de confirmación y de recordatorio un enlace al Click & Collect y al pre-pedido, sin esperar a que el pasajero abra una app."
+  },
+  {
+   "titulo": "El pre-pedido se vende con un incentivo de precio",
+   "descripcion": "Superfast ofrece hasta un 20 % de descuento al pagar comidas con el billete, Brittany Ferries regala un Food Pass de 25-40 GBP con la tarifa Flexi y Eckerö Line avisa de que la comida comprada a bordo es más cara. En los tres casos se premia pagar antes.",
+   "accion_para_solucion": "Lanzar el Click & Collect con un incentivo claro para pedir antes de subir (por ejemplo un bono de bienvenida o un pequeño descuento frente a la caja) y medir cuántos pedidos se hacen antes y durante la travesía."
+  },
+  {
+   "titulo": "Nadie en el benchmark publica la valoración real de su app",
+   "descripcion": "Las apps de Brittany Ferries y de Attica no muestran nota por falta de valoraciones y la de Eckerö Line tiene 5,0 con solo 3. Corsica Linea no tiene app localizada. El único dato de adopción es el 25 % de check-ins por app de Eckerö Line, aportado por un proveedor.",
+   "accion_para_solucion": "Convertir la medición en diferencial: definir desde el piloto KPIs públicos (porcentaje de pedidos por móvil, tiempo de espera, valoración) y pedir reseña en tienda tras el primer pedido."
+  },
+  {
+   "titulo": "Las cifras de mejora de proveedores no son evidencia de navieras",
+   "descripcion": "Jamezz anuncia hasta un 35 % más de ingresos de F&B y un 70 % menos de colas en picos, pero la propia página no identifica ningún cliente naviero y atribuye las cifras a datos genéricos del sector.",
+   "accion_para_solucion": "En el pitch citar solo cifras con fuente de operador (por ejemplo el 25 % de check-ins por app de Eckerö Line o los aperturas del 80-95 % de Corsica Linea) y presentar las de proveedor como hipótesis de objetivo, no como resultado."
+  },
+  {
+   "titulo": "Resolver la cola también con obra física, no solo con app",
+   "descripcion": "Eckerö Line renovó en 2026 las líneas de servicio del buffet con más líneas y nueva disposición para acortar colas y amplió Satama en unas 150 plazas, a la vez que mejora su app.",
+   "accion_para_solucion": "Diseñar el punto de recogida del Click & Collect como mostrador o casillero separado de la barra, para que quien pide por móvil no compita con la cola de caja."
+  },
+  {
+   "titulo": "Fred. Olsen parte con ventaja de percepción sobre Armas",
+   "descripcion": "Trustpilot: Fred. Olsen 4,0/5 (163 reseñas) frente a Armas Trasmediterránea 1,7/5 (27 reseñas, 88 % una estrella). Baleària grupo está en 4,2 (20.175 reseñas) y su marca puede elevar la percepción de Canarias. Muestras pequeñas y autoseleccionadas.",
+   "accion_para_solucion": "En el pitch, enmarcar el pedido móvil como defensa de una ventaja de satisfacción que Baleària Canarias intentará cerrar; medir NPS/valoración antes y después del piloto."
+  },
+  {
+   "titulo": "La app de Fred. Olsen (2,0/5) es el punto débil de la experiencia digital",
+   "descripcion": "Viking Line logra 78 % de uso de app con funciones útiles en el momento (vales, tiendas, cabina), mientras la app de Fred. Olsen tiene 2,0/5 con 46 valoraciones y Trustpilot recoge fallos de login y de recuperación de reservas.",
+   "accion_para_solucion": "Lanzar el pedido como PWA vía QR, con login opcional por Tarjeta Plus, y fijar un KPI de adopción (% de pasajeros que piden) además de la valoración."
+  },
+  {
+   "titulo": "El click & collect ya existe en ferris, pero en duty free y no en comida",
+   "descripcion": "P&O e Irish Ferries ofrecen reserva online y recogida a bordo; Viking Line permite pre-pedir bebidas para compras a bordo. Aún no se verificó pedido de comida desde el asiento en ningún operador.",
+   "accion_para_solucion": "Usar estos casos como validación de demanda y presentar el pedido de cafetería con recogida por QR como extensión natural al F&B."
+  }
+ ],
+ "fuentes": [
+  "https://www.fredolsen.es/en/fast-ferry-tenerife-gran-canaria",
+  "https://rtvc.es/fred-olsen-record-4-millones-pasajeros-el-2025/",
+  "https://apps.apple.com/es/app/fred-olsen-express/id716585432",
+  "https://www.directferries.es/fred_olsen_express_bajamar_express.htm",
+  "https://www.balearia.com/en/press-room/press-releases/balearia-takes-effective-control-armas-trasmediterranea-canary-islands-consolidates-leadership-spain",
+  "https://www.balearia.com/es/viajar-con-balearia/la-app-de-balearia",
+  "https://www.ferryhopper.com/es/blog/ferry-news/balearia-smart-ship-ferries-services",
+  "https://alicanteplaza.es/alicanteplaza/balearia-y-eurona-se-unen-para-mejorar-la-experiencia-de-conectividad-a-bordo-con-un-servicio-wifi-pionero",
+  "https://www.balearia.com/documents/d/guest/dosier-corporativo-balearia-2026_esp-1-",
+  "https://www.stenaline.co.uk/stena-line-app",
+  "https://www.rivieramm.com/news-content-hub/stena-line-to-install-high-speed-wifi-on-38-ships-74103",
+  "https://www.dfds.com/en/passenger-ferries/offers/pre-catering",
+  "https://apps.apple.com/app/id1447470946",
+  "https://apps.apple.com/us/app/tallink-silja-line/id1107519850",
+  "https://image.tallink.com/image/upload/grupp/documents/Factsheet/factsheet-july-2026.pdf",
+  "https://image.tallink.com/image/upload/grupp/documents/interim-reports/2026/tallink-grupp-q2-2026-presentation-v2.pdf",
+  "https://apps.apple.com/app/id665224819",
+  "https://www.molslinjen.com/timetable/aarhus-to-odden",
+  "https://www.tourmag.com/Corsica-Ferries-renforce-son-offre-estivale-2026-et-accelere-sa-transformation-digitale_a131627.html",
+  "https://thedigitalship.com/news/maritime-satellite-communications/corsica-ferries-takes-vave/",
+  "https://cruiseandferry.net/articles/viking-line-adds-new-features-to-mobile-app-for-passengers",
+  "https://condorferries.co.uk/help-info/condor-in-the-community/you-said-we-did",
+  "https://www.cruiseandferry.net/articles/po-ferries-launches-mobile-app-to-improve-customer-experience",
+  "https://www.westcoasttraveller.com/bc-ferries-launches-app-for-quicker-booking-checking-in-and-trip-management/",
+  "https://www.hurtigruten.com/nb-no/hjelp/mer-informasjon/app",
+  "https://jamezz.com/industries/ferries",
+  "https://www.corsicalinea.com/en/actualite/travelers-choice-2025-corsica-linea-de-nouveau-certifiee-par-tripadvisor/",
+  "https://corporate.brittany-ferries.com/en/service-satisfaction.aspx",
+  "https://brittanyferriesnewsroom.com/brittany-ferries-voted-the-best-seven-times-running/",
+  "https://supercharge.io/us/work/details/ecker%C3%B6-line-streamlined-ferry-trips-with-digital-travel-companion",
+  "https://www.attica-group.com/en/press-releases/attica-group-elevates-passenger-travel-experience-through-seamore-mobile-app",
+  "https://apps.apple.com/us/app/-/id6448023132",
+  "https://nz.trustpilot.com/review/www.brittany-ferries.co.uk",
+  "https://www.which.co.uk/reviews/ferries/article/best-and-worst-ferries-for-2024-aZBMl6S5heSv",
+  "https://www.brittany-ferries.co.uk/offers/free-food-pass",
+  "https://www.directferries.com/brittany_ferries_bretagne.htm",
+  "https://seatwifi.com/brittany-ferries-ferry-wifi-cost",
+  "https://www.actunautique.com/2025/10/un-ete-2025-sous-le-signe-de-la-croissance-et-de-la-transition-energetique-pour-brittany-ferries.html",
+  "https://www.corsicalinea.com/plus/faq?question=peut-on-utiliser-telephone-montrer-billet",
+  "https://www.corsicalinea.com/app/uploads/2026/06/230601-Dossier-Presse-Inauguration-A-Galeotta-060123-1.pdf",
+  "https://www.corsicalinea.com/app/uploads/2026/06/PLAQUETTE-LA-REGIE-CORSICA-LINEA_compressed.pdf",
+  "https://www.avis-verifies.com/avis-clients/corsicalinea.com",
+  "https://www.moment.tech/news/corsica-linea-partners-with-moment",
+  "https://observalgerie.com/2026/08/13/voyage/corsica-linea-propose-une-nouvelle-offre-a-ses-passagers/",
+  "https://observalgerie.com/2026/08/25/voyage/traversees-france-algerie-corsica-linea-double-les-avantages-de-son-programme-de-fidelite/",
+  "https://observalgerie.com/2026/03/31/voyage/corsica-linea-nouvelle-annonce-sur-le-paiement-des-billets/",
+  "https://www.eckeroline.com/en-eating-onboard",
+  "https://www.eckeroline.com/eckero-line-is-renewing",
+  "https://www.eckeroline.com/horizon-seats",
+  "https://www.eckeroline.com/blog/eckero-line-passenger-and-freight-volumes-increased-in-2024",
+  "https://www.eckeroline.com/blog/eckero-lines-ms-finlandia-to-be-the-first-partly-electrified-passenger-ship-on-the-gulf-of-finland",
+  "https://eckeroline.com/how-to-check-in",
+  "https://digia.com/en/customers/eckero-line",
+  "https://apps.apple.com/us/app/ecker%C3%B6-line/id1549196091",
+  "https://nz.trustpilot.com/review/www.eckeroline.fi",
+  "https://www.attica-group.com/en/press-releases/financial-results-for-the-fiscal-year-2025",
+  "https://www.attica-group.com/storage/media/press-releases/company-presentation-february-2025-wgq4-9lqF.pdf",
+  "https://www.attica-group.com/en/press-releases/nees-ypersyghkhrones-ypiresies-wifi-onboard",
+  "https://www.hellenicshippingnews.com/attica-group-chooses-orbyt-global-and-telenor-maritime-to-deliver-the-industrys-best-onboard-connectivity/",
+  "https://www.bluestarferries.com/en-gb/faqs-frequently-asked-questions-blue-star-ferries/seasmiles-loyalty-programme",
+  "https://www.hellenicseaways.gr/en-gb/seamore",
+  "https://www.superfast.com/en-gb/faqs-frequently-asked-questions-superfast-ferries/available-onboard-services",
+  "https://apps.apple.com/ly/app/seamore/id6742025746",
+  "https://www.superfast.com/de-de/nachrichten-ankundigungen/2020/seven-awards-for-attica-group-in-tourism-awards-2020",
+  "https://www.hellenicseaways.gr/en-gb/news/2025/1605-attica-group-honoured-with-21-awards-at-the-tourism-travel-marketing-awards-2025",
+  "https://news.cision.com/viking-line-abp/r/survey--viking-line-is-tops-in-customer-satisfaction-on-all-its-routes,c4165351",
+  "https://news.cision.com/viking-line-abp/r/survey--viking-line-has-the-most-satisfied-and-loyal-customers---and-gives-the-most-value-for-the-mo,c4349484",
+  "https://www.epsi-finland.org/wp-content/uploads/2026/05/epsi-laivaliikenne-2026-study-summary.pdf",
+  "https://www.worldtravelawards.com/award-worlds-leading-ferry-operator-2025",
+  "https://www.worldtravelawards.com/award-europes-leading-ferry-operator-2025",
+  "https://www.worldtravelawards.com/profile-27351-dfds",
+  "https://www.dfds.com/en/about/media/news/dfds-retains-title-as-worlds-leading-ferry-operator",
+  "https://www.dfds.com/en/about/media/news/we-are-the-worlds-and-europes-leading-ferry-operator",
+  "https://dfds.com/en-gb/passenger-ferries/onboard/dover-calais/wifi",
+  "https://dfds.com/en/passenger-ferries/onboard/wifi",
+  "https://apps.apple.com/app/id954827314",
+  "https://www.sales.vikingline.com/onboard/viking-line-app/",
+  "https://cyprusshippingnews.com/2025/03/17/viking-line-switching-to-responsibly-raised-chicken-in-its-buffet-restaurants/",
+  "https://uk.trustpilot.com/review/fredolsen.es",
+  "https://www.que.es/2024/06/27/fred-olsen-express-es-galardonada-en-los-premios-atlantico-hoy-por-su-contribucion-al-transporte-en-canarias/",
+  "https://diariodeavisos.elespanol.com/canariasenred/fred-olsen-express-unica-naviera-en-espana-de-pasajeros-y-carga-con-certificaciones-iso-en-calidad-y-seguridad-laboral/",
+  "https://www.balearia.com/es/sala-prensa/notas-prensa/balearia-toma-el-control-efectivo-de-armas-trasmediterranea-en-canarias-y-consolida-su-liderazgo-en-espana",
+  "https://www.balearia.com/en/press-room/press-releases/balearia-completes-acquisition-naviera-armas-trasmediterranea-incorporating-assets-in-strait-and-alboran-regions",
+  "https://www.shippax.com/en/news/baleria-canarias-acquires-transportes-intercanarios.aspx",
+  "https://www.lavozdelanzarote.com/en/ekonomus/economy/balearia-canarias-buys-another-armas-company-to-reinforce-its-leadership-in-the-archipelago_244939_102.html",
+  "https://se.trustpilot.com/review/armastrasmediterranea.com",
+  "https://www.balearia.com/es/web/baleariacanarias/viaja-con-app",
+  "https://www.balearia.com/es/web/baleariacanarias/rutas-horarios/ferry-a-tenerife",
+  "https://www.directferries.de/naviera_armas_volcan_de_tamasite.htm",
+  "https://uk.trustpilot.com/review/balearia.com",
+  "https://apps.apple.com/it/app/bale%C3%A0ria-viaggia-in-traghetto/id476264273",
+  "https://uk.trustpilot.com/review/stenaline.com",
+  "https://uk.trustpilot.com/review/molslinjen.dk",
+  "https://au.trustpilot.com/review/corsica-ferries.fr",
+  "https://feefo.com/en-GB/reviews/condor-ferries",
+  "https://www.bcferries.com/about/cst_archive.html",
+  "https://br.trustpilot.com/review/hurtigruten.com",
+  "https://www.hurtigruten.com/en-gb/why-hurtigruten/our-history/awards-accolades",
+  "https://www.poferries.com/en/routes/hull-to-rotterdam/onboard/shopping",
+  "https://help.irishferries.com/en/support/solutions/articles/80001128070-duty-free-shopping"
+ ]
+}
