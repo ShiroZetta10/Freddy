@@ -47,7 +47,7 @@ function Arquitectura() {
       {[84, 164, 244].map((y) => (
         <line key={y} x1={182} y1={y} x2={296} y2={130} stroke="#0b3478" strokeWidth={1.5} markerEnd="url(#ar)" markerStart="url(#ar)" />
       ))}
-      <text x={250} y={104} textAnchor="middle" fontSize={10.5} fill="#5d6779">
+      <text x={238} y={78} textAnchor="middle" fontSize={10.5} fill="#5d6779" stroke="#eef3fb" strokeWidth={4} paintOrder="stroke">
         wifi del barco
       </text>
       {/* Ágora a bordo (diseño principal) */}

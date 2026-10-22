@@ -94,13 +94,16 @@ export default function App() {
             <NavLink to="/" end>
               Inicio
             </NavLink>
-            {ENTREGABLES.map((e) => (
+            {ENTREGABLES.filter((e) => e.id !== 'prototipo').map((e) => (
               <NavLink key={e.id} to={e.ruta} className={({ isActive }) => [isActive || (e.id === 'benchmark' && enBenchmark) ? 'active' : '', e.id === 'prototipo' ? 'nav-proto' : ''].join(' ')}>
                 {e.titulo.replace('Plan de ', '')}
               </NavLink>
             ))}
             <NavLink to="/futuro">Futuro</NavLink>
             <NavLink to="/stack">Stack</NavLink>
+            <NavLink to="/prototipo" className={({ isActive }) => `nav-proto${isActive ? ' active' : ''}`}>
+              Prototipo
+            </NavLink>
           </nav>
         </div>
         {enBenchmark && (
