@@ -14,6 +14,16 @@ export type Pantalla = {
   kpis?: { l: string; v: string }[]
 }
 
+/** Mensaje al cliente por un canal (WhatsApp, email, notificación push…) en ese momento del viaje. */
+export type Canal = {
+  tipo: 'whatsapp' | 'email' | 'push' | 'wifi'
+  de: string
+  asunto?: string
+  hora: string
+  lineas: string[] // párrafos; las líneas que empiezan por "→ " se pintan como enlace/botón FredOnBoard
+  nuevo?: string // qué añade FredOnBoard al mensaje actual de Fred. Olsen
+}
+
 export type Paso = {
   fase: Fase
   /** posición en la ruta 0..1 para el barco de la barra de progreso */
@@ -25,6 +35,7 @@ export type Paso = {
   solucion: string
   mvp: boolean
   pantalla: Pantalla
+  canales?: Canal[]
 }
 
 export type Perfil = {
@@ -55,6 +66,21 @@ export const PERFILES: Perfil[] = [
         dolor: 'Hoy no sabe qué hay a bordo ni a qué hora conviene ir a la cafetería.',
         solucion: 'Un único enlace con su viaje, su asiento y lo que puede pedir. Sin registro.',
         mvp: true,
+        canales: [
+          {
+            tipo: 'email',
+            de: 'Fred. Olsen Express',
+            asunto: 'Confirmación de tu reserva FO7K2Q · Santa Cruz → Agaete',
+            hora: 'Miércoles 21:10',
+            lineas: [
+              'Hola, Carmen: tu reserva está confirmada.',
+              'Localizador: FO7K2Q · Trayecto: Santa Cruz de Tenerife – Agaete · Salida: jueves 08:00 · Asiento 42C.',
+              'No es necesario imprimir tu billete. Solo debes presentar tu propia documentación.',
+              '→ Tu viaje con FredOnBoard: pide tu desayuno y recógelo sin colas',
+            ],
+            nuevo: 'Bloque FredOnBoard en el email de confirmación que ya se envía.',
+          },
+        ],
         pantalla: {
           titulo: 'Hola, Carmen',
           sub: 'Santa Cruz → Agaete · jueves 08:00 · Asiento 42C',
@@ -76,6 +102,21 @@ export const PERFILES: Perfil[] = [
         dolor: 'Al zarpar, toda la mañana se concentra en la barra: es la franja de más ventas (38 % de la facturación).',
         solucion: 'Pre-pedido con franja: la barra sabe lo que tiene que preparar antes del pico.',
         mvp: true,
+        canales: [
+          {
+            tipo: 'email',
+            de: 'FredOnBoard · Fred. Olsen Express',
+            asunto: 'Tu pedido #214 para el jueves está confirmado',
+            hora: 'Miércoles 21:12',
+            lineas: [
+              'Café cortado y bocadillo de pollo gourmet · 7,62 € (pagado).',
+              'Recógelo de 08:15 a 08:20 en la Cafetería Proa (cubierta 5), en el punto FredOnBoard.',
+              'Puedes cancelarlo gratis hasta que empiece tu franja.',
+              '→ Ver o cambiar mi pedido',
+            ],
+            nuevo: 'Confirmación con ticket, franja y política de cancelación.',
+          },
+        ],
         pantalla: {
           titulo: 'Tu desayuno',
           items: [
@@ -96,6 +137,29 @@ export const PERFILES: Perfil[] = [
         dolor: 'Hoy hay incertidumbre: dónde está la cafetería, cuándo llegamos, si hay cola.',
         solucion: 'Estado del viaje en vivo y mapa sencillo del barco, aunque falle la conexión: la web se sirve a bordo.',
         mvp: true,
+        canales: [
+          {
+            tipo: 'whatsapp',
+            de: 'Fred. Olsen Express',
+            hora: 'Jueves 06:30',
+            lineas: [
+              'Hola, Carmen: ya falta muy poco para tu viaje a Agaete. Estamos encantados de acompañarte en esta travesía.',
+              'Datos de tu reserva: Localizador FO7K2Q · Trayecto Santa Cruz de Tenerife – Agaete · Salida 08:00.',
+              'Embarque: al viajar sin vehículo, debes estar lista para embarcar al menos 20 minutos antes de la salida.',
+              'Documentación: no es necesario imprimir tu billete. Solo debes presentar tu propia documentación.',
+              '→ Tu desayuno #214 te espera a bordo de 08:15 a 08:20. Sigue tu viaje con FredOnBoard',
+              'Atención al cliente: 922 290 070 / 928 290 070. ¡Gracias por elegirnos!',
+            ],
+            nuevo: 'El WhatsApp de recordatorio que Fred. Olsen ya envía, con una línea FredOnBoard: el pedido y el enlace al viaje.',
+          },
+          {
+            tipo: 'wifi',
+            de: 'Wifi a bordo · Bajamar Express',
+            hora: 'Jueves 07:45',
+            lineas: ['Bienvenida a bordo. Conectada al wifi gratuito.', '→ Abrir FredOnBoard (no necesitas datos móviles)'],
+            nuevo: 'Página de bienvenida del portal wifi que abre FredOnBoard.',
+          },
+        ],
         pantalla: {
           titulo: 'A bordo del Bajamar Express',
           sub: 'Llegada estimada 09:20 · Mar en calma',
@@ -136,6 +200,15 @@ export const PERFILES: Perfil[] = [
         dolor: 'Esperar de pie sin saber cuándo estará listo.',
         solucion: 'Solo se levanta cuando toca. Recoger es enseñar un QR: sin cobro ni preguntas.',
         mvp: true,
+        canales: [
+          {
+            tipo: 'push',
+            de: 'FredOnBoard',
+            hora: 'Jueves 08:52',
+            lineas: ['Tu pedido #231 está listo', 'Recógelo en el punto FredOnBoard de la Cafetería Proa. Enseña tu QR.'],
+            nuevo: 'Notificación del navegador o de la app; si no hay permiso, aviso dentro de la web.',
+          },
+        ],
         pantalla: {
           titulo: 'Tu pedido #231 está listo',
           sub: 'Punto FredOnBoard · Cafetería Proa',
@@ -153,12 +226,33 @@ export const PERFILES: Perfil[] = [
         dolor: 'Hoy la relación termina al desembarcar: no hay valoración ni motivo para repetir.',
         solucion: 'Cierre del viaje y vínculo con el siguiente: valoración, Plus Points y oferta de desayuno para la vuelta.',
         mvp: false,
+        canales: [
+          {
+            tipo: 'push',
+            de: 'FredOnBoard',
+            hora: 'Jueves 09:05',
+            lineas: ['Llegamos a Agaete en 15 minutos', 'Bus gratuito a Las Palmas a la salida de la terminal.'],
+          },
+          {
+            tipo: 'email',
+            de: 'Fred. Olsen Express',
+            asunto: '¿Qué tal tu viaje, Carmen?',
+            hora: 'Jueves 11:00',
+            lineas: [
+              'Gracias por viajar con nosotros. Aquí tienes el ticket de tus consumos a bordo (9,37 €).',
+              'Has ganado 9 Plus Points con tus pedidos FredOnBoard.',
+              '→ Valora tu experiencia en 10 segundos',
+              '→ Pre-pide tu desayuno para el viaje de vuelta',
+            ],
+            nuevo: 'Email posviaje: ticket, puntos, valoración y siguiente viaje (hoja de ruta).',
+          },
+        ],
         pantalla: {
           titulo: 'Llegamos en 15 min',
           sub: 'Agaete · Bus gratuito a Las Palmas 09:30',
           items: [
             { l: '¿Qué tal tu pedido?', r: '★★★★★', estado: 'info' },
-            { l: 'Plus Points ganados', r: '+76' },
+            { l: 'Plus Points ganados', r: '+9' },
           ],
           cta: 'Pre-pedir para la vuelta',
           nota: 'Fuera del MVP: valoración, puntos y ofertas',

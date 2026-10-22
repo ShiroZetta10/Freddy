@@ -89,7 +89,7 @@ export const ENTREGABLES: Entregable[] = [
     icono: 'phone',
     titulo: 'Prototipo',
     resumen: 'FredOnBoard navegable: la web del pasajero (sin instalar, también dentro de la app), la tablet de barra y el panel del manager.',
-    estado: 'borrador',
+    estado: 'listo',
     respondeA: '«Un prototipo que nos permita entender el servicio completo» (pregunta 1 del reto).',
     incluira: [
       'Pasajero: acceso con el billete (sin cuenta), pre-pedido, carta con stock real, franja de recogida, pago, aviso y QR.',

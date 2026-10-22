@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FASES, PERFILES, Pantalla, Perfil, PerfilId } from '../data/journey'
+import { Canal, FASES, PERFILES, Pantalla, Perfil, PerfilId } from '../data/journey'
 import Icon from '../components/Icon'
 
 function Screen({ p, perfil }: { p: Pantalla; perfil: Perfil }) {
@@ -33,6 +33,33 @@ function Screen({ p, perfil }: { p: Pantalla; perfil: Perfil }) {
         {p.nota && <div className="screen-note">{p.nota}</div>}
       </div>
     </div>
+  )
+}
+
+const CANAL_LABEL: Record<Canal['tipo'], string> = { whatsapp: 'WhatsApp', email: 'Email', push: 'Notificación', wifi: 'Portal wifi' }
+
+function MensajeCanal({ c }: { c: Canal }) {
+  return (
+    <figure className={`msg msg-${c.tipo}`}>
+      <figcaption>
+        <span className={`msg-badge msg-badge-${c.tipo}`}>{CANAL_LABEL[c.tipo]}</span>
+        <b>{c.de}</b>
+        <span className="msg-hora">{c.hora}</span>
+      </figcaption>
+      {c.asunto && <div className="msg-asunto">{c.asunto}</div>}
+      <div className="msg-cuerpo">
+        {c.lineas.map((l) =>
+          l.startsWith('→ ') ? (
+            <span key={l} className="msg-link">
+              {l.slice(2)}
+            </span>
+          ) : (
+            <p key={l}>{l}</p>
+          ),
+        )}
+      </div>
+      {c.nuevo && <div className="msg-nuevo">Novedad FredOnBoard: {c.nuevo}</div>}
+    </figure>
   )
 }
 
@@ -135,6 +162,14 @@ export default function Journey() {
                   {s.solucion}
                 </div>
               </div>
+              {s.canales && (
+                <div className="jr-canales">
+                  <h4>Comunicación con el cliente</h4>
+                  {s.canales.map((c) => (
+                    <MensajeCanal key={c.tipo + c.hora} c={c} />
+                  ))}
+                </div>
+              )}
               <div className="jr-inline-device">
                 <Screen p={s.pantalla} perfil={perfil} />
               </div>

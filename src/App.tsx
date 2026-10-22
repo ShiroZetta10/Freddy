@@ -1,5 +1,5 @@
 import { NavLink, Route, Routes, Link, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import Hub from './pages/Hub'
 import BenchmarkHome from './pages/BenchmarkHome'
 import Datos from './pages/Datos'
@@ -11,6 +11,8 @@ import Metodologia from './pages/Metodologia'
 import EntregablePage from './pages/EntregablePage'
 import Journey from './pages/Journey'
 import AppPrototipo from './app/AppPrototipo'
+// El prototipo se carga aparte para que la web de entregables siga siendo ligera
+const ProtoShell = lazy(() => import('./proto/ProtoShell'))
 import { ENTREGABLES } from './data/entregables'
 import Icon from './components/Icon'
 
@@ -33,6 +35,22 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [pathname])
   const enBenchmark = BENCH_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'))
+
+  // El prototipo se ejecuta a pantalla completa, sin la cabecera ni el pie de la web
+  if (pathname.startsWith('/app/')) {
+    return (
+      <Routes>
+        <Route
+          path="/app/*"
+          element={
+            <Suspense fallback={<div style={{ padding: 40, fontFamily: 'Open Sans, sans-serif', color: '#0b3478' }}>Cargando FredOnBoard…</div>}>
+              <ProtoShell />
+            </Suspense>
+          }
+        />
+      </Routes>
+    )
+  }
 
   return (
     <>
@@ -83,7 +101,6 @@ export default function App() {
           <Route path="/comunicacion" element={<EntregablePage id="comunicacion" />} />
           <Route path="/journey" element={<Journey />} />
           <Route path="/prototipo/*" element={<AppPrototipo />} />
-          <Route path="/app/*" element={<AppPrototipo />} />
           <Route path="/piloto" element={<EntregablePage id="piloto" />} />
           <Route path="*" element={<Hub />} />
         </Routes>

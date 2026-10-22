@@ -317,3 +317,26 @@ ul.clean li { margin-bottom: 4px; }
   .jr-steps { padding-bottom: 0; }
 }
 @media (max-width: 760px) { .jr-sticky { top: 0; position: relative; } }
+
+/* ---------- mensajes al cliente en el user journey ---------- */
+.jr-canales { margin-top: 16px; display: grid; gap: 10px; }
+.jr-canales h4 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0; }
+.msg { margin: 0; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 12px 14px; font-size: 13.5px; max-width: 560px; }
+.msg figcaption { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; font-size: 12.5px; }
+.msg-hora { margin-left: auto; color: var(--muted); font-size: 12px; }
+.msg-badge { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 7px; border-radius: 4px; background: var(--surface-2); color: var(--navy); }
+.msg-badge-whatsapp { background: #dcf8e6; color: #0f6b3c; }
+.msg-badge-email { background: var(--navy-50); color: var(--navy); }
+.msg-badge-push { background: #fff4c2; color: #6b5300; }
+.msg-whatsapp { background: #f3faf5; border-color: #cfe9d8; }
+.msg-whatsapp .msg-cuerpo { background: #fff; border-radius: 0 10px 10px 10px; padding: 10px 12px; box-shadow: 0 1px 1px rgba(0,0,0,.06); }
+.msg-asunto { font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.msg-cuerpo p { margin: 0 0 6px; }
+.msg-link { display: block; margin: 8px 0 4px; padding: 8px 12px; border-radius: 6px; background: var(--yellow); color: var(--navy); font-weight: 700; }
+.msg-whatsapp .msg-link { background: none; padding: 0; color: #0b5cad; text-decoration: underline; }
+.msg-push { background: #1c2433; color: #fff; border-color: #1c2433; border-radius: 16px; }
+.msg-push b, .msg-push .msg-hora { color: #fff; }
+.msg-push .msg-cuerpo p:first-child { font-weight: 700; }
+.msg-nuevo { margin-top: 8px; font-size: 12px; color: var(--navy-3); border-top: 1px dashed var(--line); padding-top: 6px; }
+.msg-push .msg-nuevo { color: #cfd8ea; border-color: rgba(255,255,255,.2); }
+.jr-step { min-height: 80vh; }
