@@ -31,7 +31,7 @@ export default function Simulador() {
     <div className="range-row">
       <label>
         <span>{p.label}</span>
-        <span style={{ color: 'var(--red)' }}>{p.fmt(p.value)}</span>
+        <span style={{ color: 'var(--navy)' }}>{p.fmt(p.value)}</span>
       </label>
       <input type="range" min={p.min} max={p.max} step={p.step ?? 1} value={p.value} onChange={(e) => p.set(+e.target.value)} aria-label={p.label} />
       <div className="tiny muted">{p.help}</div>
@@ -127,11 +127,11 @@ export default function Simulador() {
             </div>
             <div className="legend">
               <span>
-                <span className="dot" style={{ background: 'var(--navy-3)' }} />
+                <span className="dot" style={{ background: 'var(--navy)' }} />
                 compran hoy ({dotsBase})
               </span>
               <span>
-                <span className="dot" style={{ background: 'var(--red)' }} />
+                <span className="dot" style={{ background: 'var(--yellow)' }} />
                 nuevos con Click & Collect ({dotsNew})
               </span>
               <span>

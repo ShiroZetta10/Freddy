@@ -1,13 +1,14 @@
 // Espacio reservado para el prototipo de la app (PWA) de Click & Collect.
 // Vivirá en este mismo repo y bajo la misma web: /#/app (pasajero) y /#/app/barra (tripulación).
 import { Link } from 'react-router-dom'
+import Icon from '../components/Icon'
 
 const PASOS = [
-  ['📱', 'Escanear QR del asiento', 'Abre la web sin instalar nada, por el wifi del barco.'],
-  ['🥪', 'Elegir y pagar', 'Menú corto con lo más vendido, combos KM0, Apple/Google Pay.'],
-  ['🕐', 'Franja de recogida', 'La web asigna la siguiente franja libre según la capacidad de la barra.'],
-  ['🔔', 'Aviso «listo»', 'Estado en vivo y push; el pasajero solo se levanta cuando toca.'],
-  ['✅', 'Recoger con QR', 'Punto «Pedidos móvil», 5 segundos, sin cobro en barra.'],
+  ['qr', 'Escanear QR del asiento', 'Abre la web sin instalar nada, por el wifi del barco.'],
+  ['food', 'Elegir y pagar', 'Menú corto con lo más vendido, combos KM0, Apple/Google Pay.'],
+  ['clock', 'Franja de recogida', 'La web asigna la siguiente franja libre según la capacidad de la barra.'],
+  ['bell', 'Aviso «listo»', 'Estado en vivo y push; el pasajero solo se levanta cuando toca.'],
+  ['check', 'Recoger con QR', 'Punto «Pedidos móvil», 5 segundos, sin cobro en barra.'],
 ]
 
 export default function AppPrototipo() {
@@ -52,7 +53,9 @@ export default function AppPrototipo() {
         <div className="grid">
           {PASOS.map(([i, t, d], k) => (
             <div key={t} className="card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div className="reto-icon" style={{ width: 46, height: 46, fontSize: 22 }}>{i}</div>
+              <div className="reto-icon sm">
+                <Icon name={i} />
+              </div>
               <div>
                 <div className="tiny muted">Paso {k + 1}</div>
                 <strong>{t}</strong>

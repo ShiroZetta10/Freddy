@@ -11,6 +11,7 @@ import Metodologia from './pages/Metodologia'
 import EntregablePage from './pages/EntregablePage'
 import AppPrototipo from './app/AppPrototipo'
 import { ENTREGABLES } from './data/entregables'
+import Icon from './components/Icon'
 
 // Subnavegación del entregable «Benchmark»
 const BENCH_LINKS = [
@@ -27,7 +28,9 @@ const BENCH_PATHS = ['/benchmark', '/datos', '/ranking', '/retos', '/simulador',
 
 export default function App() {
   const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
   const enBenchmark = BENCH_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'))
 
   return (
@@ -35,7 +38,9 @@ export default function App() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link to="/" className="brand">
-            <span className="brand-mark">⚓</span>
+            <span className="brand-mark">
+              <Icon name="anchor" size={18} />
+            </span>
             <span>
               Shiro<small>Zetta10 · Click & Collect</small>
             </span>

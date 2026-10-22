@@ -15,7 +15,7 @@ export type Reto = {
 export const RETOS: Reto[] = [
   {
     id: 'colas',
-    icono: '⏱',
+    icono: 'clock',
     pregunta: '¿Cómo evitamos crear otra cola para recoger?',
     queDiceFredOlsen: 'Franjas de recogida, avisos o un punto de entrega, explicando cómo encaja en el espacio del barco y cómo se validaría.',
     referentes: [
@@ -34,7 +34,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'picos',
-    icono: '📈',
+    icono: 'trend',
     pregunta: '¿Qué pasa si entran muchos pedidos a la vez?',
     queDiceFredOlsen: 'Contemplar la capacidad real del equipo: limitar los pedidos simultáneos o ajustar los tiempos de recogida, de forma justificada.',
     referentes: [
@@ -52,7 +52,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'stock',
-    icono: '📦',
+    icono: 'box',
     pregunta: '¿Cómo sabemos qué productos están disponibles?',
     queDiceFredOlsen: 'Evitar vender agotados y explicar cómo se mantiene la disponibilidad actualizada.',
     referentes: [
@@ -70,7 +70,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'conexion',
-    icono: '📶',
+    icono: 'wifi',
     pregunta: '¿Qué pasa si el barco tiene mala conexión?',
     queDiceFredOlsen: 'Describir la experiencia del pasajero y cómo se evitan los pedidos o pagos duplicados. La conectividad real hay que confirmarla.',
     referentes: [
@@ -88,7 +88,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'integracion',
-    icono: '🔌',
+    icono: 'plug',
     pregunta: '¿Hay que integrarlo con el TPV o los sistemas actuales?',
     queDiceFredOlsen: 'Identificar las integraciones necesarias, sin dar por hecho que habrá integración durante el hackathon.',
     referentes: [
@@ -106,7 +106,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'convivencia',
-    icono: '🤝',
+    icono: 'users',
     pregunta: '¿Cómo atendemos a quien no quiera usar el móvil?',
     queDiceFredOlsen: 'Contemplar a distintos perfiles de pasajero y evitar que un canal perjudique al otro.',
     referentes: [
@@ -124,7 +124,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'errores',
-    icono: '🧾',
+    icono: 'receipt',
     pregunta: '¿Qué hacemos con errores, cancelaciones o problemas de pago?',
     queDiceFredOlsen: 'Cubrir los casos principales con una forma sencilla de resolverlos. Las condiciones de devolución se validan con la empresa.',
     referentes: [
@@ -141,7 +141,7 @@ export const RETOS: Reto[] = [
   },
   {
     id: 'piloto',
-    icono: '🧪',
+    icono: 'flask',
     pregunta: '¿Cómo demostramos que aumentan las ventas?',
     queDiceFredOlsen: 'Un piloto comparado con una situación de referencia: uso, venta por pasajero, importe de pedidos, tiempos de espera y efecto sobre el equipo.',
     referentes: [

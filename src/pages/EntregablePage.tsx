@@ -14,7 +14,7 @@ export default function EntregablePage({ id }: { id: string }) {
           Entregable {e.num} · {ESTADO_LABEL[e.estado]}
         </div>
         <h1>
-          {e.icono} {e.titulo}
+          {e.titulo}
         </h1>
         <p>{e.resumen}</p>
       </div>

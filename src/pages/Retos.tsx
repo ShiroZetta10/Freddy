@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { RETOS } from '../data/retos'
 import { CRITERIOS } from '../data/benchmarks'
+import Icon from '../components/Icon'
 
 export default function Retos() {
   const { hash } = useLocation()
@@ -22,7 +23,9 @@ export default function Retos() {
       <div className="grid">
         {RETOS.map((r, i) => (
           <article key={r.id} id={r.id} className="card reto" style={{ scrollMarginTop: 80 }}>
-            <div className="reto-icon">{r.icono}</div>
+            <div className="reto-icon">
+              <Icon name={r.icono} size={26} />
+            </div>
             <div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 <span className="tag red">Reto {String(i + 1).padStart(2, '0')}</span>
@@ -57,7 +60,7 @@ export default function Retos() {
                 </div>
               </div>
               <div className="small" style={{ marginTop: 12 }}>
-                <strong>📏 KPI del piloto:</strong> {r.kpi}
+                <strong>KPI del piloto:</strong> {r.kpi}
               </div>
             </div>
           </article>
