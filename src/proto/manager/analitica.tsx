@@ -8,13 +8,12 @@ type Tono = 'ok' | 'warn' | 'ko' | 'nd'
 
 function csv(s: ProtoState) {
   const q = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
-  const head = ['pedido', 'localizador', 'pasajero', 'asiento', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'total_eur', 'lineas', 'creado']
+  const head = ['pedido', 'localizador', 'pasajero', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'total_eur', 'lineas', 'creado']
   const rows = s.pedidos.map((p) =>
     [
       p.id,
       p.ticket,
       p.nombre,
-      p.asiento,
       s.cafeterias[p.cafeteria].nombre,
       p.franja * s.ajustes.franjaMin,
       p.estado,

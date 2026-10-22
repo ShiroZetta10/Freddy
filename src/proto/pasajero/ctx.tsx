@@ -104,7 +104,7 @@ function leerCarrito(): LineaPedido[] {
 export function PJProvider({ ticket, onLogout, children }: { ticket: string; onLogout: () => void; children: ReactNode }) {
   const s = useProtoState()
   const billete = s.billetes.find((b) => b.ticket === ticket) as Billete
-  const esOro = billete.asiento.toLowerCase().startsWith('oro')
+  const esOro = billete.clase === 'oro'
 
   const [lang, setLangState] = useState<Lang>(() => (ss.get('pj-lang') as Lang) || billete.idioma)
   const [big, setBigState] = useState(() => ls.get('pj-big') === '1')

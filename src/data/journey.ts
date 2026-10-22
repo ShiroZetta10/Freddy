@@ -64,7 +64,7 @@ export const PERFILES: Perfil[] = [
         titulo: 'Compra el billete y descubre FredOnBoard',
         hace: 'En el email de confirmación aparece «Tu viaje con FredOnBoard». Lo abre sin descargar nada ni crear una cuenta: su localizador de billete la identifica.',
         dolor: 'Hoy no sabe qué hay a bordo ni a qué hora conviene ir a la cafetería.',
-        solucion: 'Un único enlace con su viaje, su asiento y lo que puede pedir. Sin registro.',
+        solucion: 'Un único enlace con su viaje y lo que puede pedir. Sin registro.',
         mvp: true,
         canales: [
           {
@@ -74,7 +74,7 @@ export const PERFILES: Perfil[] = [
             hora: 'Miércoles 21:10',
             lineas: [
               'Hola, Carmen: tu reserva está confirmada.',
-              'Localizador: FO7K2Q · Trayecto: Santa Cruz de Tenerife – Agaete · Salida: jueves 08:00 · Asiento 42C.',
+              'Localizador: FO7K2Q · Trayecto: Santa Cruz de Tenerife – Agaete · Salida: jueves 08:00.',
               'No es necesario imprimir tu billete. Solo debes presentar tu propia documentación.',
               '→ Tu viaje con FredOnBoard: pide tu desayuno y recógelo sin colas',
             ],
@@ -83,7 +83,7 @@ export const PERFILES: Perfil[] = [
         ],
         pantalla: {
           titulo: 'Hola, Carmen',
-          sub: 'Santa Cruz → Agaete · jueves 08:00 · Asiento 42C',
+          sub: 'Santa Cruz → Agaete · jueves 08:00',
           items: [
             { l: 'Bajamar Express', r: '80 min' },
             { l: 'Embarque desde', r: '07:30' },
@@ -133,7 +133,7 @@ export const PERFILES: Perfil[] = [
         progreso: 0.12,
         hora: 'Jueves · 07:45',
         titulo: 'Embarca y FredOnBoard se activa',
-        hace: 'Se conecta al wifi del barco o escanea el QR de su asiento. FredOnBoard reconoce su billete y le muestra el estado del viaje y su pedido.',
+        hace: 'Se conecta al wifi del barco o escanea el QR de su mesa. FredOnBoard reconoce su billete y le muestra el estado del viaje y su pedido.',
         dolor: 'Hoy hay incertidumbre: dónde está la cafetería, cuándo llegamos, si hay cola.',
         solucion: 'Estado del viaje en vivo y mapa sencillo del barco, aunque falle la conexión: la web se sirve a bordo.',
         mvp: true,
@@ -175,7 +175,7 @@ export const PERFILES: Perfil[] = [
         fase: 'A bordo',
         progreso: 0.45,
         hora: 'Jueves · 08:40',
-        titulo: 'Pide desde el asiento',
+        titulo: 'Pide sin levantarse',
         hace: 'A mitad de travesía le apetece un agua. La pide en dos toques. Solo ve productos disponibles y la siguiente franja libre.',
         dolor: 'Levantarse, hacer cola y descubrir que algo se ha agotado. Muchos pasajeros no compran por eso.',
         solucion: 'Stock real, franjas con capacidad y pedido que no se duplica aunque se corte la conexión.',

@@ -56,15 +56,15 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
     ],
   },
   Embarque: {
-    resumen: 'El pasajero busca asiento y wifi. Hay que dar una sola pista clara y repetirla.',
+    resumen: 'El pasajero busca sitio y wifi. Hay que dar una sola pista clara y repetirla.',
     puntos: [
       { icono: 'wifi', canal: 'Portal wifi de On Board Club', texto: 'La página de bienvenida abre FredOnBoard con un botón. Funciona sin datos móviles.' },
-      { icono: 'qr', canal: 'QR en reposacabezas y mesa', texto: 'Escanear abre la carta ya vinculada al asiento. Es la vía para quien no hizo pre-pedido.' },
+      { icono: 'qr', canal: 'QR en mesas y zonas del salón', texto: 'Escanear abre la carta ya vinculada a la cafetería más cercana. Es la vía para quien no hizo pre-pedido.' },
       { icono: 'megaphone', canal: 'Megafonía de bienvenida', texto: 'Un guion de 15 segundos en español e inglés, tras el aviso de seguridad y sin interrumpirlo.' },
     ],
     textos: [
-      { titulo: 'Guion de megafonía · ES (15 s)', lineas: ['«Bienvenidos a bordo del Bajamar Express. Pida desde su asiento: escanee el código de su mesa o abra On Board Club en el wifi. Recoja su pedido sin colas en el punto FredOnBoard de la barra. Buen viaje.»'] },
-      { titulo: 'Megafonía · EN (15 s)', lineas: ['«Welcome aboard the Bajamar Express. Order from your seat: scan the code on your table or open On Board Club on the wifi. Collect your order at the FredOnBoard point at the bar, no queue. Enjoy the trip.»'] },
+      { titulo: 'Guion de megafonía · ES (15 s)', lineas: ['«Bienvenidos a bordo del Bajamar Express. Pida sin levantarse: escanee el código de su mesa o abra On Board Club en el wifi. Recoja su pedido sin colas en el punto FredOnBoard de la barra. Buen viaje.»'] },
+      { titulo: 'Megafonía · EN (15 s)', lineas: ['«Welcome aboard the Bajamar Express. Order without getting up: scan the code on your table or open On Board Club on the wifi. Collect your order at the FredOnBoard point at the bar, no queue. Enjoy the trip.»'] },
     ],
   },
   'A bordo': {
@@ -77,7 +77,7 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
     ],
     textos: [
       { titulo: 'Cartel en la barra', lineas: ['Recoge aquí tu pedido FredOnBoard.', 'Enseña tu QR. Sin cola, sin cobro.', '¿Prefieres pedir en la barra? Seguimos aquí, como siempre.'] },
-      { titulo: 'Texto para el QR del asiento', lineas: ['Pide desde tu asiento.', 'Escanea y recoge sin colas.'] },
+      { titulo: 'Texto para el QR de las mesas', lineas: ['Pide sin levantarte.', 'Escanea y recoge sin colas.'] },
     ],
   },
   'Llegada y después': {
@@ -92,8 +92,8 @@ const CONTACTOS: Record<Fase, { resumen: string; puntos: Pieza[]; textos: Texto[
 }
 
 const PUBLICOS = [
-  { id: 'res', icono: 'route', nombre: 'Residente frecuente', oir: 'Ahorra tiempo en un trayecto que repite: pide desde el asiento y recoge cuando esté listo. Recomprar es un clic.', canal: 'WhatsApp y email del billete; Fred. Olsen Plus' },
-  { id: 'tur', icono: 'search', nombre: 'Turista (ES / EN / DE)', oir: 'Pruebe producto canario sin hacer cola ni hablar con nadie. Todo en su idioma, sin instalar nada.', canal: 'Email de confirmación y QR del asiento, trilingüe' },
+  { id: 'res', icono: 'route', nombre: 'Residente frecuente', oir: 'Ahorra tiempo en un trayecto que repite: pide sin levantarte y recoge cuando esté listo. Recomprar es un clic.', canal: 'WhatsApp y email del billete; Fred. Olsen Plus' },
+  { id: 'tur', icono: 'search', nombre: 'Turista (ES / EN / DE)', oir: 'Pruebe producto canario sin hacer cola ni hablar con nadie. Todo en su idioma, sin instalar nada.', canal: 'Email de confirmación y QR de las mesas, trilingüe' },
   { id: 'jov', icono: 'phone', nombre: 'Joven 12–25 (Tarifa Joven)', oir: 'Se pide como se pide todo: desde el móvil, dentro de On Board Club. Con ventajas ligadas a su billete.', canal: 'On Board Club, wifi a bordo y redes sociales' },
   { id: 'oro', icono: 'shield', nombre: 'Clase Oro', oir: 'Servicio sin fricción, a su ritmo y con atención personal si la prefiere.', canal: 'Email y personal de sala' },
   { id: 'may', icono: 'users', nombre: 'Persona mayor o sin móvil', oir: 'La barra sigue igual, con el trato de siempre. El servicio digital solo quita cola a los demás.', canal: 'Megafonía y cartelería en barra; personal de sala' },
@@ -136,10 +136,10 @@ export default function Comunicacion() {
         <h2 className="section-title">1. Objetivos y mensaje central</h2>
         <div className="callout navy">
           <div className="eyebrow">Mensaje central</div>
-          <strong style={{ fontSize: 22, color: 'var(--navy)' }}>Pide desde tu asiento, recoge sin colas.</strong>
+          <strong style={{ fontSize: 22, color: 'var(--navy)' }}>Pide sin levantarte, recoge sin colas.</strong>
         </div>
         <div className="grid g3" style={{ marginTop: 16 }}>
-          <div className="card"><h3>Sin instalar nada</h3><p className="small muted">Se abre con el billete o el QR del asiento. Sin cuenta ni descargas.</p></div>
+          <div className="card"><h3>Sin instalar nada</h3><p className="small muted">Se abre con el billete o el QR de la mesa. Sin cuenta ni descargas.</p></div>
           <div className="card"><h3>Tú decides cuándo</h3><p className="small muted">Pide antes de embarcar o a bordo, y levántate solo cuando esté listo.</p></div>
           <div className="card"><h3>Producto de aquí</h3><p className="small muted">La carta destaca lo elaborado en Canarias, con nombre de proveedor.</p></div>
         </div>
@@ -219,7 +219,7 @@ export default function Comunicacion() {
             {fase === 'Embarque' && (
               <div className="co-qrcard">
                 <div className="co-qrbox"><Icon name="qr" size={34} /></div>
-                <div><b>Pide desde tu asiento.</b><div className="small muted">Escanea y recoge sin colas. Asiento vinculado.</div></div>
+                <div><b>Pide sin levantarte.</b><div className="small muted">Escanea y recoge sin colas.</div></div>
               </div>
             )}
             {fase === 'A bordo' && (

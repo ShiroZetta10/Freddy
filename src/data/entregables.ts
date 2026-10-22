@@ -60,7 +60,7 @@ export const ENTREGABLES: Entregable[] = [
     estado: 'listo',
     respondeA: 'Adopción del servicio y convivencia de canales (pregunta 14).',
     incluira: [
-      'Puntos de contacto: email de confirmación del billete, QR en el asiento, portal wifi, megafonía, cartelería y la app.',
+      'Puntos de contacto: email de confirmación del billete, QR en las mesas, portal wifi, megafonía, cartelería y la app.',
       'Mensajes clave con tono cercano y canario («contigo desde siempre»): sin colas, producto KM0, pide sin levantarte.',
       'Formación y comunicación interna para la tripulación.',
       'Incentivos de lanzamiento (p. ej. Plus Points en el primer pedido) y KPIs de comunicación.',
@@ -76,7 +76,7 @@ export const ENTREGABLES: Entregable[] = [
     estado: 'listo',
     respondeA: '«Mostrar lo que hace el pasajero y lo que ocurre detrás» (pregunta 2 del reto).',
     incluira: [
-      'Journey del pasajero: embarque → QR del asiento → pedido → pago → aviso «listo» → recogida → valoración.',
+      'Journey del pasajero: embarque → QR de la mesa o portal wifi → pedido → pago → aviso «listo» → recogida → valoración.',
       'Journey de la tripulación: recepción en la tablet de barra → preparación → aviso → entrega con QR.',
       'Perfiles: pasajero frecuente, turista, familia, persona mayor sin móvil, Clase Oro.',
       'Casos difíciles: sin conexión, producto agotado, cancelación, pedido no recogido.',

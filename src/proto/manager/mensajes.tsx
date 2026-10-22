@@ -21,7 +21,7 @@ export default function Mensajes({ s }: { s: ProtoState }) {
         t: 'Cafetería con menos espera',
         x: mejor ? `Ahora mismo hay menos espera en ${s.cafeterias[mejor].nombre} (${s.cafeterias[mejor].cubierta}). Pide ahí y recoge antes.` : 'Todas las cafeterías tienen espera por encima de lo habitual. Gracias por tu paciencia.',
       },
-      { t: 'Oferta KM0', x: km0.length ? `Producto de Canarias a bordo: ${km0.join(', ')}. Pídelo desde tu asiento y recoge sin cola.` : 'Hoy hay producto km0 canario en la carta. Pídelo desde tu asiento.' },
+      { t: 'Oferta KM0', x: km0.length ? `Producto de Canarias a bordo: ${km0.join(', ')}. Pídelo desde donde estés y recoge sin cola.` : 'Hoy hay producto km0 canario en la carta. Pídelo desde donde estés.' },
       { t: 'Cierre de pedidos', x: `Los pedidos desde la app se cierran a las ${cierre}, ${s.ajustes.cierreAntesLlegada} minutos antes de llegar. Si quieres algo, pídelo ya.` },
     ]
   }, [s])

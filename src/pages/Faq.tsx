@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CATEGORIAS, Categoria, FAQ, STACK } from '../data/faq'
+import { STACK } from '../data/faq'
+import { FUENTES_AGORA, OPCIONES_STACK, PREGUNTAS_FO } from '../data/preguntas'
 
 /** Diagrama de la arquitectura propuesta (SVG en línea, colores de la web). */
 function Arquitectura() {
@@ -56,7 +56,7 @@ function Arquitectura() {
       {box(645, 55, 225, 58, 'Panel del manager', 'Carta · reglas · analítica')}
       {box(645, 135, 225, 58, 'Servicio central', 'Node.js · PostgreSQL')}
       {box(645, 215, 105, 58, 'Pasarela', 'Pago tokenizado')}
-      {box(765, 215, 105, 58, 'Reservas · TPV', 'Integraciones')}
+      {box(765, 215, 105, 58, 'Ágora', 'TPV · reservas')}
       <line x1={757} y1={113} x2={757} y2={133} stroke="#0b3478" strokeWidth={1.5} markerEnd="url(#ar)" markerStart="url(#ar)" />
       <line x1={697} y1={193} x2={697} y2={213} stroke="#0b3478" strokeWidth={1.5} markerEnd="url(#ar)" markerStart="url(#ar)" />
       <line x1={817} y1={193} x2={817} y2={213} stroke="#0b3478" strokeWidth={1.5} markerEnd="url(#ar)" markerStart="url(#ar)" />
@@ -65,45 +65,104 @@ function Arquitectura() {
 }
 
 export default function Faq() {
-  const [q, setQ] = useState('')
-  const [cat, setCat] = useState<Categoria | 'Todas'>('Todas')
-  const [abiertas, setAbiertas] = useState<Set<string>>(new Set())
-
-  const lista = useMemo(() => {
-    const t = q.trim().toLowerCase()
-    return FAQ.filter((f) => (cat === 'Todas' || f.cat === cat) && (!t || (f.q + f.corto + f.a.join(' ')).toLowerCase().includes(t)))
-  }, [q, cat])
-
-  const toggle = (id: string) =>
-    setAbiertas((s) => {
-      const n = new Set(s)
-      if (n.has(id)) n.delete(id)
-      else n.add(id)
-      return n
-    })
-  const todasAbiertas = lista.length > 0 && lista.every((f) => abiertas.has(f.id))
-
   return (
     <>
       <div className="page-head">
-        <div className="eyebrow">Preparación de la defensa</div>
-        <h1>Preguntas y respuestas</h1>
+        <div className="eyebrow">Preguntas para Fred. Olsen</div>
+        <h1>Lo que necesitamos saber</h1>
         <p>
-          Las {FAQ.length} preguntas más probables del jurado y del equipo de Fred. Olsen, con una respuesta corta para decir en voz alta y la explicación
-          completa. Las respuestas marcadas como «supuesto» dependen de datos que hay que validar con la empresa.
+          Tres preguntas que proponemos hacer a Fred. Olsen. De sus respuestas depende cómo se conecta FredOnBoard con lo que ya tienen, así que para cada
+          respuesta posible indicamos qué haríamos.
         </p>
       </div>
 
-      <section>
+      <ol className="pq-list">
+        {PREGUNTAS_FO.map((p, i) => (
+          <li key={p.id} className="card pq-item" id={p.id}>
+            <div className="pq-head">
+              <span className="faq-top-num">{i + 1}</span>
+              <div>
+                <h2 className="pq-q">{p.q}</h2>
+                <p className="small muted">{p.porQue}</p>
+              </div>
+            </div>
+            <div className="grid g2 pq-body">
+              <div>
+                <h4 className="pq-h4">Lo que ya sabemos</h4>
+                <ul className="clean small">
+                  {p.sabemos.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="pq-h4">Según lo que respondan</h4>
+                <div className="pq-segun">
+                  {p.segun.map((x) => (
+                    <div key={x.si} className="pq-row small">
+                      <b>{x.si}</b>
+                      <span>{x.entonces}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <section className="section">
         <div className="section-title">
-          <h2>Stack técnico en un vistazo</h2>
-          <p>Cómo funcionaría FredOnBoard en producción. La idea clave: todo lo que pasa a bordo funciona aunque no haya internet.</p>
+          <h2>Stack: varias posibilidades</h2>
+          <p>
+            Nuestra base es la misma en todos los casos: todo lo que pasa a bordo funciona aunque no haya internet. Lo que cambia es cómo se conecta con
+            Ágora y con sus sistemas.
+          </p>
         </div>
         <div className="card faq-diagram">
           <div>
             <Arquitectura />
           </div>
         </div>
+
+        <div className="grid g2 section pq-opciones">
+          {OPCIONES_STACK.map((o) => (
+            <div key={o.id} className={`card pq-op${o.id === 'B' ? ' rec' : ''}`}>
+              <div className="pq-op-top">
+                <h3>{o.nombre}</h3>
+                <span className={`tag ${o.esfuerzo === 'Bajo' ? 'green' : o.esfuerzo === 'Medio' ? 'yellow' : ''}`}>Esfuerzo {o.esfuerzo.toLowerCase()}</span>
+              </div>
+              <p className="small">{o.resumen}</p>
+              <ul className="clean small">
+                {o.como.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+              <div className="grid g2 pq-pc small">
+                <div>
+                  <b>A favor</b>
+                  <ul className="clean">
+                    {o.pros.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <b>En contra</b>
+                  <ul className="clean">
+                    {o.contras.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <p className="small pq-cuando">
+                <strong>Cuándo:</strong> {o.cuando}
+              </p>
+            </div>
+          ))}
+        </div>
+
         <div className="matrix-wrap section" style={{ maxHeight: 'none' }}>
           <table className="faq-stack">
             <thead>
@@ -126,78 +185,18 @@ export default function Faq() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="section-title">
-          <h2>Preguntas</h2>
-        </div>
-        <div className="toolbar">
-          <input className="input" placeholder="Buscar: pagos, Starlink, TPV, RGPD…" value={q} onChange={(e) => setQ(e.target.value)} style={{ flex: '1 1 260px' }} />
-          <button className="btn ghost sm" onClick={() => setAbiertas(todasAbiertas ? new Set() : new Set(lista.map((f) => f.id)))}>
-            {todasAbiertas ? 'Cerrar todas' : 'Abrir todas'}
-          </button>
-        </div>
-        <div className="chips" style={{ marginBottom: 16 }}>
-          {(['Todas', ...CATEGORIAS] as const).map((c) => (
-            <button key={c} className={`chip${cat === c ? ' on' : ''}`} onClick={() => setCat(c)}>
-              {c}
-              <span style={{ opacity: 0.6, marginLeft: 6 }}>{c === 'Todas' ? FAQ.length : FAQ.filter((f) => f.cat === c).length}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="faq-list">
-          {lista.map((f) => {
-            const open = abiertas.has(f.id)
-            return (
-              <article key={f.id} className={`faq-item${open ? ' open' : ''}`} id={f.id}>
-                <button className="faq-q" aria-expanded={open} onClick={() => toggle(f.id)}>
-                  <span className="faq-cat">{f.cat}</span>
-                  <span className="faq-text">{f.q}</span>
-                  <span className="faq-chevron" aria-hidden>
-                    {open ? '−' : '+'}
-                  </span>
-                </button>
-                <div className="faq-short">
-                  <strong>En una frase:</strong> {f.corto}
-                  {f.supuesto && <span className="tag yellow" style={{ marginLeft: 8 }}>Supuesto a validar</span>}
-                </div>
-                {open && (
-                  <div className="faq-a">
-                    {f.a.map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
-                )}
-              </article>
-            )
-          })}
-          {lista.length === 0 && <p className="muted">No hay preguntas con ese filtro.</p>}
-        </div>
-      </section>
-
-      <div className="card callout navy section">
-        <h3>Puntos débiles que el jurado puede atacar (y cómo respondemos)</h3>
-        <ul className="clean">
-          <li>
-            <strong>«El servidor del prototipo es simulado».</strong> Sí: las pantallas y las reglas son reales, y el servidor es el paso siguiente. Ver
-            «¿Qué parte existe de verdad?».
-          </li>
-          <li>
-            <strong>«Sin internet no se puede cobrar».</strong> Correcto. Pedir y preparar funciona sin internet, y el cobro espera o se hace en barra.
-          </li>
-          <li>
-            <strong>«Conectividad, TPV y reservas son supuestos».</strong> Lo decimos así, y el piloto empieza con una semana 0 para medirlos.
-          </li>
-          <li>
-            <strong>«Las cifras de mejora son de proveedores».</strong> Por eso no prometemos un número: el piloto mide la venta por pasajero frente a un
-            grupo de control.
-          </li>
-        </ul>
-        <p className="small" style={{ marginTop: 10 }}>
-          Para ensayar, podéis pedirle al agente «Fred. Olsen» que os haga estas preguntas. Las respuestas se apoyan en el <Link to="/benchmark">benchmark</Link>{' '}
-          y en el <Link to="/prototipo">prototipo</Link>.
-        </p>
-      </div>
+      <p className="tiny muted section">
+        Sobre Ágora, de fuentes públicas:{' '}
+        {FUENTES_AGORA.map((f, i) => (
+          <span key={f.url}>
+            {i > 0 && ' · '}
+            <a href={f.url} target="_blank" rel="noreferrer">
+              {f.t}
+            </a>
+          </span>
+        ))}
+        . Cómo lo tienen configurado a bordo es lo que hay que preguntar. Más detalle en el <Link to="/implementacion">plan de implementación</Link>.
+      </p>
     </>
   )
 }

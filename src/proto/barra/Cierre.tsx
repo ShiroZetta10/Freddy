@@ -94,7 +94,7 @@ export default function Cierre({ s, caf }: { s: ProtoState; caf: CafeteriaId }) 
                 <motion.li key={p.id} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 30 }} className={p.bot ? '' : 'real'}>
                   <b className="n">#{p.id}</b>
                   <span className="w">
-                    {p.nombre} · {p.asiento}
+                    {p.nombre} · {p.ticket}
                     <small>{eur(p.total)}</small>
                   </span>
                   <span className={`fob-pill ${p.estado === 'listo' ? 'green' : ''}`}>{ESTADO_LABEL[p.estado]}</span>

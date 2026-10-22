@@ -7,7 +7,7 @@ const BLOQUES = [
   ['Fuentes y método', 'Fuentes públicas primarias (webs, condiciones de venta, memorias, notas de prensa) y prensa especializada. Investigación asistida por agentes de IA y revisada por el equipo.'],
   ['Matriz y puntuación', 'Rúbrica 1–5 por vertical. 0 = sin información verificable (no penaliza). Media ponderada con pesos ajustables.'],
   ['Buenas prácticas', 'Prácticas concretas y replicables por empresa, y lo que no conviene copiar en un barco de 80 minutos.'],
-  ['Gaps y oportunidades', 'Huecos del sector marítimo (no existe pedido móvil desde el asiento) y ventana competitiva en Canarias.'],
+  ['Gaps y oportunidades', 'Huecos del sector marítimo (no existe pedido móvil a bordo) y ventana competitiva en Canarias.'],
   ['Implicaciones para la solución', 'Cada insight se traduce en una decisión de diseño y un KPI del piloto (ver «Del benchmark a la solución»).'],
 ]
 

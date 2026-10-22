@@ -10,7 +10,7 @@ export default function BenchmarkHome() {
     <>
       <div className="page-head">
         <div className="eyebrow">Entregable 01 · Benchmark</div>
-        <h1>Pedir desde el asiento y recoger sin colas</h1>
+        <h1>Pedir sin levantarse y recoger sin colas</h1>
         <p>
           {benchmarkA.empresas.length} navieras y {benchmarkB.empresas.length} referentes de Click &amp; Collect (trenes, aviones, cruceros, comida rápida,
           estadios y retail) analizados para diseñar el servicio del Bajamar Express (Tenerife – Agaete, {totales.duracionMin} min).
@@ -34,7 +34,7 @@ export default function BenchmarkHome() {
             <Icon name="clock" />
           </div>
           <strong>Rápido</strong>
-          <div className="small muted">Pedido en 3 toques desde el asiento y recogida en segundos con QR.</div>
+          <div className="small muted">Pedido en 3 toques sin levantarse y recogida en segundos con QR.</div>
         </div>
         <div className="pillar">
           <div className="ico">
@@ -59,7 +59,7 @@ export default function BenchmarkHome() {
           <div className="sub">1,37 € por pasajero ÷ 5,90 € de ticket medio. ~3 de cada 4 no compran nada.</div>
         </div>
         <div className="card stat accent">
-          <div className="label">Navieras con pedido móvil desde el asiento</div>
+          <div className="label">Navieras con pedido móvil a bordo</div>
           <div className="value">0 / {benchmarkA.empresas.length}</div>
           <div className="sub">
             Ninguna lo verifica. Solo {navierasConMovil} ofrece algo cercano: el pre-pedido en la app de Molslinjen, en un trayecto de 80-90 min.

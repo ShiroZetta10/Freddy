@@ -44,15 +44,15 @@ export const EJES_CANARIOS = [
     icono: 'phone',
     titulo: 'Público joven y 100 % digital',
     suyo: 'Tarifa Joven (12–25 años, hasta −25 %), app, check-in digital, wifi a bordo y On Board Club.',
-    nuestro: 'FredOnBoard vive dentro de On Board Club: pedir desde el asiento sin instalar nada, con ventajas para billetes de Tarifa Joven.',
+    nuestro: 'FredOnBoard vive dentro de On Board Club: pedir sin levantarse y sin instalar nada, con ventajas para billetes de Tarifa Joven.',
   },
 ]
 
 /** Las 4 barreras de compra que identifica Fred. Olsen y qué hace FredOnBoard con cada una. */
 export const BARRERAS = [
-  { id: 'desplazamiento', titulo: 'Desplazamiento', suyo: 'Para comprar hay que levantarse e ir a la cafetería.', nuestro: 'Pides y pagas desde el asiento; solo te levantas cuando está listo.' },
+  { id: 'desplazamiento', titulo: 'Desplazamiento', suyo: 'Para comprar hay que levantarse e ir a la cafetería.', nuestro: 'Pides y pagas desde donde estés sentado; solo te levantas cuando está listo.' },
   { id: 'espera', titulo: 'Espera', suyo: 'Colas y tiempos de atención desaniman.', nuestro: 'Franjas de recogida con tope y aviso «listo» con QR: recoger es cosa de segundos.' },
-  { id: 'visibilidad', titulo: 'Visibilidad', suyo: 'Al acomodarse, la oferta deja de estar presente.', nuestro: 'Carta en On Board Club, portal wifi y QR del asiento; avisos en el momento oportuno.' },
+  { id: 'visibilidad', titulo: 'Visibilidad', suyo: 'Al acomodarse, la oferta deja de estar presente.', nuestro: 'Carta en On Board Club, portal wifi y QR en las mesas del salón; avisos en el momento oportuno.' },
   { id: 'momento', titulo: 'Momento de compra', suyo: 'El deseo se aplaza y se pierde.', nuestro: 'Pre-pedido antes de embarcar y recordatorio antes del cierre de pedidos.' },
 ]
 

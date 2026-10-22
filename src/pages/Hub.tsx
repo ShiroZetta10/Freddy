@@ -21,7 +21,7 @@ export default function Hub() {
           <h1>FredOnBoard</h1>
           <p>
             El compañero de viaje digital de Fred. Olsen Express, dentro de On Board Club. Acompaña al pasajero antes, durante y después de la travesía,
-            con un Click &amp; Collect que permite pedir desde el asiento y recoger en barra sin colas y sin aumentar la tripulación. Con producto canario,
+            con un Click &amp; Collect que permite pedir sin levantarse y recoger en barra sin colas y sin aumentar la tripulación. Con producto canario,
             cero papel y hecho por talento canario.
           </p>
         </div>
@@ -91,8 +91,8 @@ export default function Hub() {
 
         <Link to="/faq" className="card faq-banner section">
           <div>
-            <h3>Preguntas y respuestas</h3>
-            <p className="small muted">Las preguntas más probables del jurado, con el stack técnico explicado y una respuesta corta para cada una.</p>
+            <h3>Preguntas para Fred. Olsen</h3>
+            <p className="small muted">Ágora, inventario entre tierra, mar y cafeterías, y su stack, con las opciones de integración según lo que respondan.</p>
           </div>
           <span className="hub-go">Ver preguntas</span>
         </Link>

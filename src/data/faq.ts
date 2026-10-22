@@ -40,9 +40,9 @@ export const FAQ: Pregunta[] = [
     id: 'pwa',
     cat: 'Stack técnico',
     q: '¿Por qué una web (PWA) y no una app nativa? En iOS el push web solo funciona si se añade a la pantalla de inicio.',
-    corto: 'Porque en 80 minutos nadie se descarga una app: el QR del asiento abre la web al instante, y el aviso «listo» no depende del push.',
+    corto: 'Porque en 80 minutos nadie se descarga una app: el QR de la mesa abre la web al instante, y el aviso «listo» no depende del push.',
     a: [
-      'El pasajero ocasional no va a instalar nada para un trayecto de 80 minutos, y la app actual tiene una valoración de 2,0/5. Una web que se abre con el QR del asiento o desde el portal wifi llega a todos desde el primer día.',
+      'El pasajero ocasional no va a instalar nada para un trayecto de 80 minutos, y la app actual tiene una valoración de 2,0/5. Una web que se abre con el QR de la mesa o desde el portal wifi llega a todos desde el primer día.',
       'Es cierto que en iOS las notificaciones web solo funcionan si la web se añade a la pantalla de inicio. Por eso el aviso «tu pedido está listo» no depende del push: la página de seguimiento se actualiza sola mientras está abierta, la barra tiene una pantalla con los números listos (como en McDonald’s o Burger King) y, si el pasajero lo acepta, se envía un WhatsApp con el canal que Fred. Olsen ya usa.',
       'Si en el futuro se quiere app, el mismo código se reutiliza dentro de la app actual (WebView) o con Capacitor, sin rehacerlo.',
     ],
@@ -165,9 +165,9 @@ export const FAQ: Pregunta[] = [
     id: 'acceso-offline',
     cat: 'Conectividad y offline',
     q: 'Sin internet, ¿cómo llega el pasajero a la web si no la tenía abierta?',
-    corto: 'Por el wifi del barco: el portal de bienvenida y el QR del asiento apuntan al servidor de a bordo, que no necesita internet.',
+    corto: 'Por el wifi del barco: el portal de bienvenida y el QR de las mesas apuntan al servidor de a bordo, que no necesita internet.',
     a: [
-      'El QR del asiento y la página de bienvenida del wifi apuntan a una dirección del propio barco. Al conectarse al wifi, el pasajero llega a FredOnBoard aunque no haya salida a internet.',
+      'El QR de las mesas y la página de bienvenida del wifi apuntan a una dirección del propio barco. Al conectarse al wifi, el pasajero llega a FredOnBoard aunque no haya salida a internet.',
       'Quien hizo un pre-pedido ya tiene la web guardada en el móvil (service worker) y puede ver su pedido y su QR incluso sin datos.',
     ],
   },
@@ -208,10 +208,10 @@ export const FAQ: Pregunta[] = [
     id: 'qr',
     cat: 'Pagos y seguridad',
     q: 'El QR de recogida se puede copiar o compartir. ¿Cómo evitáis que alguien recoja el pedido de otro?',
-    corto: 'El QR está firmado, es de un solo uso y la tablet enseña el nombre y el asiento: el camarero puede comprobarlo de un vistazo.',
+    corto: 'El QR está firmado, es de un solo uso y la tablet enseña el nombre y el localizador: el camarero puede comprobarlo de un vistazo.',
     a: [
       'El QR lleva el número de pedido y una clave secreta firmada por el servidor, así que no se puede inventar. Es de un solo uso: en cuanto se entrega, deja de valer.',
-      'Al escanearlo, la tablet muestra el nombre y el asiento del pasajero. Para un ticket medio de 5,90 € es un control proporcionado; en Clase Oro se podría pedir además el billete.',
+      'Al escanearlo, la tablet muestra el nombre y el localizador del pasajero. Para un ticket medio de 5,90 € es un control proporcionado; en Clase Oro se podría pedir además el billete.',
     ],
   },
   {
@@ -222,7 +222,7 @@ export const FAQ: Pregunta[] = [
     a: [
       'Todo el tráfico va cifrado (HTTPS también en el servidor del barco, con su certificado). La sesión del pasajero se basa en su localizador y caduca al terminar el viaje; no hay contraseñas que robar.',
       'El chat tiene límite de mensajes por pasajero y solo puede consultar información pública del viaje y del pasajero que pregunta.',
-      'El riesgo de un portal falso en un wifi abierto existe en cualquier wifi público. Se mitiga con el QR físico del asiento y comprobando siempre la dirección en la pasarela de pago, que es donde se introducen datos sensibles.',
+      'El riesgo de un portal falso en un wifi abierto existe en cualquier wifi público. Se mitiga con el QR físico de las mesas y comprobando siempre la dirección en la pasarela de pago, que es donde se introducen datos sensibles.',
     ],
   },
 
@@ -244,7 +244,7 @@ export const FAQ: Pregunta[] = [
     q: 'La identificación por localizador: ¿contra qué sistema se valida? ¿Y si varias personas comparten localizador?',
     corto: 'Contra el listado de pasajeros de cada salida, en solo lectura; cada pedido lleva el nombre de quien pide, aunque compartan reserva.',
     a: [
-      'Basta con acceso de solo lectura al listado de pasajeros de cada salida (localizador, nombres, asiento), por API o con una exportación antes de zarpar que se carga en el servidor del barco. No necesitamos escribir en el sistema de reservas.',
+      'Basta con acceso de solo lectura al listado de pasajeros de cada salida (localizador y nombres; en el barco no hay asiento asignado), por API o con una exportación antes de zarpar que se carga en el servidor del barco. No necesitamos escribir en el sistema de reservas.',
       'Si en una reserva viajan varias personas, tras el localizador se elige quién pide. Cada pedido lleva su nombre y se puede pedir para otro, por ejemplo para una persona mayor que no use el móvil.',
     ],
     supuesto: true,
@@ -320,9 +320,9 @@ export const FAQ: Pregunta[] = [
     id: 'uplift',
     cat: 'Negocio y costes',
     q: 'Citáis +42 % de ticket medio de otros casos, con datos del proveedor. ¿Qué esperáis vosotros?',
-    corto: 'No prometemos el 42 %. Nuestro escenario prudente ronda un +15–20 % de facturación, y es justo lo que el piloto tiene que medir.',
+    corto: 'No prometemos el 42 %. Nuestro modelo va de +9 % de facturación (prudente) a +16 % (base), y es justo lo que el piloto tiene que medir.',
     a: [
-      'Esa cifra es de un proveedor y de otro sector, y así la presentamos. Nuestro escenario prudente (simulador del benchmark): 3 puntos más de pasajeros que compran, un 25 % de las compras por móvil y un 15 % más de ticket en ese canal. Sale en torno a un +17 % de facturación sobre la línea base.',
+      'Esa cifra es de un proveedor y de otro sector, y así la presentamos. En el modelo de negocio del plan de implementación, el escenario prudente (15 % de adopción, +2 puntos de pasajeros que compran, +5 % de ticket en el canal móvil) da ≈ +9 % de facturación, unos 64.500 € al año en el Bajamar; el base (25 %, +3 puntos, +10 %) da ≈ +16 %, unos 108.000 €.',
       'La base real es 1,37 € por pasajero y un 23 % de pasajeros que compran. El piloto mide exactamente esos dos números frente al grupo de control.',
     ],
   },
@@ -375,9 +375,9 @@ export const FAQ: Pregunta[] = [
     id: 'rgpd',
     cat: 'Legal y datos',
     q: '¿Qué datos personales guardáis, con qué base legal y durante cuánto tiempo?',
-    corto: 'Los mínimos para servir el pedido (localizador, nombre, asiento y lo pedido), alojados en la UE y borrados tras el plazo que fije el área legal.',
+    corto: 'Los mínimos para servir el pedido (localizador, nombre y lo pedido), alojados en la UE y borrados tras el plazo que fije el área legal.',
     a: [
-      'Para servir el pedido basta con el localizador, el nombre, el asiento y lo pedido. La base legal es la ejecución del contrato (el propio pedido). El marketing y las ofertas solo con consentimiento aparte.',
+      'Para servir el pedido basta con el localizador, el nombre y lo pedido. La base legal es la ejecución del contrato (el propio pedido). El marketing y las ofertas solo con consentimiento aparte.',
       'Datos alojados en la UE. El servidor del barco borra los datos personales al cerrar la travesía y la nube los conserva el tiempo que fije el área legal (por ejemplo, el necesario para facturación). La analítica del piloto se hace con datos agregados.',
     ],
     supuesto: true,
@@ -464,20 +464,6 @@ export const FAQ: Pregunta[] = [
       'La empresa no dispone de datos de edad de los pasajeros, y FredOnBoard tampoco los pide (minimización de datos). La oferta se adapta al momento del viaje (desayuno por la mañana), al idioma del billete, a la cafetería y a lo que más se vende en cada franja.',
     ],
   },
-]
-
-/** Componentes de la arquitectura propuesta (para el diagrama y la tabla del stack). */
-export const STACK = [
-  { capa: 'Pasajero', prototipo: 'React 18 + TypeScript, framer-motion, QR', produccion: 'PWA React + TypeScript con service worker (sin instalar). Acceso por QR del asiento, portal wifi, email y WhatsApp' },
-  { capa: 'Barra', prototipo: 'React (misma base), WebAudio para avisos', produccion: 'PWA en tablet resistente fijada en la barra, conectada al servidor del barco por la red local' },
-  { capa: 'Manager', prototipo: 'React + Recharts', produccion: 'Panel web en la nube con datos de toda la flota' },
-  { capa: 'Servidor del barco', prototipo: 'Simulado en el navegador (localStorage + BroadcastChannel)', produccion: 'Node.js + TypeScript en Docker sobre mini PC industrial; SQLite/PostgreSQL; WebSockets' },
-  { capa: 'Nube', prototipo: '—', produccion: 'Node.js + PostgreSQL alojado en la UE; carta, precios, analítica, cola de sincronización' },
-  { capa: 'Pagos', prototipo: 'Simulado', produccion: 'Pasarela del banco de Fred. Olsen (tokenizada, Apple Pay/Google Pay). Sin datos de tarjeta en nuestros servidores' },
-  { capa: 'Integraciones', prototipo: 'Billetes de prueba', produccion: 'Listado de pasajeros por salida (solo lectura); TPV en fase 1; Tarjeta Plus en la hoja de ruta' },
-  { capa: 'Asistente', prototipo: 'Palabras clave (ES/EN/DE)', produccion: 'LLM con contenidos aprobados y límites de uso; sin conexión, respuestas predefinidas' },
-  { capa: 'Inventario', prototipo: 'Escandallos, insumos y plan de aprovisionamiento simulados', produccion: 'Escandallos e insumos sincronizados con el programa de inventario de Fred. Olsen; recepción diaria y semanal registrada en la tablet' },
-  { capa: 'Despliegue', prototipo: 'GitHub Pages', produccion: 'Contenedores; actualización remota del servidor del barco en puerto; monitorización y alertas' },
   // ---------------------------------------------------------------- ENCAJE CON FRED. OLSEN
   {
     id: 'on-board-club',
@@ -486,7 +472,7 @@ export const STACK = [
     corto: 'No: FredOnBoard vive dentro de On Board Club. Es la pieza que convierte la carta digital en pedido, pago y recogida.',
     a: [
       'On Board Club ya es el punto de entrada digital a bordo (películas, series, juegos y wifi). FredOnBoard se añade como una sección más: el pasajero no instala nada nuevo ni aprende otra marca.',
-      'En el piloto se abre desde el portal wifi y el QR del asiento; en la fase de escalado entra en la app de Fred. Olsen y en Fred. Olsen Plus.',
+      'En el piloto se abre desde el portal wifi y el QR de las mesas; en la fase de escalado entra en la app de Fred. Olsen y en Fred. Olsen Plus.',
     ],
   },
   {
@@ -496,7 +482,7 @@ export const STACK = [
     corto: 'Producto canario y KM0 destacado y filtrable, tienda a bordo con producto de las islas, cero papel y talento canario detrás.',
     a: [
       'Carta: distintivo «Producto canario» con su origen y un filtro propio, en la línea de «Elaborado en Canarias» y «Lo nuestro viaja contigo».',
-      'Tienda a bordo: mojo, gofio, miel y dulces típicos que se piden desde el asiento y se recogen en barra, como pide el reto («cafeterías y tiendas»).',
+      'Tienda a bordo: mojo, gofio, miel y dulces típicos que se piden sin levantarse y se recogen en barra, como pide el reto («cafeterías y tiendas»).',
       'En Armonía con el Mar: ticket digital (cero papel), opción «sin cubiertos ni bolsa» y menos desperdicio gracias a la previsión por escandallo. El piloto lo mide.',
       'Talento: diseñado por el equipo Shiro en Talento Canario, con un stack abierto que puede mantener un equipo local.',
     ],
@@ -507,9 +493,23 @@ export const STACK = [
     q: '¿Cómo encaja con el público joven y la Tarifa Joven?',
     corto: 'Es digital, sin instalar nada, y los billetes de Tarifa Joven tienen una ventaja propuesta: −20 % en el café o refresco del pedido.',
     a: [
-      'El público de 12 a 25 años ya vive en el móvil: pedir desde el asiento es su forma natural de comprar.',
+      'El público de 12 a 25 años ya vive en el móvil: pedir desde el móvil es su forma natural de comprar.',
       'La ventaja joven es una propuesta para el piloto, no una condición actual de Fred. Olsen. Medimos su uso como KPI para decidir si mantenerla.',
     ],
     supuesto: true,
   },
+]
+
+/** Componentes de la arquitectura propuesta (para el diagrama y la tabla del stack). */
+export const STACK: { capa: string; prototipo: string; produccion: string }[] = [
+  { capa: 'Pasajero', prototipo: 'React 18 + TypeScript, framer-motion, QR', produccion: 'PWA React + TypeScript con service worker (sin instalar). Acceso por QR de las mesas, portal wifi, email y WhatsApp' },
+  { capa: 'Barra', prototipo: 'React (misma base), WebAudio para avisos', produccion: 'PWA en tablet resistente fijada en la barra, conectada al servidor del barco por la red local' },
+  { capa: 'Manager', prototipo: 'React + Recharts', produccion: 'Panel web en la nube con datos de toda la flota' },
+  { capa: 'Servidor del barco', prototipo: 'Simulado en el navegador (localStorage + BroadcastChannel)', produccion: 'Node.js + TypeScript en Docker sobre mini PC industrial; SQLite/PostgreSQL; WebSockets' },
+  { capa: 'Nube', prototipo: '—', produccion: 'Node.js + PostgreSQL alojado en la UE; carta, precios, analítica, cola de sincronización' },
+  { capa: 'Pagos', prototipo: 'Simulado', produccion: 'Pasarela del banco de Fred. Olsen (tokenizada, Apple Pay/Google Pay). Sin datos de tarjeta en nuestros servidores' },
+  { capa: 'Integraciones', prototipo: 'Billetes de prueba', produccion: 'Listado de pasajeros por salida (solo lectura); Ágora por su API HTTP/JSON o por fichero, según la opción elegida; Fred. Olsen Plus en la hoja de ruta' },
+  { capa: 'Asistente', prototipo: 'Palabras clave (ES/EN/DE)', produccion: 'LLM con contenidos aprobados y límites de uso; sin conexión, respuestas predefinidas' },
+  { capa: 'Inventario', prototipo: 'Escandallos, insumos y plan de aprovisionamiento simulados', produccion: 'Escandallos e insumos sincronizados con el programa de inventario de Fred. Olsen; recepción diaria y semanal registrada en la tablet' },
+  { capa: 'Despliegue', prototipo: 'GitHub Pages', produccion: 'Contenedores; actualización remota del servidor del barco en puerto; monitorización y alertas' },
 ]

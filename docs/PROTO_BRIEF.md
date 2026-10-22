@@ -3,9 +3,9 @@
 ## Contexto del producto
 FredOnBoard es el **compañero de viaje digital** de Fred. Olsen Express (naviera canaria). Ruta del prototipo:
 Bajamar Express, Santa Cruz de Tenerife → Agaete, 80 min, 3 cafeterías (Proa, Popa, Clase Oro), wifi Starlink.
-Núcleo del reto: **Click & Collect** = pedir y pagar desde el asiento y recoger en barra **sin colas y sin aumentar tripulación**.
+Núcleo del reto: **Click & Collect** = pedir y pagar sin levantarse (no hay asiento asignado) y recoger en barra **sin colas y sin aumentar tripulación**.
 Decisiones del equipo:
-- Se usa **antes, durante y después** del viaje. Web sin instalar (QR asiento / portal wifi) y también dentro de la app.
+- Se usa **antes, durante y después** del viaje. Web sin instalar (QR en las mesas / portal wifi) y también dentro de la app.
 - Personalidad **híbrida**: interfaz guiada + chat con IA opcional (ES/EN/DE).
 - 3 perfiles: **pasajero/a**, **barra/cafetería** (tablet), **admin/manager** (escritorio).
 - **MVP del piloto**: sin cuenta para el pasajero (se identifica con el localizador del billete), Click & Collect y pre-pedido.

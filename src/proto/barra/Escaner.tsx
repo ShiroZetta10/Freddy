@@ -25,7 +25,7 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
     if (p.estado === 'listo' && p.cafeteria !== caf)
       return setRes({ ok: false, pedido: p, titulo: `#${p.id} es de ${st.cafeterias[p.cafeteria].nombre}`, detalle: 'Indica al pasajero que recoja en su cafetería.' })
     const r = entregarPorQR(qrDe(p))
-    if (r.ok) setRes({ ok: true, pedido: p, titulo: `Entregado #${p.id} · ya pagado`, detalle: `${p.nombre} · asiento ${p.asiento}` })
+    if (r.ok) setRes({ ok: true, pedido: p, titulo: `Entregado #${p.id} · ya pagado`, detalle: `${p.nombre} · localizador ${p.ticket}` })
     else setRes({ ok: false, pedido: r.pedido ?? p, titulo: `#${p.id}: ${r.motivo}`, detalle: r.motivo === 'Ya entregado' ? 'Este QR ya se canjeó. Posible duplicado.' : undefined })
   }, [caf])
 
@@ -181,7 +181,7 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
                     <Ico n="qr" size={22} />
                     <span className="n">#{p.id}</span>
                     <span className="w">
-                      {p.nombre} · {p.asiento}
+                      {p.nombre} · {p.ticket}
                       {!p.bot && <em> · del móvil</em>}
                     </span>
                     <span className="go">Escanear</span>

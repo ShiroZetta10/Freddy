@@ -36,13 +36,13 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.12 } }}
       transition={{ type: 'spring', stiffness: 420, damping: 38, mass: 0.9 }}
-      aria-label={`Pedido ${p.id}, ${p.nombre}, asiento ${p.asiento}`}
+      aria-label={`Pedido ${p.id}, ${p.nombre}, localizador ${p.ticket}`}
     >
       <div className="br-card-top">
         <span className="br-num">#{p.id}</span>
         <div className="br-who">
           <b>{p.nombre}</b>
-          <span>Asiento {p.asiento}</span>
+          <span>Localizador {p.ticket}</span>
         </div>
         <span className={`br-timer ${lvl}`} title={p.estado === 'listo' ? 'Esperando recogida' : 'Desde que se recibió'}>
           <Ico n="clock" size={14} />
@@ -152,7 +152,7 @@ export default function Tablero({ s, caf, pedidos, now, fresh }: { s: ProtoState
                 {entregados.length === 0 && <span className="fob-muted">Todavía no se ha entregado ningún pedido.</span>}
                 {entregados.map((p) => (
                   <span key={p.id} className="br-done">
-                    <b>#{p.id}</b> {p.nombre} · {p.asiento}
+                    <b>#{p.id}</b> {p.nombre} · {p.ticket}
                   </span>
                 ))}
               </div>

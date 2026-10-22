@@ -14,6 +14,9 @@ import Pedidos from './Pedidos'
 import Ayuda from './Ayuda'
 import Checkout from './Checkout'
 import { PJProvider, TABS, Tab, ls, ss, useP } from './ctx'
+
+/** En el barco no hay asiento asignado: solo se indica la Clase Oro. */
+const esOroLabel = (b: { clase?: 'oro' }) => (b.clase === 'oro' ? 'Clase Oro · ' : '')
 import { LANGS } from './i18n'
 import { PI, Sheet, Skeleton, vibrar } from './ui'
 
@@ -133,7 +136,7 @@ function Sesion() {
             <div>
               <b>{t('hi', { n: billete.nombre })}</b>
               <span>
-                {t('seat', { a: billete.asiento })} · {billete.ticket}
+                {esOroLabel(billete)}{billete.ticket}
               </span>
             </div>
           </div>
@@ -246,7 +249,7 @@ function Sesion() {
         </div>
         <div className="pj-sh-body">
           <p className="pj-muted pj-who">
-            {billete.nombre} · {t('seat', { a: billete.asiento })} · {t('x.ticket', { t: billete.ticket })}
+            {billete.nombre} · {esOroLabel(billete)}{t('x.ticket', { t: billete.ticket })}
           </p>
           <h3 className="pj-h3">{t('x.lang')}</h3>
           <div className="pj-seg wide" role="group" aria-label={t('x.lang')}>

@@ -157,7 +157,7 @@ const RIESGOS = [
   { r: 'Productos agotados después de pagar', m: 'Stock por escandallo, umbral de seguridad y reembolso solo de la línea afectada.', f: 'Fase 1' },
   { r: 'Pagos y devoluciones sin definir', m: 'Pasarela tokenizada; el medio de pago y el circuito de devolución se cierran en la Fase 0.', f: 'Fase 0' },
   { r: 'Integración con el TPV se retrasa', m: 'El MVP no la necesita: conciliación diaria. La integración se hace en la Fase 2.', f: 'Fase 2' },
-  { r: 'Adopción menor de la esperada', m: 'QR en el asiento, portal wifi y pre-pedido (ver plan de comunicación). El modelo se revisa con el dato real del piloto.', f: 'Fase 1' },
+  { r: 'Adopción menor de la esperada', m: 'QR en las mesas, portal wifi y pre-pedido (ver plan de comunicación). El modelo se revisa con el dato real del piloto.', f: 'Fase 1' },
   { r: 'Beneficio inferior al coste', m: 'Escenarios con supuestos explícitos y criterio de parada tras el piloto. La inversión inicial es pequeña.', f: 'Fase 1' },
 ]
 

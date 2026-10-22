@@ -34,8 +34,7 @@ export type Pedido = {
   id: number // número visible (#214)
   clientKey: string // clave de idempotencia generada en el cliente
   ticket: string // localizador del billete
-  nombre: string // nombre del pasajero
-  asiento: string
+  nombre: string // nombre del pasajero (en el barco no hay asiento asignado)
   lineas: LineaPedido[]
   total: number
   cafeteria: CafeteriaId
@@ -77,7 +76,7 @@ export type TipoMovimiento = 'venta' | 'cancelacion' | 'entrada' | 'merma' | 'aj
 export type Movimiento = { id: number; t: number; iid: string; delta: number; tipo: TipoMovimiento; ref?: string }
 
 export type Fase = 'antes' | 'embarque' | 'navegando' | 'llegando' | 'llegado'
-export type Billete = { ticket: string; nombre: string; asiento: string; idioma: 'es' | 'en' | 'de'; plus: number; tarifaJoven?: boolean }
+export type Billete = { ticket: string; nombre: string; clase?: 'oro'; idioma: 'es' | 'en' | 'de'; plus: number; tarifaJoven?: boolean }
 export type Mensaje = { id: number; texto: string; t: number; de: 'manager' | 'sistema' }
 export type Alerta = { id: number; nivel: 'info' | 'warn'; texto: string; t: number }
 
@@ -230,10 +229,10 @@ export const CONSUMO_POR_PASAJERO: Record<string, { u: number; fuente: 'real' | 
 }
 
 export const BILLETES_DEMO: Billete[] = [
-  { ticket: 'FO7K2Q', nombre: 'Carmen', asiento: '42C', idioma: 'es', plus: 340 },
-  { ticket: 'FO9X4M', nombre: 'Tom', asiento: '17A', idioma: 'en', plus: 0 },
-  { ticket: 'FO3H8B', nombre: 'Greta', asiento: 'Oro 4', idioma: 'de', plus: 1250 },
-  { ticket: 'FO2J5T', nombre: 'Yeray', asiento: '23B', idioma: 'es', plus: 120, tarifaJoven: true },
+  { ticket: 'FO7K2Q', nombre: 'Carmen', idioma: 'es', plus: 340 },
+  { ticket: 'FO9X4M', nombre: 'Tom', idioma: 'en', plus: 0 },
+  { ticket: 'FO3H8B', nombre: 'Greta', clase: 'oro', idioma: 'de', plus: 1250 },
+  { ticket: 'FO2J5T', nombre: 'Yeray', idioma: 'es', plus: 120, tarifaJoven: true },
 ]
 
 /**
@@ -251,7 +250,7 @@ const NOMBRES_BOT = ['Ana', 'Luis', 'Marta', 'Jonay', 'Yeray', 'Elena', 'Pedro',
 
 export function estadoInicial(): ProtoState {
   return recalcular({
-    version: 3,
+    version: 4,
     viaje: { buque: 'Bajamar Express', origen: 'Santa Cruz de Tenerife', destino: 'Agaete', salida: '08:00', duracionMin: 80, minuto: -25, velocidad: 0.5 },
     ajustes: {
       franjaMin: 5,
@@ -284,7 +283,7 @@ export function estadoInicial(): ProtoState {
 }
 
 // ---------------------------------------------------------------- store (localStorage + BroadcastChannel)
-const KEY = 'fredonboard-proto-v3'
+const KEY = 'fredonboard-proto-v4'
 const canal: BroadcastChannel | null = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(KEY) : null
 
 function cargar(): ProtoState {
@@ -294,7 +293,7 @@ function cargar(): ProtoState {
     // una demo abandonada (más de 20 min sin actividad) arranca de cero con una travesía nueva
     if (raw && Date.now() - t < 20 * 60 * 1000) {
       const s = JSON.parse(raw) as ProtoState
-      if (s.version === 3) return recalcular(s)
+      if (s.version === 4) return recalcular(s)
     }
   } catch {
     /* sin almacenamiento: seguimos en memoria */
@@ -610,7 +609,6 @@ export function crearPedido(input: {
     clientKey: input.clientKey,
     ticket: input.billete.ticket,
     nombre: input.billete.nombre,
-    asiento: input.billete.asiento,
     lineas: input.lineas,
     total: Math.round((totalLineas(s, input.lineas) - descuento) * 100) / 100,
     cafeteria: input.cafeteria,
@@ -880,7 +878,7 @@ function botPedido() {
   const sinPlastico = soloBebidas(s, lineas) ? Math.random() < 0.8 : Math.random() < 0.3
   crearPedido({
     clientKey: uid(),
-    billete: { ticket: 'BOT', nombre, asiento: `${10 + Math.floor(Math.random() * 60)}${'ABCD'[Math.floor(Math.random() * 4)]}`, idioma: 'es', plus: 0, tarifaJoven: Math.random() < 0.2 },
+    billete: { ticket: 'FO' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''), nombre, idioma: 'es', plus: 0, tarifaJoven: Math.random() < 0.2 },
     lineas,
     cafeteria,
     franja: libres[0].idx,
@@ -897,7 +895,7 @@ export function kpis(s: ProtoState) {
   const entregados = s.pedidos.filter((p) => p.estado === 'entregado' && p.t.listo && p.t.entregado)
   const recogidaMedia = entregados.length ? entregados.reduce((a, p) => a + (p.t.entregado! - p.t.listo!), 0) / entregados.length / 1000 : 0
   const ticketMedio = validos.length ? ventas / validos.length : 0
-  const compradores = new Set(validos.map((p) => p.nombre + p.asiento)).size
+  const compradores = new Set(validos.map((p) => p.ticket + p.nombre)).size
   return {
     pedidos: validos.length,
     ventas,

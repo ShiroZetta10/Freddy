@@ -29,7 +29,7 @@ const HIPOTESIS: Hipotesis[] = [
     formula: '% adopción = pasajeros con al menos 1 pedido móvil ÷ pasajeros embarcados en la salida',
     base: `Canal nuevo: 0 %. Contexto: hoy compra ≈ ${pct(derivados.tasaCompra)} de los pasajeros (todos en barra).`,
     exito: '≥ 5 % de los pasajeros en las semanas 5–6 (≈ 1 de cada 5 compradores actuales) y tendencia creciente semana a semana.',
-    parada: 'Menos de 2 % en la semana 4, ya con comunicación y QR en el asiento: el canal no se usa. Se ajusta o se detiene.',
+    parada: 'Menos de 2 % en la semana 4, ya con comunicación y QR en las mesas: el canal no se usa. Se ajusta o se detiene.',
     fuente: ['Servidor FredOnBoard', 'Billetes validados'],
   },
   {
@@ -124,7 +124,7 @@ const SEMANAS_PLAN = [
   { w: 'Semana 0', t: 'Preparación', p: 'Instalación, formación, observación cronometrada y encuesta de partida en ambos buques.', tipo: 'prep' },
   { w: 'Semana 1', t: 'Línea base', p: 'Sin servicio. Se registran ventas, pasajeros, esperas y carga en Bajamar y Bañaderos.', tipo: 'base' },
   { w: 'Semana 2', t: 'Línea base', p: 'Segunda semana sin servicio: confirma que la variación normal es pequeña.', tipo: 'base' },
-  { w: 'Semana 3', t: 'Despliegue', p: 'Se activa FredOnBoard en la mañana del Bajamar. QR en los asientos y aviso en el portal wifi.', tipo: 'serv' },
+  { w: 'Semana 3', t: 'Despliegue', p: 'Se activa FredOnBoard en la mañana del Bajamar. QR en las mesas y aviso en el portal wifi.', tipo: 'serv' },
   { w: 'Semana 4', t: 'Ajuste', p: 'Se corrigen carta, franjas y cartelería con lo observado. Revisión del criterio de parada.', tipo: 'serv' },
   { w: 'Semana 5', t: 'Servicio estable', p: 'Sin cambios. Es la primera semana «limpia» para comparar.', tipo: 'serv' },
   { w: 'Semana 6', t: 'Decisión', p: 'Última medición, encuesta final y reunión de decisión con Fred. Olsen.', tipo: 'serv' },
