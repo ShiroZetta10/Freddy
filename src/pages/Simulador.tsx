@@ -101,6 +101,7 @@ function TablaCostes(p: { lineas: LineaCoste[]; edits: Edits; set: (id: string, 
                 </td>
                 <th scope="row">
                   {l.concepto}
+                  {l.avalidar && <span className="tag yellow" style={{ marginLeft: 8, fontWeight: 600 }}>{l.avalidar}</span>}
                   <div className="tiny muted" style={{ fontWeight: 400 }}>{l.detalle}</div>
                 </th>
                 <td className="num">
@@ -537,7 +538,7 @@ export default function Simulador() {
               Mismo escenario base que el <Link to="/implementacion">plan de implementación</Link>: +3 pp de compradores, 25 % por el móvil, +10 % de ticket y margen del 55 %. Antes el simulador usaba +15 % de ticket; no tenía fuente y se ha bajado al +10 % del plan.
             </li>
             <li>
-              El plan reserva 30.000 € de implantación y 1.800 €/mes de plataforma (21.600 €/año). Aquí el detalle suma {eur(costeUnico)} de coste único y {eur(mantAnual + fijosAnual)} al año de mantenimiento, nube, IA y soporte, fuera de wifi y comisión.
+              El plan reserva 30.000 € de implantación y 1.800 €/mes de plataforma (21.600 €/año). Aquí el detalle suma {eur(costeUnico)} de coste único y {eur(mantAnual + fijosAnual)} al año de mantenimiento, nube, IA y soporte, fuera de wifi y comisión. La licencia del módulo de integración de Ágora está a 0 € porque no tiene precio confirmado: es un coste anticipable a validar con Ágora, no un coste cero.
             </li>
             <li>
               La diferencia del coste único viene del equipo: el plan reserva 4.500 € (15 %) y aquí el detalle con precios públicos es de {eur(costeHardwareSinPantallas)}, más {eur(importe(unicos.pantallas))} de pantallas que el plan no incluye.

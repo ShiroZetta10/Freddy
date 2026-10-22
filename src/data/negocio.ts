@@ -200,7 +200,7 @@ export function flujoAcumulado(p: Params, meses = 36): number[] {
 
 /** Reparto orientativo de la implantación (supuesto) para explicar en qué se gasta. */
 export const REPARTO_IMPLANTACION = [
-  { concepto: 'Desarrollo de producción e integración (pasarela, TPV)', pct: 0.55 },
+  { concepto: 'Desarrollo de producción e integración (conector Ágora, pasarela)', pct: 0.55 },
   { concepto: 'Hardware: tablets de barra, servidor a bordo, SAI y repuesto', pct: 0.15 },
   { concepto: 'Piloto, medición y conciliación', pct: 0.1 },
   { concepto: 'Formación corta y material', pct: 0.05 },
@@ -220,6 +220,7 @@ export const FUENTES: { nombre: string; valor: string; fuente: Fuente; nota: str
   { nombre: 'Comisión de la pasarela', valor: '1,5 % (1,2–1,8 %)', fuente: 'supuesto', nota: 'Orden de magnitud habitual; la tarifa real depende del banco de Fred. Olsen.' },
   { nombre: 'Margen bruto sobre la venta incremental', valor: '55 %', fuente: 'supuesto', nota: 'No tenemos el margen real de la barra. Fred. Olsen puede sustituirlo con su escandallo.' },
   { nombre: 'Coste de implantación', valor: '30.000 €', fuente: 'supuesto', nota: 'Estimación del equipo (desarrollo, hardware, formación). Sin presupuestos de proveedores.' },
-  { nombre: 'Coste mensual de plataforma', valor: '1.800 €/mes', fuente: 'supuesto', nota: 'Nube, mantenimiento, soporte y producto a tiempo parcial. Sin presupuestos de proveedores.' },
+  { nombre: 'Coste mensual de plataforma', valor: '1.800 €/mes', fuente: 'supuesto', nota: 'Nube, mantenimiento, soporte y producto a tiempo parcial. Sin presupuestos de proveedores. No incluye la licencia del módulo de integración de Ágora.' },
+  { nombre: 'Licencia del módulo de integración de Ágora', valor: 'Sin importe · a validar con Ágora', fuente: 'supuesto', nota: 'Las fuentes públicas dicen que el módulo debe estar licenciado y activo, pero no su precio. No está incluida en la implantación ni en la plataforma; figura a 0 € en el simulador hasta tener presupuesto.' },
   { nombre: 'Flota: buques y ventas respecto al Bajamar', valor: '3–7 buques · 40–60 %', fuente: 'supuesto', nota: 'Solo buques de alta velocidad con cafetería. No tenemos ventas de otros buques: es una extrapolación prudente.' },
 ]

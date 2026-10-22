@@ -427,26 +427,26 @@ const B2: Esc = {
       <Persona x={70} rol="a" brazo="movil" pantalla="gris" animo="feliz" />
       <Persona x={175} rol="javi" flip animo="feliz" />
       <Barra x={110} w={130} />
-      <Tablet x={196} y={22} w={100} h={62}>
+      <Tablet x={196} y={18} w={100} h={66}>
         <T x={0} y={7} s={7.5} w={700} c={C.navy}>
           Stock de hoy
         </T>
-        <T x={0} y={26} s={8}>
+        <T x={0} y={24} s={8}>
           Croissant
         </T>
-        <T x={54} y={19} s={6.5} c={C.g4}>
+        <T x={0} y={33} s={6.5} w={700} c={C.rojo}>
           Agotado
         </T>
         <Interruptor x={62} y={14} on={false} />
-        <T x={0} y={44} s={8}>
+        <T x={0} y={48} s={8}>
           Agua 1/2
         </T>
-        <Interruptor x={62} y={36} on d={-1} />
+        <Interruptor x={62} y={40} on d={-1} />
       </Tablet>
       <Burbuja x={26} y={24} w={86} h={30} colaX={34} d={1.5}>
         <Ico k="croissant" x={14} y={15} c={C.g3} />
         <Pastilla x={28} y={9} w={50} txt="Agotado" tono="off" />
-        <T x={28} y={26} s={6.5} c={C.g5}>
+        <T x={28} y={27} s={7} c={C.g5}>
           lo ve antes de pedir
         </T>
       </Burbuja>
@@ -483,14 +483,14 @@ const B3: Esc = {
         </T>
         {[
           ['#229 · 2 cafés', 'Preparando', 'warn'],
-          ['#230 · Sándwich', 'Recibido', 'info'],
+          ['#230 · Bocata', 'Recibido', 'info'],
           ['#231 · Agua', 'Listo', 'ok'],
         ].map(([l, r, tn], i) => (
           <Entra key={l} d={0.5 + i * 0.25} y={4}>
             <T x={0} y={22 + i * 14} s={7.5} c={C.g5}>
               {l}
             </T>
-            <Pastilla x={60} y={14 + i * 14} w={40} txt={r} tono={tn as 'ok' | 'warn' | 'info'} />
+            <Pastilla x={58} y={14 + i * 14} w={46} txt={r} tono={tn as 'ok' | 'warn' | 'info'} />
           </Entra>
         ))}
       </Tablet>
@@ -824,10 +824,10 @@ const M5: Esc = {
         <T x={0} y={7} s={8} w={700} c={C.navy}>
           Venta por pasajero
         </T>
-        <Columna x={4} h={17} fill={C.g3} val="1,37 €" label="Base" d={0.6} />
-        <Columna x={38} h={20} fill={C.navy} val="1,61 €" label="Piloto" d={0.9} />
+        <Columna x={0} h={17} fill={C.g3} val="1,37 €" label="Base" d={0.6} />
+        <Columna x={32} h={20} fill={C.navy} val="1,61 €" label="Piloto" d={0.9} />
         <Pop d={1.5} ox={0.5} oy={0.5}>
-          <T x={92} y={26} s={11} w={800} c={C.verde} a="end">
+          <T x={94} y={24} s={10} w={800} c={C.verde} a="end">
             +17 %
           </T>
         </Pop>

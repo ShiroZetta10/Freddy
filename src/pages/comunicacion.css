@@ -48,16 +48,17 @@
 .co-carteles figure { margin: 0; }
 .co-carteles figcaption, .co-fmt figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: center; }
 .co-cartel-box { container-type: inline-size; }
-.co-cartel { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 20px rgba(11,52,120,.12); overflow: hidden; display: flex; flex-direction: column; }
+.co-cartel { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 20px rgba(11,52,120,.12); overflow: clip; display: flex; flex-direction: column; }
+/* overflow: clip (no hidden): el aspect-ratio pasa a ser una altura mínima; si el texto necesita más, el cartel crece y nunca se corta ni pega al borde */
 .co-cartel-franja { background: var(--navy); color: #fff; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-size: 4.6cqw; padding: 3cqw 5cqw; border-bottom: 1.2cqw solid var(--yellow); }
-.co-cartel-cuerpo { padding: 6cqw; display: flex; flex-direction: column; gap: 3cqw; align-items: center; text-align: center; }
+.co-cartel-cuerpo { flex: 1 1 auto; padding: 6cqw 6cqw 7cqw; display: flex; flex-direction: column; justify-content: center; gap: 3cqw; align-items: center; text-align: center; }
 .co-cartel-cuerpo strong { color: var(--navy); font-size: 7cqw; line-height: 1.1; }
 .co-cartel-cuerpo span { color: var(--muted); font-size: 4.4cqw; }
 .co-cartel-cuerpo em { font-style: normal; font-weight: 700; color: var(--navy); font-size: 4cqw; }
 .co-cartel-qr { width: 46cqw; background: #fff; padding: 2.5cqw; border: 0.8cqw solid var(--navy); border-radius: 3cqw; }
 .co-cartel-qr svg, .co-pn-qr svg { display: block; width: 100%; height: auto; }
 .co-cartel-mesa { aspect-ratio: 1 / 1.15; }
-.co-cartel-barra { aspect-ratio: 4 / 4.1; }
+.co-cartel-barra { aspect-ratio: 4 / 4.6; }
 .co-cartel-barra .co-cartel-franja { background: var(--yellow); color: var(--navy); border-bottom-color: var(--navy); }
 .co-cartel-salon { aspect-ratio: 2 / 3; }
 
@@ -78,7 +79,7 @@
 .co-fmt figcaption span { display: block; font-size: 12px; }
 .co-pn-box { container-type: inline-size; }
 .co-fmt-mupi .co-pn-box, .co-fmt-story .co-pn-box { max-width: 300px; margin: 0 auto; }
-.co-pn { position: relative; overflow: hidden; background: var(--navy); color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(11,52,120,.18); display: flex; }
+.co-pn { position: relative; overflow: clip; background: var(--navy); color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(11,52,120,.18); display: flex; }
 .co-pn h4 { color: #fff; margin: 0; line-height: 1.12; }
 .co-pn p { margin: 0; opacity: .92; }
 .co-pn em { font-style: normal; opacity: .8; font-weight: 600; }
@@ -99,9 +100,9 @@
 .co-pn-barra { aspect-ratio: 16 / 10; padding: 5cqw; gap: 5cqw; align-items: center; background: #fff; color: var(--navy); border: 1px solid var(--line); border-top: 3cqw solid var(--navy); }
 .co-pn-barra .co-pn-logo { padding: 0; margin-bottom: 2cqw; }
 .co-pn-barra .co-pn-logo img { height: 5cqw; }
-.co-pn-barra h4 { color: var(--navy); font-size: 6.4cqw; }
-.co-pn-barra p { font-size: 3.6cqw; margin-top: 1.5cqw; color: var(--muted); opacity: 1; }
-.co-pn-barra em { font-size: 3.4cqw; display: block; margin-top: 2cqw; color: var(--navy); opacity: 1; }
+.co-pn-barra h4 { color: var(--navy); font-size: 5.2cqw; }
+.co-pn-barra p { font-size: 3.2cqw; margin-top: 1.5cqw; color: var(--muted); opacity: 1; }
+.co-pn-barra em { font-size: 3cqw; display: block; margin-top: 2cqw; color: var(--navy); opacity: 1; }
 .co-pn-barra-txt { flex: 1; min-width: 0; }
 .co-pn-barra .co-pn-qr { width: 28cqw; border: 0.8cqw solid var(--navy); }
 .co-pn-story { aspect-ratio: 9 / 16; flex-direction: column; align-items: center; text-align: center; padding: 8cqw; gap: 5cqw; background: linear-gradient(170deg, var(--navy) 0%, #164a9e 100%); }
@@ -129,4 +130,35 @@
   .co-tabs button { flex: 1 1 auto; }
   .co-nav { flex-direction: column; }
   .co-nav .btn { justify-content: center; }
+}
+
+/* ---------- campaña de lanzamiento ---------- */
+.co-cmp-intro { align-items: start; }
+.co-cmp-guia { display: grid; gap: 8px; text-decoration: none; padding: 12px; }
+.co-cmp-guia img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; }
+.co-cmp-cal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; font-size: 12.5px; }
+.co-cmp-cal > div { background: var(--bg-soft); border-radius: 6px; padding: 10px; }
+.co-cmp-cal span { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.co-cmp-cal b { color: var(--navy); }
+.co-cmp-cal ul { margin: 6px 0 0; padding-left: 16px; }
+.co-cmp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; align-items: start; }
+.co-cmp-pieza { display: grid; gap: 12px; }
+.co-cmp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.co-cmp-head h3 { margin: 2px 0 0; }
+.co-cmp-id { font-size: 11px; font-weight: 800; letter-spacing: .08em; color: var(--muted); }
+.co-cmp-var { justify-self: start; }
+.co-cmp-strip { display: flex; gap: 10px; overflow-x: auto; background: var(--bg-soft); border-radius: 6px; padding: 12px; min-height: 120px; align-items: center; justify-content: center; }
+.co-cmp-strip.multi { justify-content: flex-start; }
+.co-cmp-strip a { flex: none; display: block; }
+.co-cmp-strip img { display: block; height: 300px; width: auto; max-width: 100%; border-radius: 4px; box-shadow: 0 4px 14px rgba(11,52,120,.14); background: #fff; }
+.co-cmp-strip.multi img { max-width: none; height: 260px; }
+.co-cmp-copy { margin: 0; font-size: 14px; color: var(--navy); font-weight: 600; }
+.co-cmp-meta { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 12.5px; }
+.co-cmp-meta dt { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.co-cmp-meta dd { margin: 2px 0 0; }
+@media (max-width: 900px) {
+  .co-cmp-grid, .co-cmp-intro { grid-template-columns: 1fr; }
+  .co-cmp-cal { grid-template-columns: 1fr; }
+  .co-cmp-strip img { height: 220px; }
+  .co-cmp-strip.multi img { height: 200px; }
 }

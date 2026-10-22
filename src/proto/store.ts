@@ -56,6 +56,7 @@ export type Pedido = {
   tarifaJoven?: boolean // el billete es Tarifa Joven y se aplicó la ventaja propuesta
   descuentoJoven?: number // € descontados por la ventaja Tarifa Joven (ya restados de `total`)
   bot?: boolean
+  manual?: number // minuto simulado en que la barra lo movió a mano por última vez (el auto-avance le deja margen)
   t: Partial<Record<EstadoPedido | 'creado', number>> // marcas de tiempo (ms reales)
 }
 /** Menú Clase Oro incluido aplicado a un pedido: qué unidades van a 0 € y su valor a precio de carta. */
@@ -111,7 +112,23 @@ export type Movimiento = { id: number; t: number; iid: string; delta: number; ti
 export type Fase = 'antes' | 'embarque' | 'navegando' | 'llegando' | 'llegado'
 export type Billete = { ticket: string; nombre: string; clase?: ClaseId; vehiculo?: boolean; idioma: 'es' | 'en' | 'de'; plus: number; tarifaJoven?: boolean }
 export type Mensaje = { id: number; texto: string; t: number; de: 'manager' | 'sistema' }
-export type Alerta = { id: number; nivel: 'info' | 'warn'; texto: string; t: number }
+/**
+ * Alerta del manager. Las que nacen de una condición (saturación de una cafetería, insumo bajo mínimo) llevan una `clave`
+ * estable (tipo + entidad, p. ej. `inventario:croissant`) con la que se deduplican, se resuelven y se silencian.
+ */
+export type Alerta = {
+  id: number
+  nivel: 'info' | 'warn'
+  texto: string
+  t: number
+  clave?: string
+  tipo?: 'saturacion' | 'inventario'
+  entidad?: string // cafetería (`proa`…) o insumo (`croissant`…)
+  gravedad?: number // medida de lo grave que es la condición ahora
+  paso?: number // cuánto debe empeorar `gravedad` para que una alerta silenciada vuelva a avisar
+}
+/** Alerta resuelta con una acción o descartada con la X: no vuelve mientras la condición siga igual (ver `actualizarAlertas`). */
+export type AlertaSilenciada = { t: number; motivo: 'resuelta' | 'descartada'; gravedad: number; reaparece: number }
 
 export type ProtoState = {
   version: number
@@ -142,6 +159,7 @@ export type ProtoState = {
   billetes: Billete[]
   mensajes: Mensaje[]
   alertas: Alerta[]
+  alertasSilenciadas: Record<string, AlertaSilenciada> // por clave estable; compartido entre pestañas/iframes como el resto del estado
   siguienteId: number
   bonos: Bono[] // bonos de consumo emitidos (de billete y físicos); el código es de un solo uso
   insumos: Insumo[]
@@ -468,7 +486,7 @@ const NOMBRES_BOT = ['Ana', 'Luis', 'Marta', 'Jonay', 'Yeray', 'Elena', 'Pedro',
 
 export function estadoInicial(): ProtoState {
   return recalcular({
-    version: 6,
+    version: 7,
     viaje: { buque: 'Bajamar Express', origen: 'Santa Cruz de Tenerife', destino: 'Agaete', salida: '08:00', duracionMin: 80, minuto: -25, velocidad: 0.5 },
     ajustes: {
       franjaMin: 5,
@@ -492,6 +510,7 @@ export function estadoInicial(): ProtoState {
     billetes: BILLETES_DEMO.map((b) => ({ ...b })),
     mensajes: [{ id: 1, texto: 'Bienvenidos a bordo del Bajamar Express. Mar en calma, llegada prevista a Agaete a las 09:20.', t: Date.now(), de: 'sistema' }],
     alertas: [],
+    alertasSilenciadas: {},
     siguienteId: 201,
     bonos: bonosIniciales(),
     insumos: INSUMOS_INICIALES.map((i) => ({ ...i })),
@@ -504,7 +523,7 @@ export function estadoInicial(): ProtoState {
 }
 
 // ---------------------------------------------------------------- store (localStorage + BroadcastChannel)
-const KEY = 'fredonboard-proto-v6'
+const KEY = 'fredonboard-proto-v7'
 const canal: BroadcastChannel | null = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(KEY) : null
 
 function cargar(): ProtoState {
@@ -514,7 +533,7 @@ function cargar(): ProtoState {
     // una demo abandonada (más de 20 min sin actividad) arranca de cero con una travesía nueva
     if (raw && Date.now() - t < 20 * 60 * 1000) {
       const s = JSON.parse(raw) as ProtoState
-      if (s.version === 6) return recalcular(s)
+      if (s.version === 7) return recalcular(s)
     }
   } catch {
     /* sin almacenamiento: seguimos en memoria */
@@ -916,7 +935,7 @@ function refrescarDesdeAlmacen() {
     const raw = localStorage.getItem(KEY)
     if (!raw) return
     const st = JSON.parse(raw) as ProtoState
-    if (st.version === 6 && st.bonos?.some((b) => b.estado !== 'disponible' && state.bonos.find((x) => x.codigo === b.codigo)?.estado === 'disponible')) {
+    if (st.version === 7 && st.bonos?.some((b) => b.estado !== 'disponible' && state.bonos.find((x) => x.codigo === b.codigo)?.estado === 'disponible')) {
       state = recalcular(st)
       emit()
     }
@@ -1040,22 +1059,143 @@ export function solicitarSoporteOro(billete: Pick<Billete, 'ticket' | 'nombre' |
   return true
 }
 
-export function avanzarPedido(id: number) {
+/**
+ * Barra: pasa un pedido al siguiente estado. `desde` es el estado que la barra tenía en pantalla al pulsar: si el auto-avance
+ * del reloj ya lo movió en ese instante, el toque no se aplica (así un solo toque nunca salta dos estados).
+ */
+export function avanzarPedido(id: number, desde?: EstadoPedido) {
   const orden: EstadoPedido[] = ['recibido', 'preparando', 'listo', 'entregado']
   update((s) => ({
     ...s,
     pedidos: s.pedidos.map((p) => {
       if (p.id !== id) return p
+      if (desde && p.estado !== desde) return p
       const i = orden.indexOf(p.estado)
       if (i < 0 || i === orden.length - 1) return p
       const nuevo = orden[i + 1]
-      return { ...p, estado: nuevo, t: { ...p.t, [nuevo]: Date.now() } }
+      return { ...p, estado: nuevo, manual: s.viaje.minuto, t: { ...p.t, [nuevo]: Date.now() } }
     }),
   }))
 }
 
 export function setEstadoPedido(id: number, estado: EstadoPedido) {
-  update((s) => ({ ...s, pedidos: s.pedidos.map((p) => (p.id === id ? { ...p, estado, t: { ...p.t, [estado]: Date.now() } } : p)) }))
+  update((s) => ({ ...s, pedidos: s.pedidos.map((p) => (p.id === id ? { ...p, estado, manual: s.viaje.minuto, t: { ...p.t, [estado]: Date.now() } } : p)) }))
+}
+
+// ---------------------------------------------------------------- auto-avance de los pedidos reales (reloj simulado)
+/** Minutos simulados de preparación: el pedido empieza a prepararse PREP_MIN antes de que se abra su franja y queda listo al abrirse. */
+export const PREP_MIN = 4
+/** Si la barra movió un pedido a mano, el reloj no lo toca hasta pasados estos minutos simulados (la barra manda; si se olvida, el reloj lo alcanza). */
+export const GRACIA_MANUAL_MIN = 3
+const ORDEN_AUTO: EstadoPedido[] = ['recibido', 'preparando', 'listo']
+/** Estado en el que debería estar un pedido según el reloj del viaje y su franja de recogida. */
+export function estadoPorReloj(s: Pick<ProtoState, 'ajustes'>, p: Pick<Pedido, 'franja'>, minuto: number): EstadoPedido {
+  const inicio = p.franja * s.ajustes.franjaMin
+  if (minuto >= inicio) return 'listo'
+  if (minuto >= inicio - PREP_MIN) return 'preparando'
+  return 'recibido'
+}
+/** Un paso de auto-avance (nunca retrocede ni salta). `entregado` solo lo marca la barra con el QR: un pedido listo se queda en listo. */
+function autoAvanzar(s: ProtoState, minuto: number, ahora: number): Pedido[] {
+  return s.pedidos.map((p) => {
+    if (p.bot || (p.estado !== 'recibido' && p.estado !== 'preparando')) return p
+    const objetivo = ORDEN_AUTO.indexOf(estadoPorReloj(s, p, minuto))
+    const actual = ORDEN_AUTO.indexOf(p.estado)
+    if (objetivo <= actual) return p
+    if (p.manual !== undefined && minuto - p.manual < GRACIA_MANUAL_MIN) return p
+    const nuevo = ORDEN_AUTO[actual + 1]
+    return { ...p, estado: nuevo, t: { ...p.t, [nuevo]: ahora } }
+  })
+}
+
+// ---------------------------------------------------------------- alertas del manager
+/** Tiempo (ms reales) que una alerta resuelta o descartada permanece silenciada aunque su condición siga. */
+export const SILENCIO_ALERTA_MS = 5 * 60 * 1000
+
+/**
+ * Resuelve (acción pulsada) o descarta (X) una alerta. Desaparece y, si nace de una condición, queda silenciada por su clave estable:
+ * no se vuelve a crear mientras la condición no cambie de forma significativa (ver `actualizarAlertas`).
+ */
+export function resolverAlerta(id: number, motivo: 'resuelta' | 'descartada' = 'resuelta') {
+  update((s) => {
+    const a = s.alertas.find((x) => x.id === id)
+    if (!a) return s
+    const g = a.gravedad ?? 0
+    return {
+      ...s,
+      alertas: s.alertas.filter((x) => x.id !== id),
+      alertasSilenciadas: a.clave ? { ...s.alertasSilenciadas, [a.clave]: { t: Date.now(), motivo, gravedad: g, reaparece: g + (a.paso ?? 1) } } : s.alertasSilenciadas,
+    }
+  })
+}
+
+type Condicion = { clave: string; tipo: NonNullable<Alerta['tipo']>; entidad: string; estado: 'activa' | 'intermedia' | 'despejada'; texto: string; gravedad: number; paso: number }
+/** Condiciones que generan alertas. `intermedia` = histéresis: ni se crea alerta nueva ni se reactiva una silenciada (evita parpadeos). */
+function condicionesAlerta(s: ProtoState): Condicion[] {
+  const out: Condicion[] = []
+  for (const c of ['proa', 'popa', 'oro'] as CafeteriaId[]) {
+    const activos = s.pedidos.filter((p) => p.cafeteria === c && (p.estado === 'recibido' || p.estado === 'preparando')).length
+    out.push({ clave: `saturacion:${c}`, tipo: 'saturacion', entidad: c, estado: activos >= 7 ? 'activa' : activos <= 5 ? 'despejada' : 'intermedia', texto: `${s.cafeterias[c].nombre}: ${activos} pedidos en preparación`, gravedad: activos, paso: 3 })
+  }
+  for (const i of s.insumos) {
+    out.push({
+      clave: `inventario:${i.id}`,
+      tipo: 'inventario',
+      entidad: i.id,
+      estado: i.stock <= i.minimo ? 'activa' : 'despejada',
+      texto: `Inventario: ${i.nombre} bajo mínimo (${Math.round(i.stock)} ${i.unidad}). Reposición: ${i.aprovisionamiento}.`,
+      gravedad: i.stock <= 0 ? 2 : i.stock <= i.minimo / 2 ? 1 : 0, // bajo mínimo → a la mitad → agotado
+      paso: 1,
+    })
+  }
+  return out
+}
+
+let seqAlerta = 0
+/**
+ * Regenera las alertas de condición con deduplicación por clave estable (tipo + entidad), no por texto:
+ *  - condición activa y sin alerta → se crea; con alerta → se actualiza su texto (mismo id).
+ *  - condición despejada → la alerta se retira sola y se olvida su silencio (si reaparece, avisa de nuevo).
+ *  - alerta resuelta/descartada (silenciada) → no vuelve mientras la condición siga igual; sí si empeora
+ *    (`gravedad` ≥ la que tenía + `paso`) o pasados SILENCIO_ALERTA_MS.
+ */
+function actualizarAlertas(s: ProtoState, ahora: number): Pick<ProtoState, 'alertas' | 'alertasSilenciadas'> {
+  let alertas = s.alertas
+  const sil = { ...(s.alertasSilenciadas ?? {}) }
+  const poner = (a: Alerta[]) => {
+    alertas = a
+  }
+  for (const c of condicionesAlerta(s)) {
+    const idx = alertas.findIndex((a) => a.clave === c.clave)
+    if (c.estado === 'despejada') {
+      delete sil[c.clave]
+      if (idx >= 0) poner(alertas.filter((_, k) => k !== idx))
+      continue
+    }
+    const sl = sil[c.clave]
+    if (sl) {
+      const vuelve = c.estado === 'activa' && (c.gravedad >= sl.reaparece || ahora - sl.t >= SILENCIO_ALERTA_MS)
+      if (!vuelve) {
+        if (idx >= 0) poner(alertas.filter((_, k) => k !== idx))
+        continue
+      }
+      delete sil[c.clave]
+    }
+    if (idx >= 0) {
+      const a = alertas[idx]
+      if (a.texto !== c.texto || a.gravedad !== c.gravedad) poner(alertas.map((x, k) => (k === idx ? { ...x, texto: c.texto, gravedad: c.gravedad } : x)))
+    } else if (c.estado === 'activa') {
+      poner([...alertas, { id: ahora * 100 + (seqAlerta++ % 100), nivel: 'warn', texto: c.texto, t: ahora, clave: c.clave, tipo: c.tipo, entidad: c.entidad, gravedad: c.gravedad, paso: c.paso }])
+    }
+  }
+  return { alertas: alertas.slice(-12), alertasSilenciadas: sil }
+}
+
+/** Alerta «Reponer»: recibe el insumo hasta su cantidad de referencia (la condición desaparece sola). */
+export function reponerInsumo(iid: string) {
+  const i = state.insumos.find((x) => x.id === iid)
+  if (!i) return
+  movimientoInventario(iid, Math.max(0, i.inicial - i.stock), 'entrada', 'Reposición desde alerta')
 }
 
 /** Cancelación del pasajero: solo mientras está «recibido». Devuelve el stock. */
@@ -1180,40 +1320,63 @@ let finDesde: number | null = null
 const FIN_ESPERA_MS = 45000
 let ultimoTick = Date.now()
 
-/** Arranca el reloj y el bot. Idempotente; llamar desde el shell del prototipo. Solo una pestaña "lidera". */
+/** Arranca el reloj y el bot. Idempotente; llamar desde el shell del prototipo (cualquier vista, también solo la del pasajero). Solo una pestaña «lidera». */
 export function arrancarMotor() {
   if (motor !== null) return
   ultimoTick = Date.now()
   motor = window.setInterval(tick, 1000)
+  window.addEventListener('pagehide', soltarLiderazgo)
 }
 export function pararMotor() {
   if (motor !== null) window.clearInterval(motor)
   motor = null
+  window.removeEventListener('pagehide', soltarLiderazgo)
+  soltarLiderazgo()
 }
 
-function esLider() {
-  // la pestaña visible lidera para no acelerar el reloj N veces con varias pestañas abiertas
+// elección de líder entre pestañas/iframes: solo una avanza el reloj (si no, el viaje iría N veces más rápido)
+const LIDER_KEY = 'fredonboard-lider'
+const LIDER_TTL_MS = 3000 // un líder que no renueva en este tiempo (pestaña cerrada, congelada o muy estrangulada) pierde el puesto
+const MAX_SALTO_S = 5 // al relevar a un líder se recupera como mucho este tiempo de reloj perdido
+const LIDER_ID = uid()
+
+/**
+ * Renueva o toma el liderazgo. Devuelve si esta pestaña lidera y, si acaba de relevar a otra, la hora (ms) del último tick de la anterior.
+ * Una pestaña visible releva a una oculta (los navegadores estrangulan los temporizadores de las ocultas). Si el líder se cierra
+ * libera el puesto al instante (`soltarLiderazgo`), y si desaparece sin avisar lo releva otra a los LIDER_TTL_MS.
+ */
+function liderazgo(ahora: number): { lider: boolean; previo?: number } {
   try {
-    const k = 'fredonboard-lider'
-    const ahora = Date.now()
-    const raw = localStorage.getItem(k)
-    const [id, t] = raw ? raw.split('|') : ['', '0']
-    if (!raw || id === LIDER_ID || ahora - Number(t) > 3000) {
-      localStorage.setItem(k, `${LIDER_ID}|${ahora}`)
-      return true
+    const visible = typeof document === 'undefined' || !document.hidden
+    const raw = localStorage.getItem(LIDER_KEY)
+    const [id, t, vis] = raw ? raw.split('|') : ['', '0', '0']
+    const mio = id === LIDER_ID
+    if (!raw || mio || id === '' || ahora - Number(t) > LIDER_TTL_MS || (visible && vis === '0')) {
+      localStorage.setItem(LIDER_KEY, `${LIDER_ID}|${ahora}|${visible ? 1 : 0}`)
+      return { lider: true, previo: mio || !raw ? undefined : Number(t) }
     }
-    return false
+    return { lider: false }
   } catch {
-    return true
+    return { lider: true }
   }
 }
-const LIDER_ID = uid()
+function soltarLiderazgo() {
+  try {
+    const [id, t] = (localStorage.getItem(LIDER_KEY) ?? '').split('|')
+    if (id === LIDER_ID) localStorage.setItem(LIDER_KEY, `|${t}|0`) // sin dueño, pero conserva la hora del último tick para no perder reloj
+  } catch {
+    /* ignorar */
+  }
+}
 
 function tick() {
   const ahora = Date.now()
-  const dt = (ahora - ultimoTick) / 1000
+  let dt = (ahora - ultimoTick) / 1000
   ultimoTick = ahora
-  if (!esLider()) return
+  const { lider, previo } = liderazgo(ahora)
+  if (!lider) return
+  // relevo de líder: recupera el reloj que se perdió mientras nadie lideraba (acotado)
+  if (previo !== undefined && previo > 0) dt = Math.min(MAX_SALTO_S, Math.max(dt, (ahora - previo) / 1000))
   const s = state
   if (s.viaje.velocidad <= 0) return
   const minuto = Math.min(s.viaje.duracionMin + 10, s.viaje.minuto + dt * s.viaje.velocidad)
@@ -1235,10 +1398,11 @@ function tick() {
   // al llegar a puerto, los bonos sin canjear caducan
   if (minuto >= s.viaje.duracionMin && next.bonos.some((b) => b.estado === 'disponible')) next = { ...next, bonos: next.bonos.map((b) => (b.estado === 'disponible' ? { ...b, estado: 'caducado' as const } : b)) }
 
-  // barra automática para pedidos del bot (los del usuario los mueve la barra humana… o el auto-avance tras un tiempo)
+  // barra automática: los pedidos del bot avanzan por tiempo real; los del usuario, con el reloj simulado y su franja de recogida
+  // (así funcionan aunque no haya ninguna barra abierta, y respetan la velocidad elegida en los controles de demo)
   next = {
     ...next,
-    pedidos: next.pedidos.map((p) => {
+    pedidos: autoAvanzar(next, minuto, ahora).map((p) => {
       const edad = (ahora - (p.t.creado ?? ahora)) / 1000
       if (p.bot) {
         if (p.estado === 'recibido' && edad > 6) return { ...p, estado: 'preparando', t: { ...p.t, preparando: ahora } }
@@ -1249,21 +1413,8 @@ function tick() {
     }),
   }
 
-  // alertas de saturación
-  const caf: CafeteriaId[] = ['proa', 'popa', 'oro']
-  const alertas = [...next.alertas]
-  for (const c of caf) {
-    const activos = next.pedidos.filter((p) => p.cafeteria === c && (p.estado === 'recibido' || p.estado === 'preparando')).length
-    const yaHay = alertas.some((a) => a.texto.startsWith(next.cafeterias[c].nombre) && ahora - a.t < 30000)
-    if (activos >= 7 && !yaHay) alertas.push({ id: ahora + c.length, nivel: 'warn', texto: `${next.cafeterias[c].nombre}: ${activos} pedidos en preparación`, t: ahora })
-  }
-  // alertas de inventario: insumo bajo mínimo y producto agotado por falta de insumo
-  for (const i of next.insumos) {
-    const yaHay = alertas.some((a) => a.texto.includes(i.nombre) && ahora - a.t < 60000)
-    if (i.stock <= i.minimo && !yaHay)
-      alertas.push({ id: ahora + i.id.length * 7, nivel: 'warn', texto: `Inventario: ${i.nombre} bajo mínimo (${Math.round(i.stock)} ${i.unidad}). Reposición: ${i.aprovisionamiento}.`, t: ahora })
-  }
-  next = { ...next, alertas: alertas.slice(-12) }
+  // alertas de saturación por cafetería e inventario bajo mínimo (claves estables; ver actualizarAlertas)
+  next = { ...next, ...actualizarAlertas(next, ahora) }
 
   state = next
   guardar()

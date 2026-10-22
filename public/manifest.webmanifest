@@ -2,7 +2,7 @@
   "name": "FredOnBoard · prototipo",
   "short_name": "FredOnBoard",
   "description": "Compañero de viaje digital y Click & Collect a bordo (prototipo del equipo Shiro para Zetta10).",
-  "start_url": "./#/app/pasajero",
+  "start_url": "./#/app/inicio",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4f6f9",

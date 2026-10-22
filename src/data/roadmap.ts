@@ -23,7 +23,7 @@ export type IdeaFutura = {
 }
 
 export const HORIZONTES: { id: Horizonte; descripcion: string }[] = [
-  { id: 'Tras el piloto', descripcion: 'Se pueden abordar en cuanto el piloto valide las hipótesis, sin integraciones externas pesadas.' },
+  { id: 'Tras el piloto', descripcion: 'Se pueden abordar en cuanto el piloto valide las hipótesis, sin más integraciones externas que Ágora (ya integrada desde el piloto).' },
   { id: 'Escalado', descripcion: 'Necesitan integrarse con sistemas de Fred. Olsen o desplegarse en más barcos y rutas.' },
   { id: 'Exploración', descripcion: 'Ideas que requieren más evidencia, datos de uso o decisiones de la naviera antes de comprometerse.' },
 ]

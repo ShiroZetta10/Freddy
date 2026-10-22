@@ -44,9 +44,7 @@ export function ProtoChrome({ titulo, children }: { titulo: string; children?: R
   return (
     <header className="fob-chrome">
       <Link to="/prototipo" className="fob-logo" style={{ color: '#fff', textDecoration: 'none' }} aria-label="Volver al prototipo">
-        <i>
-          <Icon name="anchor" size={14} />
-        </i>
+        <img className="fob-flag" src="logos/fo-bandera.png" alt="Fred. Olsen Express" />
         FredOnBoard
         <span style={{ fontWeight: 500, opacity: 0.7, fontSize: 12 }}>· {titulo}</span>
       </Link>
@@ -206,8 +204,9 @@ export const LOGO_ELABORADO_SRC = 'logos/elaborado-en-canarias.png'
  * y, si no carga, aparece la etiqueta de texto `fallback` («Producto canario»). Su uso requiere autorización de la marca y solo
  * puede acompañar a productos certificados.
  */
-export function ElaboradoLogo({ fallback, height = 20 }: { fallback: ReactNode; height?: number }) {
+export function ElaboradoLogo({ fallback, height = 32 }: { fallback: ReactNode; height?: number }) {
   const [fallo, setFallo] = useState(false)
   if (fallo) return <>{fallback}</>
-  return <img className="fob-elab-logo" src={LOGO_ELABORADO_SRC} alt="Elaborado en Canarias" height={height} style={{ height, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} onError={() => setFallo(true)} />
+  // el archivo oficial es cuadrado (256×256): a 32 px de alto se ve nítido en pantallas de 2×; width:auto conserva la proporción (sin deformar)
+  return <img className="fob-elab-logo" src={LOGO_ELABORADO_SRC} alt="Elaborado en Canarias" height={height} decoding="async" style={{ height, width: 'auto', display: 'inline-block', verticalAlign: 'middle', flex: 'none' }} onError={() => setFallo(true)} />
 }

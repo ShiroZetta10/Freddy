@@ -26,11 +26,12 @@ const FASES = [
     duracion: '≈ 4 semanas (la semana 0 es de medición)',
     entregables: [
       'Semana 0: medición sin servicio (tickets por hora, % que compra, espera en barra) para tener línea base propia.',
+      'Ágora: acceso y licencia del módulo de integración, token y URL del TPV y un entorno de pruebas. Confirmar si Ágora corre a bordo o en tierra y si admite crear ventas desde fuera.',
       'Acuerdos con Fred. Olsen: cafetería piloto, franja, espacio de recogida, medio de pago y devoluciones.',
-      'Carta, precios y escandallos cargados; servidor a bordo y tablets instalados.',
+      'Servidor a bordo y tablets instalados; carta, precios y stock leídos desde Ágora en el entorno de pruebas.',
     ],
-    quien: 'Equipo Shiro (producto y desarrollo), responsable de restauración y IT de Fred. Olsen.',
-    criterio: 'Supuestos críticos validados (TPV, conectividad real, espacio de recogida, pagos) y línea base medida.',
+    quien: 'Equipo Shiro (producto y desarrollo), responsable de restauración y IT de Fred. Olsen y el proveedor de Ágora.',
+    criterio: 'Acceso al módulo de integración de Ágora y entorno de pruebas listos (o decidido el modo puente), supuestos críticos validados (conectividad real, espacio de recogida, pagos) y línea base medida.',
   },
   {
     num: 'Fase 1',
@@ -39,22 +40,23 @@ const FASES = [
     entregables: [
       'Web sin cuenta, con acceso por el billete: Click & Collect y pre-pedido antes de embarcar.',
       'Tablet de barra con cola por franjas, pausa y entrega con QR.',
-      'Panel de manager con KPIs y conciliación diaria (sin integración con el TPV).',
+      'Conector Ágora activo en el Bajamar: lee carta, precios y stock y escribe cada pedido como venta con su método de pago, con cola de reintentos.',
+      'Panel de manager con KPIs y conciliación diaria por cierre Z de Ágora. Si el módulo no llega a tiempo: modo puente con exportación diaria.',
     ],
-    quien: 'Tripulación de la cafetería piloto, un responsable de producto y el equipo de desarrollo.',
+    quien: 'Tripulación de la cafetería piloto, un responsable de producto, el equipo de desarrollo y el proveedor de Ágora.',
     criterio: 'Más pasajeros que compran y más venta por pasajero frente a la línea base, sin más espera en barra y sin ampliar dotación. Umbrales a acordar con Fred. Olsen (ver Piloto).',
   },
   {
     num: 'Fase 2',
-    titulo: 'Integraciones',
-    duracion: '2–3 meses (depende del proveedor del TPV)',
+    titulo: 'Pagos y Fred. Olsen Plus',
+    duracion: '2–3 meses (depende del banco y del sistema Plus)',
     entregables: [
-      'Integración por API con el TPV: ventas y stock en una sola caja.',
+      'Ágora ya integrada desde el piloto: se endurecen devoluciones, stock por cafetería y conciliación automática sin diferencias.',
       'Pasarela de pago tokenizada del banco de Fred. Olsen, con Apple Pay y Google Pay.',
       'Fred. Olsen Plus: identificación opcional y Plus Points en el pedido.',
     ],
-    quien: 'Desarrollo, IT y proveedor de TPV y pasarela de Fred. Olsen.',
-    criterio: 'Conciliación automática sin diferencias y pagos con devoluciones probados de extremo a extremo.',
+    quien: 'Desarrollo, IT, proveedor de Ágora, banco y Fred. Olsen Plus.',
+    criterio: 'Conciliación con el cierre Z de Ágora sin diferencias y pagos con devoluciones probados de extremo a extremo.',
   },
   {
     num: 'Fase 3',
@@ -63,7 +65,8 @@ const FASES = [
     entregables: [
       'Segunda oleada: Bañaderos Express y resto de alta velocidad; después, ferry convencional y miniferris con su modo propio.',
       'FredOnBoard dentro de On Board Club y de la app: viaje en tiempo real, valoración, Plus Points.',
-      'Panel de flota con datos agregados y carta por buque.',
+      'Panel de flota con datos agregados y carta por buque, con el conector Ágora desplegado en cada buque (a bordo o en tierra, según su instalación).',
+      'Si IT lo pide, conexión a su plataforma corporativa (ERP) en lugar de a cada Ágora.',
     ],
     quien: 'Producto y desarrollo de Fred. Olsen o proveedor local, con la formación a cada tripulación.',
     criterio: 'Resultado estable por buque durante 3 meses y plataforma que se mantiene sin el equipo original.',
@@ -107,11 +110,11 @@ const RECURSOS: Recurso[] = [
     icono: 'plug',
     titulo: 'Integraciones',
     puntos: [
-      'Fase 1: ninguna obligatoria. Listado de pasajeros por salida en solo lectura y conciliación diaria con el TPV.',
-      'Fase 2: TPV por API, pasarela de pago y Fred. Olsen Plus.',
+      'Desde el piloto: Ágora por API HTTP/JSON (módulo de integración), carta, precios, stock, ventas y cierre Z. Listado de pasajeros por salida en solo lectura.',
+      'Fase 2: pasarela de pago del banco de Fred. Olsen y Fred. Olsen Plus.',
       'Inventario: se aprovecha el escandallo que ya existe y la función de perecederos aún sin activar.',
     ],
-    supuesto: 'Modelo de TPV y si ofrece API: no lo conocemos. Si no la hay, la conciliación diaria sigue siendo válida.',
+    supuesto: 'Licencia del módulo de integración de Ágora, dónde corre Ágora (barco o tierra) y si admite crear ventas desde fuera: a validar con Fred. Olsen / Ágora. Si el módulo no está disponible o no escribe pedidos, modo puente con exportación diaria.',
   },
   {
     icono: 'wrench',
@@ -156,7 +159,8 @@ const RIESGOS = [
   { r: 'Pasajeros sin móvil o poco digitales', m: 'La barra tradicional no cambia. El servicio suma un canal, no sustituye ninguno.', f: 'Todas' },
   { r: 'Productos agotados después de pagar', m: 'Stock por escandallo, umbral de seguridad y reembolso solo de la línea afectada.', f: 'Fase 1' },
   { r: 'Pagos y devoluciones sin definir', m: 'Pasarela tokenizada; el medio de pago y el circuito de devolución se cierran en la Fase 0.', f: 'Fase 0' },
-  { r: 'Integración con el TPV se retrasa', m: 'El MVP no la necesita: conciliación diaria. La integración se hace en la Fase 2.', f: 'Fase 2' },
+  { r: 'Módulo de integración de Ágora no disponible o sin capacidad de escribir pedidos', m: 'Modo puente: carta cargada desde Ágora y exportación diaria cruzada con el cierre Z hasta activar el módulo. Se pide acceso y entorno de pruebas en la Fase 0.', f: 'Fase 0' },
+  { r: 'Ágora no responde durante la travesía', m: 'Cola de reintentos en el servidor del barco con clave única por pedido, sin duplicar ventas. La barra sigue vendiendo como hoy.', f: 'Fase 1' },
   { r: 'Adopción menor de la esperada', m: 'QR en las mesas, portal wifi y pre-pedido (ver plan de comunicación). El modelo se revisa con el dato real del piloto.', f: 'Fase 1' },
   { r: 'Beneficio inferior al coste', m: 'Escenarios con supuestos explícitos y criterio de parada tras el piloto. La inversión inicial es pequeña.', f: 'Fase 1' },
 ]
@@ -534,6 +538,7 @@ function Lienzo() {
             <li>Pre-pedido y Click & Collect, con franjas de recogida con tope.</li>
             <li>Aviso «listo» y entrega con QR.</li>
             <li>Tablet de barra para la tripulación y panel de manager con KPIs.</li>
+            <li>Conectado a Ágora, el TPV de Fred. Olsen: carta, precios, stock y caja en un solo sitio.</li>
             <li>Funciona sin internet a bordo: servidor local por el wifi del barco.</li>
           </ul>
         </Bloque>
@@ -566,8 +571,8 @@ function Lienzo() {
               <dd>Usuarios del servicio, también socios de Fred. Olsen Plus.</dd>
             </div>
             <div>
-              <dt>Proveedores tecnológicos</dt>
-              <dd>TPV Ágora, pasarela de pago y conectividad a bordo.</dd>
+              <dt>Ágora y proveedores tecnológicos</dt>
+              <dd>Ágora (TPV) y su proveedor, para el módulo de integración y el entorno de pruebas; pasarela de pago y conectividad a bordo.</dd>
             </div>
             <div>
               <dt>Proveedores locales canarios</dt>
@@ -585,12 +590,12 @@ function Lienzo() {
             <li>
               <span className="im-hito-n">Hito 1</span>
               <strong>Piloto MVP en el Bajamar Express</strong>
-              <span>Fases 0 y 1 · semana 0 de medición y 4 semanas con servicio. Conciliación diaria, sin integraciones.</span>
+              <span>Fases 0 y 1 · acceso a Ágora, semana 0 de medición y 4 semanas con servicio con el conector Ágora activo.</span>
             </li>
             <li>
               <span className="im-hito-n">Hito 2</span>
-              <strong>Integración TPV, pagos y Plus</strong>
-              <span>Fase 2 · 2–3 meses. Una sola caja, pasarela tokenizada y Plus Points.</span>
+              <strong>Pagos y Fred. Olsen Plus</strong>
+              <span>Fase 2 · 2–3 meses. Pasarela tokenizada, devoluciones y Plus Points sobre la caja única de Ágora.</span>
             </li>
             <li>
               <span className="im-hito-n">Hito 3</span>
@@ -609,7 +614,7 @@ function Lienzo() {
               <strong>Piloto:</strong> Bajamar Express, franja de {mañana.franja.toLowerCase()} ({mañana.horas}), 1 de las {totales.cafeterias} cafeterías.
             </li>
             <li>
-              <strong>Hace falta:</strong> una tablet y un servidor a bordo, carta y precios cargados, y acuerdo con Fred. Olsen sobre espacio de recogida y medio de pago.
+              <strong>Hace falta:</strong> acceso al módulo de integración de Ágora y un entorno de pruebas, una tablet y un servidor a bordo, y acuerdo con Fred. Olsen sobre espacio de recogida y medio de pago.
             </li>
           </ul>
         </Bloque>
@@ -631,7 +636,7 @@ export default function Implementacion() {
         <h1>Cómo implantar FredOnBoard a bordo</h1>
         <p>
           FredOnBoard se integra dentro de On Board Club, el ecosistema digital que Fred. Olsen ya ofrece a bordo. Este plan recoge los pasos, los recursos y las condiciones necesarias, y
-          una estimación de costes y beneficios. Es una propuesta viable para pilotar, no un producto terminado: lo que no sabemos se marca como supuesto a validar.
+          una estimación de costes y beneficios. Es una propuesta viable para pilotar, no un producto terminado: lo que no sabemos se marca como supuesto a validar. La integración con Ágora forma parte del plan desde el piloto.
         </p>
       </div>
 
@@ -651,7 +656,7 @@ export default function Implementacion() {
         <div className="card stat yellow">
           <div className="label">Inversión estimada</div>
           <div className="value">{eur(base.implantacion)}</div>
-          <div className="sub">y {eur(base.plataforma)}/mes de plataforma (supuestos)</div>
+          <div className="sub">y {eur(base.plataforma)}/mes de plataforma (supuestos). No incluye la licencia del módulo de integración de Ágora (a validar)</div>
         </div>
       </div>
 

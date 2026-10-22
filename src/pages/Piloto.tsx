@@ -50,7 +50,7 @@ const HIPOTESIS: Hipotesis[] = [
     base: `Bajamar ene–abr 2026: ${eur(totales.consumoPorPasajero, 2)} por pasajero, ticket medio ${eur(totales.ticketMedio, 2)} (franja de mañana ${eur(franjas[0].ticketMedio, 2)}) y ≈ ${pct(derivados.tasaCompra)} compra. La cifra de la mañana en la cafetería piloto se confirma en la semana 0.`,
     exito: `Venta por pasajero +5 % o más sobre el control en las semanas 5–6 (objetivo +10 %: ${eur(totales.consumoPorPasajero * 1.1, 2)}), sin bajar el ticket medio.`,
     parada: 'Venta por pasajero por debajo del control dos semanas seguidas con el servicio ya ajustado.',
-    fuente: ['TPV', 'Servidor FredOnBoard', 'Billetes validados'],
+    fuente: ['Ágora (ventas y cierres Z)', 'Servidor FredOnBoard', 'Billetes validados'],
   },
   {
     id: 'H4',
@@ -60,7 +60,7 @@ const HIPOTESIS: Hipotesis[] = [
     base: 'Se mide en la semana 0: encuesta a la tripulación, horas trabajadas y pedidos por hora en barra.',
     exito: 'Carga percibida ≤ 3,0 y sin subir más de 0,5 puntos sobre la semana 0; 0 horas extra atribuibles; ningún tripulante añadido.',
     parada: 'Carga percibida ≥ 4 en dos encuestas seguidas, cualquier hora extra atribuible o petición razonada de la tripulación.',
-    fuente: ['Encuesta a la tripulación', 'TPV', 'Servidor FredOnBoard', 'Cuadrantes'],
+    fuente: ['Encuesta a la tripulación', 'Ágora (ventas y cierres Z)', 'Servidor FredOnBoard', 'Cuadrantes'],
   },
 ]
 
@@ -181,10 +181,10 @@ const ORDEN_OLA = ['Ola 2', 'Ola 2', 'Ola 1', 'Ola 3', 'Ola 4']
 
 const SUPUESTOS = [
   {
-    area: 'TPV',
-    supuesto: 'Podemos recibir los tickets por línea de producto, o registrar el pedido móvil como un canal propio en el TPV.',
-    validar: 'Si el TPV tiene API o exportación diaria, y cómo se identifica un pedido móvil.',
-    si: 'Sin API: la tablet de barra registra el pedido y se concilia cada día con el TPV.',
+    area: 'Ágora (TPV)',
+    supuesto: 'Tenemos acceso al módulo de integración de Ágora y un entorno de pruebas: podemos leer carta, precios, stock y ventas, y registrar cada pedido móvil como venta con un método de pago propio.',
+    validar: 'Licencia del módulo de integración, dónde corre Ágora (barco o tierra), si admite crear ventas desde fuera y si lleva el stock por cafetería.',
+    si: 'Sin módulo o sin escritura de pedidos: modo puente con carta cargada desde Ágora y exportación diaria cruzada con el cierre Z hasta activarlo.',
   },
   {
     area: 'Conectividad',
@@ -291,7 +291,7 @@ export default function Piloto() {
           <div className="card stat">
             <div className="label">Recursos</div>
             <div className="value">2 tablets</div>
-            <div className="sub">Una de barra y una de repuesto, más un mini PC a bordo. 0 personas añadidas a la dotación</div>
+            <div className="sub">Una de barra y una de repuesto, más un mini PC a bordo con el conector Ágora y acceso a su módulo de integración. 0 personas añadidas a la dotación</div>
           </div>
           <div className="card stat">
             <div className="label">Coste del piloto</div>
@@ -391,7 +391,7 @@ export default function Piloto() {
             <h3>Grupo de control</h3>
             <p className="small">
               El Bañaderos Express es un buque gemelo en la misma ruta Santa Cruz – Agaete. Se mide igual que el Bajamar durante las seis semanas, pero
-              sin FredOnBoard. Así separamos el efecto del servicio del de la estacionalidad, las fiestas o el tiempo.
+              sin FredOnBoard. Así separamos el efecto del servicio del de la estacionalidad, las fiestas o el tiempo. La fuente de ventas es Ágora (ventas y cierres Z de cada cafetería) tanto en el piloto como en el control, para medir los dos con el mismo dato; que el Bañaderos use Ágora y se pueda leer es un supuesto a validar.
             </p>
           </div>
           <div className="card">
@@ -473,7 +473,7 @@ export default function Piloto() {
           </div>
           <p className="tiny muted" style={{ marginBottom: 0, marginTop: 12 }}>
             Las líneas parten de la línea base real (1,37 €, 5,90 €, ≈ 23 %) con una variación semanal inventada y una subida gradual a partir de la
-            semana 3. Con datos reales, este mismo panel se alimentaría del TPV y del servidor FredOnBoard.
+            semana 3. Con datos reales, este mismo panel se alimentaría de Ágora (ventas y cierres Z) y del servidor FredOnBoard.
           </p>
         </div>
       </section>

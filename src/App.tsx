@@ -73,7 +73,7 @@ export default function App() {
               Inicio
             </NavLink>
             {ENTREGABLES.map((e) => (
-              <NavLink key={e.id} to={e.ruta} className={({ isActive }) => (isActive || (e.id === 'benchmark' && enBenchmark) ? 'active' : '')}>
+              <NavLink key={e.id} to={e.ruta} className={({ isActive }) => [isActive || (e.id === 'benchmark' && enBenchmark) ? 'active' : '', e.id === 'prototipo' ? 'nav-proto' : ''].join(' ')}>
                 {e.titulo.replace('Plan de ', '')}
               </NavLink>
             ))}

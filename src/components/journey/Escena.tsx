@@ -35,7 +35,9 @@ export default function EscenaPaso({ perfil, idx, activo, dolor, solucion }: { p
   useEffect(() => {
     if (!activo || reducido || tocado.current) return
     setVista('hoy')
-    const id = window.setTimeout(() => setVista('con'), 3400)
+    const id = window.setTimeout(() => {
+      if (!tocado.current) setVista('con') // si el usuario ya eligió (p. ej. «Comparar»), no se la cambiamos
+    }, 3400)
     return () => window.clearTimeout(id)
   }, [activo, reducido])
 

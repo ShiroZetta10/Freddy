@@ -61,7 +61,7 @@ export const RETOS: Reto[] = [
       { id: 'ouigo-espana-smartbar', nombre: 'OUIGO', aprendizaje: 'Si falta un producto se cancela el pedido entero. Un fallo de experiencia que no debemos copiar.' },
     ],
     propuesta: [
-      'Stock inicial por travesía cargado desde el TPV o a mano. Cada venta (móvil o barra) lo descuenta.',
+      'Stock por travesía leído de Ágora, el TPV de Fred. Olsen. Cada venta (móvil o barra) lo descuenta; si Ágora no expone el stock por cafetería, se carga a mano (a validar).',
       'El producto se oculta al llegar a un umbral bajo, no a cero, para no vender lo último que se está despachando en barra.',
       'Interruptor de agotado en un toque en la tablet. Si algo falla después de pagar, se ofrece sustituirlo o devolver solo esa línea.',
     ],
@@ -97,9 +97,9 @@ export const RETOS: Reto[] = [
       { id: 'qamarero', nombre: 'Qamarero', aprendizaje: 'Una plataforma QR española que se integra con los TPV de hostelería más comunes.' },
     ],
     propuesta: [
-      'Fase 0 (piloto): funciona sin integración, con tablet de barra y conciliación diaria por exportación.',
-      'Fase 1: integración por API con el TPV (catálogo, precios, stock y ventas) y con la pasarela de pago.',
-      'Fase 2: Tarjeta Plus / Plus Points y datos para la previsión de demanda.',
+      'Decisión del equipo: nos integramos con Ágora, el TPV de Fred. Olsen, desde el piloto. Ágora es la fuente de verdad de carta, precios, stock y caja.',
+      'Fase 0: acceso y licencia del módulo de integración de Ágora y entorno de pruebas. Fase 1 (piloto): conector en el servidor del barco, con cola de reintentos y conciliación diaria por cierre Z. Sin módulo a tiempo: modo puente con exportación.',
+      'Fase 2: pasarela de pago y Tarjeta Plus / Plus Points. Fase 3: flota y datos para la previsión de demanda.',
     ],
     kpi: 'Horas de conciliación manual · Diferencias entre ventas web y TPV',
     criterio: 'escalabilidad',

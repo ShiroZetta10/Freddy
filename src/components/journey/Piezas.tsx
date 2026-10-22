@@ -1,4 +1,4 @@
-import { createContext, useContext, useId, type ReactNode } from 'react'
+import { createContext, useContext, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { C } from './paleta'
 import { FerryShape } from './Ferry'
@@ -215,19 +215,62 @@ const TONOS = {
   amarilla: { fill: C.yellow, stroke: C.yellowD },
 }
 
+/** Márgenes interiores del bocadillo (unidades del viewBox 320×180) y margen mínimo al borde de la escena. */
+const PAD_X = 8
+const PAD_Y = 5
+const BORDE = 4
+const ESC_W = 320
+
+/**
+ * Bocadillo que se dimensiona según su contenido: tras el render mide el contenido (getBBox) y amplía el
+ * rectángulo (ancho y alto) para que texto e iconos queden dentro con padding. Crece hacia la derecha y hacia
+ * arriba (la cola sigue apuntando al personaje) y se desplaza si no cabe, para no salirse del SVG de la escena.
+ * `w` y `h` son el tamaño mínimo; las coordenadas de los hijos son relativas a la esquina del bocadillo.
+ */
 export function Burbuja({ x, y, w, h, tono = 'blanca', cola = 'abajo', colaX = 12, d = 0, children }: { x: number; y: number; w: number; h: number; tono?: keyof typeof TONOS; cola?: 'abajo' | 'nada'; colaX?: number; d?: number; children?: ReactNode }) {
   const t = TONOS[tono]
+  const contenido = useRef<SVGGElement>(null)
+  const [med, setMed] = useState<{ w: number; h: number } | null>(null)
+
+  useLayoutEffect(() => {
+    const el = contenido.current
+    if (!el) return
+    const medir = () => {
+      const bb = el.getBBox()
+      if (!bb.width && !bb.height) return
+      const nw = Math.max(w, Math.ceil(bb.x + bb.width + PAD_X))
+      const nh = Math.max(h, Math.ceil(bb.y + bb.height + PAD_Y))
+      setMed((m) => (m && m.w === nw && m.h === nh ? m : { w: nw, h: nh }))
+    }
+    medir()
+    // Si la tipografía web llega después del primer render, vuelve a medir
+    let vivo = true
+    document.fonts?.ready.then(() => vivo && medir())
+    return () => {
+      vivo = false
+    }
+  }, [w, h, children])
+
+  const W = Math.min(med?.w ?? w, ESC_W - 2 * BORDE)
+  const H = med?.h ?? h
+  // crece hacia arriba (mantiene la cola sobre el personaje); si no hay sitio arriba, hacia abajo
+  const subir = Math.min(H - h, Math.max(0, y - BORDE))
+  const Y = y - subir
+  // si se sale por la derecha, se desplaza a la izquierda y la cola compensa para apuntar al mismo sitio
+  const X = Math.max(BORDE, Math.min(x, ESC_W - BORDE - W))
+  const cx = Math.max(10, Math.min(colaX + (x - X), W - 18))
+
   return (
-    <g transform={`translate(${x} ${y})`}>
-      <Pop d={d} ox={colaX / w} oy={1}>
-        <rect width={w} height={h} rx={7} fill={t.fill} stroke={t.stroke} strokeWidth={1} />
+    <g transform={`translate(${X} ${Y})`} data-burbuja>
+      <Pop d={d} ox={cx / W} oy={1}>
+        <rect data-bg width={W} height={H} rx={7} fill={t.fill} stroke={t.stroke} strokeWidth={1} />
         {cola === 'abajo' && (
           <>
-            <path d={`M${colaX} ${h} L${colaX + 2} ${h + 8} L${colaX + 9} ${h}`} fill={t.fill} stroke={t.stroke} strokeWidth={1} />
-            <rect x={colaX + 0.8} y={h - 1.2} width={7.4} height={2.4} fill={t.fill} />
+            <path d={`M${cx} ${H} L${cx + 2} ${H + 8} L${cx + 9} ${H}`} fill={t.fill} stroke={t.stroke} strokeWidth={1} />
+            <rect x={cx + 0.8} y={H - 1.2} width={7.4} height={2.4} fill={t.fill} />
           </>
         )}
-        {children}
+        <g ref={contenido}>{children}</g>
       </Pop>
     </g>
   )
@@ -517,13 +560,44 @@ export function Barra({ x, w = 120, punto = false }: { x: number; w?: number; pu
   )
 }
 
+/**
+ * Contenido de una pantalla (tablet / portátil): lo mide tras el render y, si no cabe en el área útil (w × h),
+ * lo reduce proporcionalmente para que ningún texto se salga de la pantalla.
+ */
+function Ajuste({ x, y, w, h, children }: { x: number; y: number; w: number; h: number; children?: ReactNode }) {
+  const ref = useRef<SVGGElement>(null)
+  const [k, setK] = useState(1)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const medir = () => {
+      const bb = el.getBBox()
+      if (!bb.width || !bb.height) return
+      const nk = Math.min(1, w / (bb.x + bb.width), h / (bb.y + bb.height))
+      setK((v) => (Math.abs(v - nk) < 0.002 ? v : nk))
+    }
+    // se mide sin escala: la escala previa no afecta al getBBox del propio grupo (va en el padre)
+    medir()
+    let vivo = true
+    document.fonts?.ready.then(() => vivo && medir())
+    return () => {
+      vivo = false
+    }
+  }, [w, h, children])
+  return (
+    <g transform={`translate(${x} ${y}) scale(${k})`} data-contenido>
+      <g ref={ref}>{children}</g>
+    </g>
+  )
+}
+
 export function Tablet({ x, y, w = 80, h = 58, children }: { x: number; y: number; w?: number; h?: number; children?: ReactNode }) {
   return (
     <Pop d={0.25} ox={0.5} oy={1}>
       <g transform={`translate(${x} ${y})`}>
         <rect width={w} height={h} rx={6} fill={C.navy} />
-        <rect x={4} y={4} width={w - 8} height={h - 8} rx={3} fill="#fff" />
-        <g transform="translate(8 8)">{children}</g>
+        <rect data-inner x={4} y={4} width={w - 8} height={h - 8} rx={3} fill="#fff" />
+        <Ajuste x={8} y={8} w={w - 16} h={h - 16}>{children}</Ajuste>
       </g>
     </Pop>
   )
@@ -534,8 +608,8 @@ export function Portatil({ x, y, w = 112, h = 72, children }: { x: number; y: nu
     <Pop d={0.2} ox={0.5} oy={1}>
       <g transform={`translate(${x} ${y})`}>
         <rect width={w} height={h} rx={5} fill={C.navy} />
-        <rect x={4} y={4} width={w - 8} height={h - 8} rx={2.5} fill="#fff" />
-        <g transform="translate(9 9)">{children}</g>
+        <rect data-inner x={4} y={4} width={w - 8} height={h - 8} rx={2.5} fill="#fff" />
+        <Ajuste x={9} y={9} w={w - 18} h={h - 18}>{children}</Ajuste>
         <path d={`M-6 ${h} H${w + 6} L${w + 2} ${h + 6} H2Z`} fill={C.g4} />
       </g>
     </Pop>

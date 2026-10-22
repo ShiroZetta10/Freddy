@@ -8,6 +8,7 @@ import PlanRedes from '../components/comunicacion/PlanRedes'
 import CanalesSolucion from '../components/comunicacion/CanalesSolucion'
 import Personas from '../components/comunicacion/Personas'
 import Paneles from '../components/comunicacion/Paneles'
+import Campana from '../components/comunicacion/Campana'
 import { PersonaId } from '../data/comunicacion'
 import './comunicacion.css'
 
@@ -18,6 +19,7 @@ const PESTANAS = [
   { id: 'canales', t: 'Canales de la solución' },
   { id: 'personas', t: 'Buyer personas' },
   { id: 'paneles', t: 'Paneles publicitarios' },
+  { id: 'campana', t: 'Campaña de lanzamiento' },
 ] as const
 type Pestana = (typeof PESTANAS)[number]['id']
 
@@ -161,6 +163,7 @@ export default function Comunicacion() {
       {tab === 'canales' && <section className="section co-sub"><h2 className="section-title">10. Canales de la solución: WhatsApp y cartelería con QR</h2><CanalesSolucion /></section>}
       {tab === 'personas' && <section className="section co-sub"><h2 className="section-title">11. Buyer personas</h2><Personas id={persona} onChange={setPersona} /></section>}
       {tab === 'paneles' && <section className="section co-sub"><h2 className="section-title">12. Paneles publicitarios por buyer persona</h2><Paneles id={persona} onChange={setPersona} /></section>}
+      {tab === 'campana' && <section className="section co-sub"><h2 className="section-title">13. Campaña de lanzamiento: piezas finales</h2><Campana /></section>}
 
       {tab === 'base' && (<>
       <section className="section">

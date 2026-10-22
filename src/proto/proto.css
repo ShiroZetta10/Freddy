@@ -98,3 +98,19 @@ body.fob-body { background: #e9edf3; }
 .fob-demo-desk { height: 460px; border: 1px solid var(--fob-line); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(16,36,72,.14); }
 @media (max-width: 1000px) { .fob-demo-grid { grid-template-columns: 1fr; } .fob-demo-grid section:nth-child(1) { grid-row: auto; } .fob-demo-phone { margin: 0 auto; max-width: 100%; } }
 @media (max-width: 520px) { .fob-hide-xs { display: none; } }
+
+/* Bandera de Fred. Olsen en la barra del prototipo */
+.fob-chrome .fob-flag { height: 20px; width: auto; display: block; }
+
+/* Selector de perfil (entrada desde el móvil) */
+.fob-elegir-main { max-width: 760px; margin: 0 auto; padding: 24px 16px 96px; }
+.fob-elegir-main h1 { font-size: 22px; line-height: 1.25; color: var(--fob-navy, #0b3478); margin: 6px 0 8px; }
+.fob-elegir-main > p { color: #5d6779; font-size: 14px; margin: 0 0 18px; }
+.fob-elegir-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .fob-elegir-grid { grid-template-columns: 1fr; } }
+.fob-elegir-card { display: grid; gap: 4px; padding: 16px 18px; border-radius: 12px; background: #fff; border: 1px solid #e2e7ef; text-decoration: none; color: #1d2433; box-shadow: 0 1px 2px rgba(11,52,120,.06); }
+.fob-elegir-card b { font-size: 18px; color: #0b3478; }
+.fob-elegir-card span:last-child { font-size: 13.5px; color: #5d6779; }
+.fob-elegir-card:hover, .fob-elegir-card:focus-visible { border-color: #0b3478; }
+.fob-elegir-disp { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #8a5a00; }
+.fob .fob-elegir-reset { margin-top: 18px; background: none; border: 1px solid #0b3478; color: #0b3478; border-radius: 8px; padding: 10px 14px; font: inherit; font-weight: 700; cursor: pointer; }

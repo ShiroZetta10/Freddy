@@ -55,7 +55,7 @@ export const FAQ: Pregunta[] = [
     a: [
       'Web del pasajero, tablet de barra y panel del manager: React + TypeScript (PWA con service worker para que cargue sin internet). Es lo mismo que el prototipo, así que el trabajo de interfaz ya está hecho.',
       'A bordo: un servidor ligero por buque (Node.js + TypeScript en Docker, base de datos SQLite o PostgreSQL) que sirve la web por el wifi del barco, guarda pedidos y stock y empuja los cambios en tiempo real a las tablets (WebSockets).',
-      'En tierra: un servicio en la nube (Node.js + PostgreSQL, alojado en la UE) para la carta, los precios, la analítica, el panel del manager y la conexión con pasarela de pago, reservas y TPV.',
+      'En tierra: un servicio en la nube (Node.js + PostgreSQL, alojado en la UE) para la analítica, el panel del manager y la conexión con la pasarela de pago y con las reservas. La carta, los precios, el stock y la caja vienen de Ágora, el TPV de Fred. Olsen, mediante un conector (API HTTP/JSON) que corre en el servidor del barco, o aquí si Ágora está en tierra.',
       'Elegimos tecnologías estándar, muy extendidas y con mucho talento disponible en Canarias, para que el equipo de IT de Fred. Olsen o cualquier proveedor puedan mantenerlo.',
     ],
   },
@@ -88,8 +88,8 @@ export const FAQ: Pregunta[] = [
     q: 'Si se vende lo mismo en barra y en móvil a la vez, ¿quién gana? ¿Cómo evitáis vender agotados?',
     corto: 'Un umbral de seguridad: el producto desaparece del móvil antes de llegar a cero, y la barra lo puede marcar agotado en un toque.',
     a: [
-      'El stock es por cafetería y vive en el servidor del barco. En la fase 0 (sin integración con el TPV), la barra carga el stock al empezar y lo ajusta con un toque; el móvil oculta un producto cuando quedan pocas unidades (umbral configurable), no cuando llega a cero, para dejar margen a la venta presencial.',
-      'En la fase 1, con integración con el TPV, cada venta en barra también descuenta stock y el margen se puede reducir.',
+      'El stock es por cafetería y vive en el servidor del barco. Ágora es la fuente de verdad del stock: el conector lo lee y el móvil oculta un producto cuando quedan pocas unidades (umbral configurable), no cuando llega a cero, para dejar margen a la venta presencial. La barra puede marcar un producto agotado con un toque. Que Ágora gestione el stock por cafetería es un supuesto a validar con Fred. Olsen.',
+      'Cada pedido móvil se escribe como venta en Ágora y descuenta stock igual que una venta en barra, así que el margen de seguridad puede ser pequeño. Si el módulo de integración aún no está activo, el modo puente con exportación diaria cubre el hueco y el stock se ajusta a mano.',
       'Si aun así un producto se agota después de pagar, el pasajero elige entre cambiarlo o que se le devuelva solo esa línea, en lugar de cancelar todo el pedido (el fallo que vimos en OUIGO).',
     ],
   },
@@ -230,11 +230,11 @@ export const FAQ: Pregunta[] = [
   {
     id: 'tpv',
     cat: 'Integraciones',
-    q: 'No sabéis qué TPV usamos. ¿Cuánto se complica la fase 1 si el proveedor no tiene API?',
-    corto: 'El piloto no depende del TPV: la fase 0 funciona con la tablet y una exportación diaria. La integración se diseña cuando sepamos el modelo.',
+    q: '¿Cómo os integráis con Ágora, y qué pasa si no está disponible el módulo de integración o no admite crear pedidos?',
+    corto: 'La integración con Ágora es parte del stack desde el piloto. Si el módulo no está listo o no admite crear pedidos, hay un modo puente con exportación hasta activarlo.',
     a: [
-      'La fase 0 (el piloto) funciona sin integración: los pedidos se gestionan en la tablet de barra y las ventas se concilian con una exportación diaria.',
-      'Para la fase 1 hay tres caminos según el TPV: API del proveedor (lo ideal), importación de ficheros programada, o registrar las ventas de FredOnBoard en el TPV como una forma de pago más. La elección depende del modelo, que es una de las primeras cosas que necesitamos saber.',
+      'Ágora es el TPV de Fred. Olsen y la fuente de verdad de carta, precios, stock y caja. Un conector de FredOnBoard lee esos datos y escribe cada pedido como venta, con su método de pago, por la API HTTP/JSON de Ágora. Necesita el módulo de integración de Ágora licenciado y activo; en la fase 0 pedimos acceso y entorno de pruebas, y el piloto (fase 1) arranca ya con el conector.',
+      'Según dónde esté Ágora cambia el montaje: a bordo, el conector habla con Ágora por la red del barco; en tierra o en la nube, lo hace el servicio central y el barco guarda una copia para vender sin internet. Si el módulo no está activo a tiempo o no admite crear pedidos desde fuera, usamos un modo puente temporal: carta cargada desde Ágora y exportación diaria de ventas cruzada con el cierre Z. Licencia del módulo, ubicación de Ágora y capacidad de escribir pedidos: a validar con Fred. Olsen y con Ágora.',
     ],
     supuesto: true,
   },
@@ -284,10 +284,10 @@ export const FAQ: Pregunta[] = [
     id: 'conciliacion',
     cat: 'Operativa a bordo',
     q: '¿Cómo se cuadra la caja diaria entre las ventas web y el TPV sin horas extra?',
-    corto: 'Las ventas FredOnBoard ya están cobradas por la pasarela; al cerrar la travesía se genera el resumen y se cruza solo con el TPV.',
+    corto: 'Las ventas FredOnBoard ya están cobradas por la pasarela y entran en Ágora como un método de pago propio; cada día se cruzan con el cierre Z.',
     a: [
-      'Los pedidos de FredOnBoard se cobran por la pasarela, no en la caja, así que no hay efectivo que cuadrar. Al cerrar la travesía, la tablet genera el resumen (pedidos, importes, no recogidos).',
-      'En la fase 0, ese resumen se exporta y se cruza con la pasarela automáticamente. En la fase 1 entra directamente en el TPV como un medio de pago más.',
+      'Los pedidos de FredOnBoard se cobran por la pasarela, no en la caja, así que no hay efectivo que cuadrar. Al cerrar la travesía, la tablet genera el resumen (pedidos, importes, no recogidos), y el conector escribe cada pedido en Ágora con su método de pago.',
+      'Cada día, la conciliación lee el cierre Z de Ágora y lo cruza con los pedidos de FredOnBoard y con la liquidación de la pasarela; las diferencias se marcan en el panel. Si el módulo de integración aún no está activo, el resumen se exporta y se cruza igualmente (modo puente).',
     ],
   },
 
@@ -508,8 +508,9 @@ export const STACK: { capa: string; prototipo: string; produccion: string }[] = 
   { capa: 'Servidor del barco', prototipo: 'Simulado en el navegador (localStorage + BroadcastChannel)', produccion: 'Node.js + TypeScript en Docker sobre mini PC industrial; SQLite/PostgreSQL; WebSockets' },
   { capa: 'Nube', prototipo: '—', produccion: 'Node.js + PostgreSQL alojado en la UE; carta, precios, analítica, cola de sincronización' },
   { capa: 'Pagos', prototipo: 'Simulado', produccion: 'Pasarela del banco de Fred. Olsen (tokenizada, Apple Pay/Google Pay). Sin datos de tarjeta en nuestros servidores' },
-  { capa: 'Integraciones', prototipo: 'Billetes de prueba', produccion: 'Listado de pasajeros por salida (solo lectura); Ágora por su API HTTP/JSON o por fichero, según la opción elegida; Fred. Olsen Plus en la hoja de ruta' },
+  { capa: 'TPV (Ágora)', prototipo: 'Simulado: carta y stock cargados a mano en el panel', produccion: 'Ágora es la fuente de verdad de carta, precios, stock y caja. Conector en el servidor del barco por API HTTP/JSON (módulo de integración): lee carta, precios y stock, escribe cada pedido como venta con su método de pago, cola de reintentos y conciliación diaria por cierre Z. Si Ágora está en tierra, el conector vive en el servicio central. Licencia del módulo y dónde corre Ágora: a validar con Fred. Olsen / Ágora' },
+  { capa: 'Integraciones', prototipo: 'Billetes de prueba', produccion: 'Listado de pasajeros por salida (solo lectura); pasarela de pago; Fred. Olsen Plus en la hoja de ruta; ERP corporativo como evolución al escalar a la flota' },
   { capa: 'Asistente', prototipo: 'Palabras clave (ES/EN/DE)', produccion: 'LLM con contenidos aprobados y límites de uso; sin conexión, respuestas predefinidas' },
-  { capa: 'Inventario', prototipo: 'Escandallos, insumos y plan de aprovisionamiento simulados', produccion: 'Escandallos e insumos sincronizados con el programa de inventario de Fred. Olsen; recepción diaria y semanal registrada en la tablet' },
+  { capa: 'Inventario', prototipo: 'Escandallos, insumos y plan de aprovisionamiento simulados', produccion: 'Escandallos e insumos sincronizados con Ágora (stock, compras e inventario) o con el programa de inventario de Fred. Olsen, a validar; recepción diaria y semanal registrada en la tablet' },
   { capa: 'Despliegue', prototipo: 'GitHub Pages', produccion: 'Contenedores; actualización remota del servidor del barco en puerto; monitorización y alertas' },
 ]

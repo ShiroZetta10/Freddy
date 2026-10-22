@@ -96,7 +96,7 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
           </span>
         )}
       </div>
-      <button className={`fob-btn br-adv ${p.estado === 'listo' ? 'navy' : 'primary'}`} onClick={() => avanzarPedido(p.id)} aria-label={`${col.btn} pedido ${p.id}`}>
+      <button className={`fob-btn br-adv ${p.estado === 'listo' ? 'navy' : 'primary'}`} onClick={() => avanzarPedido(p.id, p.estado)} aria-label={`${col.btn} pedido ${p.id}`}>
         {col.btn}
         <Ico n="arrow" size={18} />
       </button>

@@ -29,6 +29,13 @@
 }
 
 * { box-sizing: border-box; }
+
+/* Texto seleccionado: legible sobre fondo claro y oscuro (amarillo de marca + texto navy; contraste ~9:1).
+   Se fija color Y fondo para que nunca herede el blanco de los bloques navy ni el gris de la selección inactiva. */
+::selection { background: var(--yellow); color: var(--navy); text-shadow: none; }
+/* Sobre superficies amarillas la selección se invierte (navy + amarillo) para que se distinga del propio fondo */
+.btn.primary::selection, .btn.primary ::selection, .screen-cta::selection, .screen-cta ::selection, .msg-link::selection, .msg-link ::selection,
+.ja-chip-con::selection, .ja-conmuta button.con::selection { background: var(--navy); color: var(--yellow); }
 html, body { margin: 0; }
 body {
   font-family: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -420,3 +427,17 @@ ul.clean li { margin-bottom: 4px; }
 .sim-fields label { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 tr.sim-hl, tr.sim-hl > * { background: var(--s2) !important; transition: background .3s ease; }
 @media (max-width: 760px) { .sim-table.sim-fuentes { min-width: 860px; } }
+
+/* Menú: «Prototipo» destacado con fondo amarillo y un pequeño meneo cada pocos segundos */
+.nav a.nav-proto { align-self: center; margin: 0 4px; padding: 8px 14px; border-radius: 999px; border-bottom: 0; background: var(--yellow); color: var(--navy); animation: nav-proto-meneo 6s ease-in-out 2s infinite; transform-origin: 50% 60%; }
+.nav a.nav-proto:hover { color: var(--navy); filter: brightness(1.05); }
+.nav a.nav-proto.active { color: var(--navy); box-shadow: 0 0 0 2px #fff inset; }
+@keyframes nav-proto-meneo {
+  0%, 84%, 100% { transform: rotate(0) scale(1); }
+  86% { transform: rotate(-5deg) scale(1.06); }
+  89% { transform: rotate(5deg) scale(1.06); }
+  92% { transform: rotate(-3deg) scale(1.04); }
+  95% { transform: rotate(2deg) scale(1.02); }
+}
+@media (prefers-reduced-motion: reduce) { .nav a.nav-proto { animation: none; } }
+@media (max-width: 760px) { .nav a.nav-proto { padding: 6px 12px; margin: 6px 4px; } }

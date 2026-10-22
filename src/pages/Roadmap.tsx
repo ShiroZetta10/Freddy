@@ -223,7 +223,7 @@ export default function Roadmap() {
         <div className="eyebrow">Hoja de ruta · Ideas a futuro</div>
         <h1>Lo que FredOnBoard podría ser después del piloto</h1>
         <p>
-          El MVP del piloto se limita a lo esencial: pedir sin cuenta (identificación por el localizador del billete), Click &amp; Collect y pre-pedido. Todo lo demás queda fuera a propósito: depende de integraciones con sistemas de Fred. Olsen, necesita datos que solo dará el piloto o exige decisiones de la naviera. Estas ideas están ordenadas por horizonte y ninguna incluye cifras que no se hayan medido: el esfuerzo es una estimación del equipo.
+          El MVP del piloto se limita a lo esencial: pedir sin cuenta (identificación por el localizador del billete), Click &amp; Collect y pre-pedido. Todo lo demás queda fuera a propósito: depende de integraciones con sistemas de Fred. Olsen distintos de Ágora (que ya está integrada desde el piloto), necesita datos que solo dará el piloto o exige decisiones de la naviera. Estas ideas están ordenadas por horizonte y ninguna incluye cifras que no se hayan medido: el esfuerzo es una estimación del equipo.
         </p>
       </header>
 

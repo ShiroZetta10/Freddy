@@ -10,6 +10,7 @@ import { DemoControls, ProtoChrome, ToastProvider } from './shared'
 import PasajeroApp from './pasajero'
 import BarraApp from './barra'
 import ManagerApp from './manager'
+import ElegirPerfil from './ElegirPerfil'
 
 function Demo() {
   // Vista "show-off": las tres apps en vivo, una al lado de otra, compartiendo el mismo estado.
@@ -66,7 +67,8 @@ export default function ProtoShell() {
         <Route path="barra/*" element={<BarraApp />} />
         <Route path="manager/*" element={<ManagerApp />} />
         <Route path="demo" element={<Demo />} />
-        <Route path="*" element={<Navigate to="/prototipo" replace />} />
+        <Route path="inicio" element={<ElegirPerfil />} />
+        <Route path="*" element={<Navigate to="/app/inicio" replace />} />
       </Routes>
       {!embebido && <DemoControls />}
     </ToastProvider>

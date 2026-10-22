@@ -40,7 +40,7 @@
 .ja-celda { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-soft, #f4f6f9); }
 .ja-v-ambas .ja-celda { border-radius: 10px; border: 1px solid var(--line, #d8dee9); }
 .ja-celda svg { display: block; width: 100%; height: 100%; }
-.ja-chip { position: absolute; left: 8px; top: 8px; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; pointer-events: none; }
+.ja-chip { position: absolute; left: 8px; bottom: 8px; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; pointer-events: none; }
 .ja-chip-hoy { background: rgba(74, 85, 104, .88); color: #fff; }
 .ja-chip-con { background: var(--yellow, #ffcc00); color: var(--navy, #0b3478); }
 .ja-pie { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--muted, #5d6779); min-height: 2.9em; }

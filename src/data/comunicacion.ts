@@ -154,7 +154,7 @@ export const PLAN_REDES: PlanRed[] = [
     formato: 'Vídeo vertical de 15–25 s, tono cercano y sin guion rígido.',
     piezas: [
       { formato: 'Vídeo · teaser', copy: 'POV: son las 8 de la mañana, estás en el barco y tu café ya está pedido.' },
-      { formato: 'Vídeo · lanzamiento', copy: 'Probamos pedir desde el asiento del salón, sin cola. Spoiler: tu bocata sale antes de que lo pienses.' },
+      { formato: 'Vídeo · lanzamiento', copy: 'Probamos pedir desde el salón, sin levantarnos ni hacer cola. Spoiler: tu bocata sale antes de que lo pienses.' },
       { formato: 'Vídeo · refuerzo', copy: 'Tarifa Joven más pedido anticipado: viaja, pide y recoge sin hacer cola.' },
     ],
     teaser: 'Semana −1',
@@ -182,7 +182,7 @@ export const PLAN_REDES: PlanRed[] = [
     formato: 'Vídeo explicativo de 45–60 s con subtítulos en ES, EN y DE.',
     piezas: [
       { formato: 'Vídeo · lanzamiento', copy: 'Cómo pedir en el Bajamar Express en tres pasos: abre On Board Club, elige tu pedido y recógelo con tu código.' },
-      { formato: 'Vídeo · refuerzo (EN)', copy: 'Order from your seat, collect without queuing. How FredOnBoard works on the Bajamar Express.' },
+      { formato: 'Vídeo · refuerzo (EN)', copy: 'Order without getting up, collect without queuing. How FredOnBoard works on the Bajamar Express.' },
     ],
     teaser: 'No aplica',
     lanzamiento: 'Semana 1',
@@ -275,7 +275,7 @@ export const PERSONAS: Persona[] = [
     necesidades: ['Carta en su idioma', 'Probar producto canario sin hablar con nadie'],
     motivaciones: ['Experiencia local auténtica', 'Comodidad'],
     frenos: ['El idioma en la barra', 'No sabe cómo funciona el barco ni la cola'],
-    mensaje: 'Order from your seat. Taste the islands, no queue.',
+    mensaje: 'Order from your table. Taste the islands, no queue.',
     canal: 'Email de confirmación trilingüe y QR de mesas',
     base: ['Turistas ES / EN / DE como público del plan', 'Dorada, 2.802 unidades, entre los diez productos más vendidos', 'Producto canario destacado y filtro KM0 en la carta'],
     avatar: { fondo: '#e3f2ee', piel: '#f0c9a8', pelo: '#b9892e', ropa: '#2a8f84', peloTipo: 'moño', gafas: true },

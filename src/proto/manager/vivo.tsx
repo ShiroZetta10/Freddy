@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Alerta, CafeteriaId, Pedido, ProtoState, enviarMensaje, eur, horaDe, kpis, ocupacionFrio, porciones, setAjustes, update } from '../store'
+import { Alerta, CafeteriaId, Pedido, ProtoState, enviarMensaje, eur, horaDe, kpis, ocupacionFrio, porciones, reponerInsumo, resolverAlerta, setAjustes } from '../store'
 import { useToast } from '../shared'
 import Mapa from './mapa'
 import { C, CAFS, CAF_COLOR, Card, Counter, Ico, PausaCtl, cuentaAtras, hace, num, useNow } from './util'
@@ -17,6 +17,8 @@ function Kpi({ label, children, sub, i }: { label: string; children: ReactNode; 
 }
 
 function cafDeAlerta(s: ProtoState, a: Alerta): CafeteriaId | null {
+  if (a.tipo === 'saturacion') return CAFS.find((c) => c === a.entidad) ?? null
+  if (a.tipo) return null
   return CAFS.find((c) => a.texto.startsWith(s.cafeterias[c].nombre)) ?? null
 }
 
@@ -24,8 +26,16 @@ const activos = (s: ProtoState, c: CafeteriaId) => s.pedidos.filter((p) => p.caf
 
 function Alertas({ s, ctl, now }: { s: ProtoState; ctl: PausaCtl; now: number }) {
   const toast = useToast()
-  const lista = s.alertas.filter((a) => now - a.t < 120000).slice().reverse().slice(0, 3)
-  const avisar = (c: CafeteriaId | null) => {
+  // las alertas de condición (clave) se muestran mientras la condición siga; las puntuales (soporte Oro) caducan a los 10 min
+  const lista = s.alertas.filter((a) => a.clave || now - a.t < 600000).slice().reverse().slice(0, 3)
+  const avisar = (c: CafeteriaId | null, a?: Alerta) => {
+    if (a?.tipo === 'inventario') {
+      const ins = s.insumos.find((i) => i.id === a.entidad)
+      const txt = `Se está agotando ${ins?.nombre.toLowerCase() ?? 'un producto'} a bordo. Si quieres pedirlo, hazlo cuanto antes.`
+      enviarMensaje(txt)
+      toast({ titulo: 'Aviso enviado a los pasajeros', texto: txt, icono: 'megaphone' })
+      return
+    }
     const otras = CAFS.filter((x) => x !== c && !s.ajustes.pausa[x]).sort((a, b) => activos(s, a) - activos(s, b))
     const alt = otras[0]
     const txt = alt
@@ -34,7 +44,12 @@ function Alertas({ s, ctl, now }: { s: ProtoState; ctl: PausaCtl; now: number })
     enviarMensaje(txt)
     toast({ titulo: 'Aviso enviado a los pasajeros', texto: txt, icono: 'megaphone' })
   }
-  const quitar = (id: number) => update((st) => ({ ...st, alertas: st.alertas.filter((a) => a.id !== id) }))
+  // pulsar una acción resuelve la alerta (desaparece y no vuelve mientras la condición siga igual); la X la descarta (silenciada, ver store)
+  const accion = (a: Alerta, fn: () => void) => {
+    fn()
+    resolverAlerta(a.id, 'resuelta')
+  }
+  const quitar = (a: Alerta) => resolverAlerta(a.id, 'descartada')
   return (
     <div className="mg-alerts" aria-live="polite">
       <AnimatePresence initial={false}>
@@ -63,17 +78,22 @@ function Alertas({ s, ctl, now }: { s: ProtoState; ctl: PausaCtl; now: number })
                 </div>
                 <div className="mg-alert-a">
                   {c && (
-                    <button className="mg-btn" onClick={() => (pausada ? ctl.reanudar(c) : ctl.pausar(c, 5))}>
+                    <button className="mg-btn" onClick={() => accion(a, () => (pausada ? ctl.reanudar(c) : ctl.pausar(c, 5)))}>
                       {pausada ? `Reanudar ${cuentaAtras(ctl.hasta[c], now)}` : 'Pausar 5 min'}
                     </button>
                   )}
-                  <button className="mg-btn" onClick={() => setAjustes({ topePorFranja: s.ajustes.topePorFranja + 2 })}>
+                  {a.tipo === 'inventario' && (
+                    <button className="mg-btn" onClick={() => accion(a, () => reponerInsumo(a.entidad!))}>
+                      Reponer stock
+                    </button>
+                  )}
+                  <button className="mg-btn" onClick={() => accion(a, () => setAjustes({ topePorFranja: s.ajustes.topePorFranja + 2 }))}>
                     Subir tope de franja (+2)
                   </button>
-                  <button className="mg-btn solid" onClick={() => avisar(c)}>
+                  <button className="mg-btn solid" onClick={() => accion(a, () => avisar(c, a))}>
                     Avisar a pasajeros
                   </button>
-                  <button className="mg-x" aria-label="Descartar alerta" onClick={() => quitar(a.id)}>
+                  <button className="mg-x" aria-label="Descartar alerta" onClick={() => quitar(a)}>
                     ×
                   </button>
                 </div>

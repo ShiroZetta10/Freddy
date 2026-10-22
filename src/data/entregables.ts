@@ -43,9 +43,9 @@ export const ENTREGABLES: Entregable[] = [
     estado: 'listo',
     respondeA: 'Viabilidad técnica y económica, y escalabilidad (22 % de la valoración; preguntas 8, 9 y 11).',
     incluira: [
-      'Fase 0, MVP del piloto: web FredOnBoard con acceso por billete, Click & Collect y pre-pedido; tablet de barra y panel de manager; conciliación diaria.',
-      'Fase 1: integración por API con el TPV y la pasarela de pago.',
-      'Fase 2: FredOnBoard completo dentro de la app (viaje en tiempo real, destino, valoración, Plus Points) y extensión al resto de la flota.',
+      'Fase 0: acceso y licencia del módulo de integración de Ágora, entorno de pruebas y línea base.',
+      'Fase 1, MVP del piloto: web FredOnBoard con acceso por billete, Click & Collect y pre-pedido; tablet de barra y panel de manager; conector Ágora activo y conciliación diaria por cierre Z.',
+      'Fase 2: pasarela de pago y Fred. Olsen Plus. Fase 3: FredOnBoard completo dentro de la app (viaje en tiempo real, destino, valoración, Plus Points) y extensión al resto de la flota.',
       'Arquitectura local-first a bordo, requisitos de conectividad y supuestos a validar.',
       'Estimación razonada de costes y beneficios, con los supuestos explícitos.',
     ],

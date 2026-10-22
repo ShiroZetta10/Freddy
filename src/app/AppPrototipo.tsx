@@ -29,7 +29,7 @@ const PERFILES = [
 
 export default function AppPrototipo() {
   const base = window.location.href.split('#')[0]
-  const urlPasajero = `${base}#/app/pasajero`
+  const urlPasajero = `${base}#/app/inicio`
   return (
     <>
       <div className="page-head">
@@ -76,7 +76,7 @@ export default function AppPrototipo() {
           <div style={{ flex: 1, minWidth: 200 }}>
             <h3>Pruébalo en tu móvil</h3>
             <p className="small muted">
-              Escanea el código, como haría el pasajero con el QR de las mesas del salón. Usa el botón de pantalla completa o «Añadir a pantalla de inicio» para
+              Escanea el código y elige con qué perfil probarlo: pasajero, barra o manager. Usa el botón de pantalla completa o «Añadir a pantalla de inicio» para
               abrirlo como una app.
             </p>
             <p className="small">

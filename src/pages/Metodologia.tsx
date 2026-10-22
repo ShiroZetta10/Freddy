@@ -91,7 +91,7 @@ export default function Metodologia() {
         <ul className="clean">
           <li>Muchas evidencias de estadios son de 2014–2019. Las de cruceros reflejan recortes posteriores por falta de personal.</li>
           <li>Pocas operadoras publican KPIs; los incrementos de ventas proceden sobre todo de casos de éxito de proveedores.</li>
-          <li>No hay información pública sobre el TPV, la conectividad real ni la tripulación por cafetería de Fred. Olsen. Hay que validarlo.</li>
+          <li>De Ágora solo hay información pública del producto (licencia del módulo, ubicación y escritura de pedidos sin confirmar). No hay información pública sobre la conectividad real ni la tripulación por cafetería de Fred. Olsen. Hay que validarlo.</li>
           <li>La puntuación es una valoración cualitativa del equipo, pensada para comparar, no para auditar.</li>
         </ul>
       </div>

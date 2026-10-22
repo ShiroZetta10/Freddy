@@ -71,7 +71,7 @@ export default function Retos() {
         <h3>Supuestos que hay que validar con Fred. Olsen</h3>
         <ul className="clean">
           <li>Ancho de banda y estabilidad reales del wifi/Starlink en la ruta, y si se puede instalar un servidor local a bordo.</li>
-          <li>Modelo y proveedor del TPV, y si tiene API de catálogo, stock y ventas.</li>
+          <li>Ágora (TPV): licencia del módulo de integración, dónde corre (barco o tierra), si admite crear ventas desde fuera y si gestiona el stock por cafetería.</li>
           <li>Tripulación por cafetería y capacidad de preparación por franja (pedidos cada 5 min).</li>
           <li>Espacio físico para un punto de recogida en cada cafetería.</li>
           <li>Medios de pago aceptados, política de devoluciones e integración con Tarjeta Plus / Plus Points.</li>

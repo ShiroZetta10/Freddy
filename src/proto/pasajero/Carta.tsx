@@ -198,7 +198,7 @@ export default function Carta() {
                   <span className="desc">{p.desc}</span>
                   {p.km0 && p.origen && <span className="origen">{t('c.origin', { o: p.origen })}</span>}
                   <span className="tags">
-                    {p.km0 && (p.elaboradoCanarias ? <ElaboradoLogo height={20} fallback={<span className="fob-pill green">{t('tag.canario')}</span>} /> : <span className="fob-pill green">{t('tag.canario')}</span>)}
+                    {p.km0 && (p.elaboradoCanarias ? <ElaboradoLogo height={32} fallback={<span className="fob-pill green">{t('tag.canario')}</span>} /> : <span className="fob-pill green">{t('tag.canario')}</span>)}
                     {p.tags?.map((x) => (
                       <span key={x} className="fob-pill">
                         {t('tag.' + x)}

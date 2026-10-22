@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { BENCHMARKS, Empresa, pesosIguales, puntuar, SECTOR_LABEL, CRITERIOS, CATEGORIAS, agruparVerticales } from '../data/benchmarks'
 import './benchmark-grupos.css'
@@ -28,6 +28,18 @@ export default function BenchmarkPage() {
     setGrupo('todos')
     setOrden('score')
   }
+
+  // Las cabeceras de la tabla se fijan respecto a la ventana, justo debajo de la cabecera fija de la web (barra + subnavegación)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const ajustar = () => {
+      const h = document.querySelector('.topbar')?.getBoundingClientRect().height
+      if (h && wrapRef.current) wrapRef.current.style.setProperty('--bg-top', `${Math.floor(h) - 2}px`)
+    }
+    ajustar()
+    window.addEventListener('resize', ajustar)
+    return () => window.removeEventListener('resize', ajustar)
+  }, [vista])
 
   const sectores = useMemo(() => Array.from(new Set(b.empresas.map((e) => e.sector))), [b])
   const pesos = useMemo(() => {
@@ -144,7 +156,7 @@ export default function BenchmarkPage() {
               </span>
             ))}
           </div>
-          <div className="matrix-wrap">
+          <div className="matrix-wrap bg-wrap" ref={wrapRef}>
             <table className="matrix bg-matrix">
               <thead>
                 <tr className="bg-row1">

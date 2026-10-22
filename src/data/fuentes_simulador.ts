@@ -160,6 +160,7 @@ export const SUPUESTOS_SIM: SupuestoSim[] = [
   { id: 'S12', nombre: 'Soporte y producto a tiempo parcial: 1.300 €/mes', valor: '1.300 €/mes', nota: 'Con el mantenimiento, la nube y la IA suma unos 21.700 €/año, que es la plataforma del plan (1.800 €/mes = 21.600 €/año).' },
   { id: 'S13', nombre: 'Tráfico por pedido: 800 KB', valor: '800 KB por sesión de pedido', nota: 'La web se carga una vez (cientos de KB, luego queda en el móvil) y cada pedido son pocos KB. Sin medir: se medirá en la semana 0 del piloto.' },
   { id: 'S14', nombre: 'Uso total de datos de los pasajeros: 30 % conectados × 100 MB', valor: '30 % · 100 MB', nota: 'Solo sirve para comparar. No tenemos datos reales del wifi del Bajamar Express; Fred. Olsen puede sustituirlos.' },
+  { id: 'S15', nombre: 'Licencia del módulo de integración de Ágora: sin importe', valor: '0 € (a validar con Ágora)', nota: 'Ágora exige el módulo de integración licenciado y activo [fuentes públicas del producto], pero no hemos encontrado su precio ni si es cuota única o recurrente. Se deja a 0 € como coste anticipable hasta tener presupuesto de Ágora; no es un coste cero real.' },
 ]
 
 /** Una línea de coste editable: importe = cantidad × precio unitario. `refs` apunta a FUENTES_SIM o a SUPUESTOS_SIM. */
@@ -173,11 +174,13 @@ export type LineaCoste = {
   refs: string[]
   /** Se incluye por defecto */
   activa: boolean
+  /** Importe sin confirmar: se muestra con esta etiqueta junto al concepto */
+  avalidar?: string
 }
 
 /** Costes únicos del piloto: 1 buque (Bajamar Express), 3 cafeterías. */
 export const COSTES_UNICOS: LineaCoste[] = [
-  { id: 'dev', concepto: 'Desarrollo de producción e integración', detalle: 'Pasarela de pago, TPV, servidor del barco y nube', cantidad: 1, unidad: 'ud.', precio: 16500, refs: ['S6'], activa: true },
+  { id: 'dev', concepto: 'Desarrollo de producción e integración', detalle: 'Conector con Ágora, pasarela de pago, servidor del barco y nube', cantidad: 1, unidad: 'ud.', precio: 16500, refs: ['S6'], activa: true },
   { id: 'tablet', concepto: 'Tablets resistentes de barra', detalle: '3 cafeterías + 1 de repuesto', cantidad: 4, unidad: 'ud.', precio: 549.99, refs: ['8'], activa: true },
   { id: 'soporte', concepto: 'Funda y soporte fijo de tablet', detalle: 'Uno por tablet', cantidad: 4, unidad: 'ud.', precio: 60, refs: ['S8'], activa: true },
   { id: 'minipc', concepto: 'Mini PC servidor a bordo', detalle: '1 en el buque + 1 de repuesto en tierra', cantidad: 2, unidad: 'ud.', precio: 700, refs: ['S7'], activa: true },
@@ -193,6 +196,7 @@ export const COSTES_UNICOS: LineaCoste[] = [
 export const COSTES_MENSUALES: LineaCoste[] = [
   { id: 'nube', concepto: 'Nube en la UE (PostgreSQL, analítica)', detalle: 'Carta, precios, panel del manager', cantidad: 12, unidad: 'meses', precio: 200, refs: ['S11'], activa: true },
   { id: 'ia', concepto: 'Chat con IA, con límite de uso', detalle: 'Opcional; se puede apagar', cantidad: 12, unidad: 'meses', precio: 30, refs: ['S11'], activa: true },
+  { id: 'agora', concepto: 'Licencia del módulo de integración de Ágora', detalle: 'Necesaria para el conector. Importe y periodicidad por confirmar; se introduce aquí cuando Ágora dé presupuesto', cantidad: 12, unidad: 'meses', precio: 0, refs: ['S15'], activa: true, avalidar: 'a validar con Ágora' },
   { id: 'soporte', concepto: 'Soporte y producto a tiempo parcial', detalle: 'Atención de incidencias y mejoras', cantidad: 12, unidad: 'meses', precio: 1300, refs: ['S12'], activa: true },
 ]
 

@@ -259,7 +259,7 @@ body:has(.pj-sheet) .fob-demo { display: none; }
 .pj-root .pj-prod-tx { display: grid; gap: 3px; min-width: 0; }
 .pj-root .pj-prod-tx b { font-size: calc(14.5px * var(--f)); color: var(--fob-navy); line-height: 1.25; }
 .pj-root .pj-prod-tx .desc { font-size: calc(12.5px * var(--f)); color: var(--fob-muted); line-height: 1.35; }
-.pj-root .pj-prod-tx .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.pj-root .pj-prod-tx .tags { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-top: 2px; }
 .pj-root .pj-prod-act { display: grid; justify-items: end; gap: 6px; }
 .pj-root .pj-prod-act .price { font-weight: 800; font-size: calc(14.5px * var(--f)); color: var(--fob-text); font-variant-numeric: tabular-nums; }
 .pj-root .pj-add { width: 46px; height: 46px; border-radius: 50%; background: var(--fob-navy); color: #fff; display: grid; place-items: center; box-shadow: 0 4px 10px rgba(11, 52, 120, .25); }
@@ -528,7 +528,7 @@ body:has(.pj-sheet) .fob-demo { display: none; }
 .pj-root .pj-oro-menu .fob-btn { justify-self: start; min-height: 44px; }
 .pj-root .pj-prod .price.incl { display: grid; justify-items: end; gap: 0; color: var(--fob-navy); font-weight: 800; font-size: calc(13px * var(--f)); }
 .pj-root .pj-prod .price.incl s { font-weight: 600; font-size: calc(11.5px * var(--f)); color: var(--fob-muted); }
-.pj-root .fob-elab-logo { max-width: 96px; object-fit: contain; }
+.pj-root .fob-elab-logo { max-width: 96px; object-fit: contain; image-rendering: auto; }
 .pj-root .pj-mesa { display: grid; gap: 8px; margin-top: 14px; }
 .pj-root .pj-uporo { padding: 10px 12px; box-shadow: none; border: 1px solid var(--fob-line); }
 .pj-root .pj-uporo-h { display: flex; align-items: center; gap: 10px; color: var(--fob-navy); }
