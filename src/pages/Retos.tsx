@@ -28,7 +28,7 @@ export default function Retos() {
             </div>
             <div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span className="tag red">Reto {String(i + 1).padStart(2, '0')}</span>
+                <span className="tag">Reto {String(i + 1).padStart(2, '0')}</span>
                 <span className="tag">
                   <span className="dot" style={{ background: CRITERIOS[r.criterio].color }} />
                   {CRITERIOS[r.criterio].nombre} · {CRITERIOS[r.criterio].peso} %

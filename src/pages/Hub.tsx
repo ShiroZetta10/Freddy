@@ -10,8 +10,11 @@ export default function Hub() {
       <section className="band">
         <div className="band-inner">
           <div className="eyebrow light">Zetta10 · Reto Fred. Olsen Express · Equipo Shiro</div>
-          <h1>Click &amp; Collect a bordo</h1>
-          <p>Pedir y pagar desde el asiento y recoger en barra, sin colas y sin aumentar la tripulación.</p>
+          <h1>FredOnBoard</h1>
+          <p>
+            El compañero de viaje digital de Fred. Olsen Express. Acompaña al pasajero antes, durante y después de la travesía, con un Click &amp; Collect
+            que permite pedir desde el asiento y recoger en barra sin colas y sin aumentar la tripulación.
+          </p>
         </div>
       </section>
 

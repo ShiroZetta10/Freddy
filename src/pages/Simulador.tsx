@@ -94,7 +94,7 @@ export default function Simulador() {
         </div>
 
         <div className="grid">
-          <div className="card" style={{ background: 'var(--navy)', color: '#fff' }}>
+          <div className="card" style={{ background: 'var(--navy)', color: '#fff', border: 0 }}>
             <div className="eyebrow" style={{ color: 'var(--yellow)' }}>
               Facturación incremental {anual ? 'anual' : '(4 meses)'}
             </div>
@@ -147,9 +147,9 @@ export default function Simulador() {
                   <XAxis type="number" hide />
                   <YAxis type="category" dataKey="n" width={140} tickLine={false} axisLine={false} />
                   <Tooltip formatter={(v: number) => eur(v)} />
-                  <Bar dataKey="v" radius={[0, 10, 10, 0]}>
+                  <Bar dataKey="v" radius={[0, 4, 4, 0]}>
                     {chart.map((c, i) => (
-                      <Cell key={i} fill={i ? '#e30613' : '#0f3f86'} />
+                      <Cell key={i} fill={i ? '#0b3478' : '#a9c2ea'} />
                     ))}
                     <LabelList dataKey="v" position="right" formatter={(v: number) => eur(v)} style={{ fontWeight: 700, fontSize: 12 }} />
                   </Bar>

@@ -45,8 +45,8 @@ export default function Datos() {
                 <YAxis yAxisId="l" tickFormatter={fmtK} tickLine={false} axisLine={false} width={56} />
                 <YAxis yAxisId="r" orientation="right" domain={[5.5, 6.2]} tickFormatter={(v) => `${num(v, 2)} €`} tickLine={false} axisLine={false} width={60} />
                 <Tooltip formatter={(v: number, n) => (n === 'Ticket medio' ? eur(v, 2) : eur(v))} />
-                <Bar yAxisId="l" dataKey="facturacion" name="Facturación" fill="#0f3f86" radius={[8, 8, 0, 0]} />
-                <Line yAxisId="r" dataKey="ticketMedio" name="Ticket medio" stroke="#e30613" strokeWidth={3} dot={{ r: 5 }} />
+                <Bar yAxisId="l" dataKey="facturacion" name="Facturación" fill="#0b3478" radius={[4, 4, 0, 0]} />
+                <Line yAxisId="r" dataKey="ticketMedio" name="Ticket medio" stroke="#e3a600" strokeWidth={3} dot={{ r: 5 }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -61,9 +61,9 @@ export default function Datos() {
                 <XAxis type="number" tickFormatter={fmtK} tickLine={false} axisLine={false} />
                 <YAxis type="category" dataKey="franja" width={80} tickLine={false} axisLine={false} />
                 <Tooltip formatter={tipEur} />
-                <Bar dataKey="facturacion" name="Facturación" radius={[0, 8, 8, 0]}>
+                <Bar dataKey="facturacion" name="Facturación" radius={[0, 4, 4, 0]}>
                   {franjas.map((f) => (
-                    <Cell key={f.franja} fill={f.facturacion === maxFranja ? '#e30613' : '#0f3f86'} />
+                    <Cell key={f.franja} fill={f.facturacion === maxFranja ? '#0b3478' : '#a9c2ea'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -83,10 +83,10 @@ export default function Datos() {
               <YAxis tickFormatter={fmtK} tickLine={false} axisLine={false} width={56} />
               <Tooltip formatter={tipEur} />
               <Legend />
-              <Bar dataKey="Mañana" fill="#e30613" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="Mediodía" fill="#0f3f86" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="Tarde" fill="#7d9bd6" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="Noche" fill="#f39200" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="Mañana" fill="#0b3478" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Mediodía" fill="#4f7cc4" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Tarde" fill="#a9c2ea" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Noche" fill="#e3a600" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -101,7 +101,7 @@ export default function Datos() {
                 <XAxis type="number" tickFormatter={fmtK} tickLine={false} axisLine={false} />
                 <YAxis type="category" dataKey="familia" width={110} tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
                 <Tooltip formatter={tipEur} />
-                <Bar dataKey="facturacion" name="Facturación" fill="#0f3f86" radius={[0, 8, 8, 0]} />
+                <Bar dataKey="facturacion" name="Facturación" fill="#0b3478" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

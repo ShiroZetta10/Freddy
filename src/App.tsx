@@ -9,6 +9,7 @@ import Retos from './pages/Retos'
 import Simulador from './pages/Simulador'
 import Metodologia from './pages/Metodologia'
 import EntregablePage from './pages/EntregablePage'
+import Journey from './pages/Journey'
 import AppPrototipo from './app/AppPrototipo'
 import { ENTREGABLES } from './data/entregables'
 import Icon from './components/Icon'
@@ -42,7 +43,7 @@ export default function App() {
               <Icon name="anchor" size={18} />
             </span>
             <span>
-              Shiro<small>Zetta10 · Click & Collect</small>
+              Shiro<small>FredOnBoard · Zetta10</small>
             </span>
           </Link>
           <nav className="nav">
@@ -80,7 +81,7 @@ export default function App() {
           <Route path="/metodologia" element={<Metodologia />} />
           <Route path="/implementacion" element={<EntregablePage id="implementacion" />} />
           <Route path="/comunicacion" element={<EntregablePage id="comunicacion" />} />
-          <Route path="/journey" element={<EntregablePage id="journey" />} />
+          <Route path="/journey" element={<Journey />} />
           <Route path="/prototipo/*" element={<AppPrototipo />} />
           <Route path="/app/*" element={<AppPrototipo />} />
           <Route path="/piloto" element={<EntregablePage id="piloto" />} />

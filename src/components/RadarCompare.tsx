@@ -1,7 +1,7 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { Benchmark, Empresa } from '../data/benchmarks'
 
-const COLORS = ['#e30613', '#0f3f86', '#f39200', '#2a9d8f']
+const COLORS = ['#0b3478', '#e3a600', '#2a8f84', '#d7141a']
 
 export default function RadarCompare({ b, empresas }: { b: Benchmark; empresas: Empresa[] }) {
   const data = b.verticales.map((v) => {
