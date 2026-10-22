@@ -8,8 +8,11 @@ import Ranking from './pages/Ranking'
 import Retos from './pages/Retos'
 import Simulador from './pages/Simulador'
 import Metodologia from './pages/Metodologia'
-import EntregablePage from './pages/EntregablePage'
+import Implementacion from './pages/Implementacion'
+import Comunicacion from './pages/Comunicacion'
+import Piloto from './pages/Piloto'
 import Journey from './pages/Journey'
+import Faq from './pages/Faq'
 import AppPrototipo from './app/AppPrototipo'
 // El prototipo se carga aparte para que la web de entregables siga siendo ligera
 const ProtoShell = lazy(() => import('./proto/ProtoShell'))
@@ -73,6 +76,7 @@ export default function App() {
                 {e.titulo.replace('Plan de ', '')}
               </NavLink>
             ))}
+            <NavLink to="/faq">Preguntas</NavLink>
           </nav>
         </div>
         {enBenchmark && (
@@ -97,15 +101,22 @@ export default function App() {
           <Route path="/retos" element={<Retos />} />
           <Route path="/simulador" element={<Simulador />} />
           <Route path="/metodologia" element={<Metodologia />} />
-          <Route path="/implementacion" element={<EntregablePage id="implementacion" />} />
-          <Route path="/comunicacion" element={<EntregablePage id="comunicacion" />} />
+          <Route path="/implementacion" element={<Implementacion />} />
+          <Route path="/comunicacion" element={<Comunicacion />} />
           <Route path="/journey" element={<Journey />} />
           <Route path="/prototipo/*" element={<AppPrototipo />} />
-          <Route path="/piloto" element={<EntregablePage id="piloto" />} />
+          <Route path="/piloto" element={<Piloto />} />
+          <Route path="/faq" element={<Faq />} />
           <Route path="*" element={<Hub />} />
         </Routes>
       </main>
       <footer className="footer">
+        <div className="footer-logos">
+          <span>Reto propuesto por</span>
+          <img src="logos/fred-olsen-express.png" alt="Fred. Olsen Express" height={44} />
+          <span>en el marco de</span>
+          <img src="logos/talento-canario.png" alt="Talento Canario" height={34} />
+        </div>
         Equipo Shiro · Zetta10 Hackathon Talento Canario · Reto «Click & Collect a bordo» propuesto por Fred. Olsen Express.
         <br />
         Benchmark elaborado con fuentes públicas (octubre 2026) y datos facilitados por la organización. Las cifras de proveedores se indican como tales.

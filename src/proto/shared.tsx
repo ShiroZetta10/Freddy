@@ -150,7 +150,7 @@ export function DemoControls() {
               <span>Otros pasajeros pidiendo (bot)</span>
               <input type="checkbox" checked={s.ajustes.bot} onChange={(e) => setAjustes({ bot: e.target.checked })} />
             </label>
-            <button className="fob-btn ghost" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => confirm('¿Reiniciar la demo?') && resetDemo()}>
+            <button className="fob-btn ghost" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => resetDemo()}>
               Reiniciar demo
             </button>
           </motion.div>

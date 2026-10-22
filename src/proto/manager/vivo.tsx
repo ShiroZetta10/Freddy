@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Alerta, CafeteriaId, Pedido, ProtoState, enviarMensaje, eur, horaDe, kpis, setAjustes, update } from '../store'
+import { Alerta, CafeteriaId, Pedido, ProtoState, enviarMensaje, eur, horaDe, kpis, ocupacionFrio, porciones, setAjustes, update } from '../store'
 import { useToast } from '../shared'
 import Mapa from './mapa'
 import { C, CAFS, CAF_COLOR, Card, Counter, Ico, PausaCtl, cuentaAtras, hace, num, useNow } from './util'
@@ -164,6 +164,8 @@ function Feed({ s, now }: { s: ProtoState; now: number }) {
                 <span>
                   {e.p.nombre} · {s.cafeterias[e.p.cafeteria].nombre.replace('Cafetería ', '')} · {eur(e.p.total)}
                   {e.p.prepedido && e.tipo === 'nuevo' ? ' · pre-pedido' : ''}
+                  {e.p.sinPlastico && e.tipo === 'nuevo' ? ' · sin cubiertos' : ''}
+                  {e.p.tarifaJoven && e.tipo === 'nuevo' ? ' · Tarifa Joven' : ''}
                 </span>
               </div>
               <time>{hace(now - e.t)}</time>
@@ -171,6 +173,36 @@ function Feed({ s, now }: { s: ProtoState; now: number }) {
           ))}
         </AnimatePresence>
       </ul>
+    </Card>
+  )
+}
+
+function MiniInventario({ s, onOpen }: { s: ProtoState; onOpen: () => void }) {
+  const valor = s.insumos.reduce((a, i) => a + i.stock * i.coste, 0)
+  const bajos = s.insumos.filter((i) => i.stock <= i.minimo).length
+  const frio = ocupacionFrio(s)
+  const pctFrio = s.almacen.frioLitros > 0 ? (frio / s.almacen.frioLitros) * 100 : 0
+  const riesgo = s.productos.filter((p) => porciones(s, p.id) <= s.ajustes.umbralStock * 2).length
+  return (
+    <Card title="Inventario" sub="Stock por escandallo" right={<button className="mg-btn sm" onClick={onOpen}>Abrir sección</button>}>
+      <div className="mg-iv-mini">
+        <div>
+          <span>Valor</span>
+          <b>{eur(valor)}</b>
+        </div>
+        <div>
+          <span>Bajo mínimo</span>
+          <b style={bajos ? { color: '#9b1015' } : undefined}>{bajos}</b>
+        </div>
+        <div>
+          <span>Frío ocupado</span>
+          <b>{num(pctFrio)} %</b>
+        </div>
+        <div>
+          <span>En riesgo</span>
+          <b style={riesgo ? { color: '#8a5f00' } : undefined}>{riesgo}</b>
+        </div>
+      </div>
     </Card>
   )
 }
@@ -210,7 +242,7 @@ function Franjas({ s }: { s: ProtoState }) {
   )
 }
 
-export default function Vivo({ s, ctl }: { s: ProtoState; ctl: PausaCtl }) {
+export default function Vivo({ s, ctl, onInventario }: { s: ProtoState; ctl: PausaCtl; onInventario?: () => void }) {
   const now = useNow(1000)
   const k = kpis(s)
   const recog = k.recogidaMediaSeg
@@ -252,6 +284,7 @@ export default function Vivo({ s, ctl }: { s: ProtoState; ctl: PausaCtl }) {
         </div>
         <div className="mg-col">
           <Carga s={s} ctl={ctl} now={now} />
+          {onInventario && <MiniInventario s={s} onOpen={onInventario} />}
           <Feed s={s} now={now} />
         </div>
       </div>

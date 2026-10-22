@@ -1,7 +1,7 @@
 /** Hoja inferior: carrito → franja de recogida → pago simulado → confirmación (o pedido guardado offline / error). */
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CafeteriaId, LineaPedido, Pedido, ResultadoPedido, crearPedido, eur, franjas, getState, horaDe, pedidosAbiertos, producto, uid } from '../store'
+import { CafeteriaId, LineaPedido, Pedido, ResultadoPedido, crearPedido, descuentoJoven, eur, franjas, getState, horaDe, pedidosAbiertos, producto, soloBebidas, totalLineas, uid } from '../store'
 import { ProductoArt } from '../shared'
 import { CheckDraw, PI, vibrar } from './ui'
 import { SelectorCafeteria } from './Carta'
@@ -10,7 +10,7 @@ import { useP } from './ctx'
 type Paso = 'carrito' | 'pago' | 'proceso' | 'ok' | 'offline' | 'error'
 type Metodo = Pedido['pago']
 type Err = { motivo: 'cerrado' | 'pausa' | 'franja-llena' | 'sin-stock'; detalle?: string; franjaNueva?: string | null }
-type Intento = { clientKey: string; billete: ReturnType<typeof useP>['billete']; lineas: LineaPedido[]; cafeteria: CafeteriaId; franja: number; pago: Metodo }
+type Intento = { clientKey: string; billete: ReturnType<typeof useP>['billete']; lineas: LineaPedido[]; cafeteria: CafeteriaId; franja: number; pago: Metodo; sinPlastico: boolean }
 
 const slide = {
   initial: { opacity: 0, x: 28 },
@@ -26,6 +26,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
   const [err, setErr] = useState<Err | null>(null)
   const [res, setRes] = useState<Extract<ResultadoPedido, { ok: true }> | null>(null)
   const [dup, setDup] = useState(false)
+  const [spManual, setSpManual] = useState<boolean | null>(null) // null = por defecto (activado si solo hay bebidas)
   const [reintentando, setReintentando] = useState(false)
   const [sigueOffline, setSigueOffline] = useState(false)
   const key = useRef(uid())
@@ -42,7 +43,10 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
   const frs = useMemo(() => franjas(s, caf, 6), [s, caf])
   const libres = frs.filter((f) => !f.llena)
   const sel = frs.find((f) => f.idx === franjaSel && !f.llena) ?? libres[0] ?? null
-  const total = Math.round(cart.reduce((a, l) => a + producto(s, l.pid).precio * l.qty, 0) * 100) / 100
+  const subtotal = totalLineas(s, cart)
+  const dto = descuentoJoven(s, billete, cart)
+  const total = Math.round((subtotal - dto) * 100) / 100
+  const sinPlastico = spManual ?? soloBebidas(s, cart)
   const abiertos = pedidosAbiertos(s)
   const pausa = s.ajustes.pausa[caf]
   const prepedido = s.viaje.minuto < 0
@@ -90,7 +94,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
 
   const pagar = () => {
     if (!sel || cart.length === 0) return
-    intento.current = { clientKey: key.current, billete, lineas: cart.map((l) => ({ ...l })), cafeteria: caf, franja: sel.idx, pago: metodo }
+    intento.current = { clientKey: key.current, billete, lineas: cart.map((l) => ({ ...l })), cafeteria: caf, franja: sel.idx, pago: metodo, sinPlastico }
     setPaso('proceso')
     vibrar(15)
     timer.current = window.setTimeout(() => resolver(crearPedido(intento.current!)), 1400)
@@ -245,11 +249,43 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                 </div>
               )}
               {prepedido && <p className="pj-note">{t('k.pre')}</p>}
+
+              <div className="pj-eco">
+                <button role="switch" aria-checked={sinPlastico} className={'pj-eco-sw' + (sinPlastico ? ' on' : '')} onClick={() => setSpManual(!sinPlastico)}>
+                  <span className="ic" aria-hidden>
+                    <PI n="leaf" size={20} />
+                  </span>
+                  <span className="tx">
+                    <b>{t('g.nocut')}</b>
+                    <small>{t('g.nocut.b')}</small>
+                  </span>
+                  <i aria-hidden>
+                    <motion.b layout transition={{ type: 'spring', stiffness: 500, damping: 32 }} />
+                  </i>
+                </button>
+                <p className="pj-eco-note">
+                  <PI n="receipt" size={14} /> {t('g.ticket')} · {t('g.title')}
+                </p>
+              </div>
             </>
           )}
         </div>
         {cart.length > 0 && (
           <div className="pj-sh-foot">
+            {dto > 0 && (
+              <div className="pj-total-sub">
+                <span>{t('k.subtotal')}</span>
+                <span>{eur(subtotal)}</span>
+              </div>
+            )}
+            {dto > 0 && (
+              <div className="pj-total-sub dto">
+                <span>
+                  {t('j.line')} <em>{t('j.proposal')}</em>
+                </span>
+                <span>−{eur(dto)}</span>
+              </div>
+            )}
             <div className="pj-total">
               <span>{t('k.total')}</span>
               <motion.b key={total} initial={{ scale: 1.12 }} animate={{ scale: 1 }}>
@@ -280,6 +316,11 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
             <small>
               {s.cafeterias[caf].nombre} · {sel?.desde}
             </small>
+            {dto > 0 && (
+              <small className="pj-paydto">
+                {t('j.line')}: −{eur(dto)}
+              </small>
+            )}
           </div>
           <div className="pj-methods" role="radiogroup" aria-label={t('y.title')}>
             {metodos.map((m) => (
@@ -336,6 +377,10 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
           <span>{cafPedido.cubierta}</span>
           <span>{eur(pedido.total)}</span>
         </div>
+        <p className="pj-ok-eco">
+          <PI n="leaf" size={14} /> {t('g.ticket')}
+          {pedido.sinPlastico ? ` · ${t('g.nocut')}` : ''}
+        </p>
         <div className="pj-actions">
           <button
             className="fob-btn primary block"

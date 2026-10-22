@@ -47,6 +47,13 @@ const PATHS: Record<string, ReactNode> = {
     </>
   ),
   plus: <path d="M12 5v14M5 12h14" />,
+  anchor: (
+    <>
+      <circle cx="12" cy="5.5" r="2" />
+      <path d="M12 7.5V20M8 11h8M5 14c0 3.3 3 6 7 6s7-2.7 7-6" />
+    </>
+  ),
+  leaf: <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14M5 19c2-4 5-7 9-9" />,
   minus: <path d="M5 12h14" />,
   close: <path d="M6 6l12 12M18 6L6 18" />,
   chevR: <path d="M9 6l6 6-6 6" />,

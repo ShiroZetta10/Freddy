@@ -53,6 +53,7 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
         {p.lineas.map((l) => (
           <li key={l.pid}>
             <b>{l.qty}×</b> {producto(s, l.pid).nombre}
+            {producto(s, l.pid).cat === 'Tienda' && <em className="br-shop-tag">Tienda</em>}
           </li>
         ))}
       </ul>
@@ -62,6 +63,17 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
           Recogida {horaDe(s, minFranja)}
         </span>
         {p.prepedido && <span className="fob-pill">Pre-pedido</span>}
+        {p.sinPlastico && (
+          <span className="br-eco" title="Sin cubiertos ni bolsa">
+            <Ico n="leaf" size={13} />
+            Sin cubiertos
+          </span>
+        )}
+        {p.tarifaJoven && (
+          <span className="br-joven" title="Billete Tarifa Joven (ventaja propuesta)">
+            Tarifa Joven{p.descuentoJoven ? ` −${p.descuentoJoven.toFixed(2).replace('.', ',')} €` : ''}
+          </span>
+        )}
         {!p.bot && (
           <span className="br-real-tag">
             <Ico n="user" size={12} />

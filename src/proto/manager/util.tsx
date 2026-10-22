@@ -195,9 +195,15 @@ export function cuentaAtras(hasta: number | undefined, now: number) {
 }
 
 // iconos propios (línea)
-export function Ico({ name, size = 20 }: { name: 'live' | 'carta' | 'sliders' | 'msg' | 'chart' | 'demo' | 'download' | 'pause' | 'play' | 'alert' | 'ship'; size?: number }) {
+export function Ico({ name, size = 20 }: { name: 'live' | 'caja' | 'carta' | 'sliders' | 'msg' | 'chart' | 'demo' | 'download' | 'pause' | 'play' | 'alert' | 'ship'; size?: number }) {
   const P: Record<string, ReactNode> = {
     live: <path d="M3 12h4l3-7 4 14 3-7h4" />,
+    caja: (
+      <>
+        <path d="M4 8l8-4 8 4v8l-8 4-8-4V8z" />
+        <path d="M4 8l8 4 8-4M12 12v8" />
+      </>
+    ),
     carta: (
       <>
         <rect x="4" y="3" width="16" height="18" rx="2" />

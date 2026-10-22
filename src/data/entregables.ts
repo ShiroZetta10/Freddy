@@ -39,8 +39,8 @@ export const ENTREGABLES: Entregable[] = [
     num: '02',
     icono: 'wrench',
     titulo: 'Plan de implementación',
-    resumen: 'Fases, integraciones (TPV, pagos, Tarjeta Plus), recursos, costes y beneficios estimados, y riesgos.',
-    estado: 'en-preparacion',
+    resumen: 'Fases, recursos y condiciones, modelo de negocio interactivo (costes, beneficios y potencial de ventas), escalado a la flota y riesgos.',
+    estado: 'listo',
     respondeA: 'Viabilidad técnica y económica, y escalabilidad (22 % de la valoración; preguntas 8, 9 y 11).',
     incluira: [
       'Fase 0, MVP del piloto: web FredOnBoard con acceso por billete, Click & Collect y pre-pedido; tablet de barra y panel de manager; conciliación diaria.',
@@ -56,8 +56,8 @@ export const ENTREGABLES: Entregable[] = [
     num: '03',
     icono: 'megaphone',
     titulo: 'Plan de comunicación',
-    resumen: 'Cómo damos a conocer FredOnBoard a pasajeros y tripulación para que se use desde el primer viaje sin perjudicar la barra.',
-    estado: 'en-preparacion',
+    resumen: 'Cómo damos a conocer FredOnBoard dentro de On Board Club: públicos, puntos de contacto del viaje, calendario de lanzamiento, tripulación y KPIs.',
+    estado: 'listo',
     respondeA: 'Adopción del servicio y convivencia de canales (pregunta 14).',
     incluira: [
       'Puntos de contacto: email de confirmación del billete, QR en el asiento, portal wifi, megafonía, cartelería y la app.',
@@ -88,7 +88,7 @@ export const ENTREGABLES: Entregable[] = [
     num: '05',
     icono: 'phone',
     titulo: 'Prototipo',
-    resumen: 'FredOnBoard navegable: la web del pasajero (sin instalar, también dentro de la app), la tablet de barra y el panel del manager.',
+    resumen: 'FredOnBoard navegable dentro de On Board Club: la web del pasajero (sin instalar), la tablet de barra y el panel del manager, con producto canario y tienda a bordo.',
     estado: 'listo',
     respondeA: '«Un prototipo que nos permita entender el servicio completo» (pregunta 1 del reto).',
     incluira: [
@@ -105,8 +105,8 @@ export const ENTREGABLES: Entregable[] = [
     num: '06',
     icono: 'flask',
     titulo: 'Piloto (PoC)',
-    resumen: 'Cómo lo probaríamos en el barco: buque, duración, línea base, KPIs y criterios de éxito para decidir si escalar.',
-    estado: 'en-preparacion',
+    resumen: 'Las 4 hipótesis del reto, cada una con su KPI y umbral; 6 semanas en el Bajamar Express con grupo de control, panel de KPIs y criterios para escalar.',
+    estado: 'listo',
     respondeA: '«Cómo demostramos que aumentan las ventas» y «en qué barco o ruta» (preguntas 12 y 13).',
     incluira: [
       'MVP: sin cuenta para el pasajero (identificación por billete), Click & Collect a bordo y pre-pedido antes de embarcar, con tablet de barra y panel de manager.',

@@ -218,6 +218,23 @@ const es: Dict = {
   'x.contrast': 'Alto contraste',
   'x.out': 'Cerrar sesión',
   'x.ticket': 'Billete {t}',
+
+  'club.seal': 'en On Board Club',
+  'club.full': 'FredOnBoard · en On Board Club',
+  'cat.Tienda': 'Tienda',
+  'tag.canario': 'Producto canario',
+  'c.origin': 'KM0 · {o}',
+  'c.canonly': 'Canario',
+  'c.shopnote': 'Tienda a bordo: se recoge en barra con el resto de tu pedido.',
+  'j.tag': 'Tarifa Joven',
+  'j.perk': 'Tarifa Joven: café o refresco −20 % con tu pedido',
+  'j.proposal': 'Propuesta',
+  'j.line': 'Tarifa Joven −20 %',
+  'k.subtotal': 'Subtotal',
+  'g.title': 'En Armonía con el Mar',
+  'g.nocut': 'Sin cubiertos ni bolsa',
+  'g.nocut.b': 'Menos plásticos a bordo: recoges tu pedido tal cual.',
+  'g.ticket': 'Ticket digital: cero papel',
 }
 
 const en: Dict = {
@@ -436,6 +453,23 @@ const en: Dict = {
   'x.contrast': 'High contrast',
   'x.out': 'Sign out',
   'x.ticket': 'Ticket {t}',
+
+  'club.seal': 'in On Board Club',
+  'club.full': 'FredOnBoard · in On Board Club',
+  'cat.Tienda': 'Shop',
+  'tag.canario': 'Canarian product',
+  'c.origin': 'Local · {o}',
+  'c.canonly': 'Canarian',
+  'c.shopnote': 'On-board shop: collected at the counter with the rest of your order.',
+  'j.tag': 'Youth Fare',
+  'j.perk': 'Youth Fare: coffee or soft drink 20% off with your order',
+  'j.proposal': 'Proposal',
+  'j.line': 'Youth Fare −20%',
+  'k.subtotal': 'Subtotal',
+  'g.title': 'In Harmony with the Sea',
+  'g.nocut': 'No cutlery or bag',
+  'g.nocut.b': 'Less plastic on board: you take your order as it is.',
+  'g.ticket': 'Digital receipt: zero paper',
 }
 
 const de: Dict = {
@@ -654,6 +688,23 @@ const de: Dict = {
   'x.contrast': 'Hoher Kontrast',
   'x.out': 'Abmelden',
   'x.ticket': 'Ticket {t}',
+
+  'club.seal': 'im On Board Club',
+  'club.full': 'FredOnBoard · im On Board Club',
+  'cat.Tienda': 'Shop',
+  'tag.canario': 'Kanarisches Produkt',
+  'c.origin': 'Regional · {o}',
+  'c.canonly': 'Kanarisch',
+  'c.shopnote': 'Bordshop: Abholung an der Theke zusammen mit Ihrer Bestellung.',
+  'j.tag': 'Jugendtarif',
+  'j.perk': 'Jugendtarif: Kaffee oder Erfrischungsgetränk 20 % günstiger',
+  'j.proposal': 'Vorschlag',
+  'j.line': 'Jugendtarif −20 %',
+  'k.subtotal': 'Zwischensumme',
+  'g.title': 'Im Einklang mit dem Meer',
+  'g.nocut': 'Ohne Besteck und Tüte',
+  'g.nocut.b': 'Weniger Plastik an Bord: Sie nehmen Ihre Bestellung unverpackt mit.',
+  'g.ticket': 'Digitaler Beleg: null Papier',
 }
 
 const DICTS: Record<Lang, Dict> = { es, en, de }

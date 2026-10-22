@@ -425,3 +425,33 @@ body:has(.pj-sheet) .fob-demo { display: none; }
 
 }
 
+
+/* ---- identidad canaria: On Board Club, producto canario, Tarifa Joven, En Armonía con el Mar ---- */
+.pj-root .pj-club-seal { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: calc(12px * var(--f)); font-weight: 600; letter-spacing: .01em; color: #fff; }
+.pj-root .pj-club-seal b { font-weight: 800; }
+.pj-root .pj-club-strip { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px; padding: 3px 14px; background: var(--fob-navy-50); border-bottom: 1px solid var(--fob-line); font-size: calc(11.5px * var(--f)); color: var(--fob-navy-2); }
+.pj-root .pj-club-strip > span { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.pj-root .pj-club-strip b { font-weight: 800; }
+.pj-root .pj-joven-tag { font-style: normal; font-weight: 800; font-size: calc(11px * var(--f)); text-transform: uppercase; letter-spacing: .05em; padding: 1px 8px; border-radius: 999px; background: #fff; border: 1px solid var(--fob-navy-3); color: var(--fob-navy); }
+.pj-root .pj-joven { overflow: hidden; }
+.pj-root .pj-joven > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; border-radius: 12px; background: var(--fob-navy-50); border: 1px solid #cfdcf0; font-size: calc(13px * var(--f)); color: var(--fob-navy); }
+.pj-root .pj-joven em { font-style: normal; font-size: calc(10.5px * var(--f)); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--fob-muted); }
+.pj-root .pj-shopnote { padding: 0 2px; }
+.pj-root .pj-prod-tx .origen { font-size: calc(12px * var(--f)); font-weight: 600; color: #1b6b60; line-height: 1.3; }
+.pj-root .pj-eco { margin-top: 14px; display: grid; gap: 6px; }
+.pj-root .pj-eco-sw { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid var(--fob-line); background: #fff; text-align: left; transition: border-color .15s, background .15s; }
+.pj-root .pj-eco-sw.on { border-color: #1b6b60; background: var(--fob-green-50); }
+.pj-root .pj-eco-sw .ic { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #1b6b60; border: 1px solid #bfe3da; }
+.pj-root .pj-eco-sw .tx { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.pj-root .pj-eco-sw .tx b { font-size: calc(14px * var(--f)); color: var(--fob-navy); }
+.pj-root .pj-eco-sw .tx small { font-size: calc(12px * var(--f)); color: var(--fob-muted); line-height: 1.3; }
+.pj-root .pj-eco-sw i { width: 46px; height: 28px; border-radius: 99px; background: #c4ccdb; padding: 3px; display: flex; flex: none; transition: background .2s; }
+.pj-root .pj-eco-sw.on i { background: #1b6b60; justify-content: flex-end; }
+.pj-root .pj-eco-sw i b { width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); }
+.pj-root .pj-eco-note, .pj-root .pj-ok-eco { display: flex; align-items: center; gap: 6px; font-size: calc(12.5px * var(--f)); color: #1b6b60; font-weight: 600; }
+.pj-root .pj-ok-eco { justify-content: center; margin-top: 10px; text-align: center; }
+.pj-root .pj-total-sub { display: flex; justify-content: space-between; align-items: baseline; font-size: calc(13px * var(--f)); color: var(--fob-muted); font-variant-numeric: tabular-nums; margin-bottom: 2px; }
+.pj-root .pj-total-sub.dto { color: var(--fob-navy-2); font-weight: 700; }
+.pj-root .pj-total-sub em { font-style: normal; font-size: calc(10.5px * var(--f)); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--fob-muted); margin-left: 4px; }
+.pj-root .pj-paydto { color: var(--fob-navy-2); font-weight: 700; }
+.pj-root .pj-order-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 6px; }

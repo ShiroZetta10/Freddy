@@ -1,23 +1,60 @@
 import './barra.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import Icon from '../../components/Icon'
 import { ProtoChrome } from '../shared'
-import { CafeteriaId, fase, horaDe, pedidosAbiertos, setPausa, useProtoState } from '../store'
-import { CAFS, CAF_CORTO, FASE_LABEL, Ico, useCafSeleccionada, useNow, usePedidosNuevos, useSilencio } from './util'
+import { CafeteriaId, fase, horaDe, insumoLimitante, pedidosAbiertos, ProtoState, setPausa, useProtoState } from '../store'
+import { CAFS, CAF_CORTO, FASE_LABEL, Ico, useCafSeleccionada, pitar, useNow, usePedidosNuevos, useSilencio } from './util'
 import Tablero from './Tablero'
 import Escaner from './Escaner'
-import Stock from './Stock'
+import Inventario from './Inventario'
 import Prevision from './Prevision'
 import Cierre from './Cierre'
 
-type Tab = 'pedidos' | 'prevision' | 'stock' | 'cierre'
+type Tab = 'pedidos' | 'prevision' | 'inventario' | 'cierre'
 const TABS: { id: Tab; l: string }[] = [
   { id: 'pedidos', l: 'Pedidos' },
   { id: 'prevision', l: 'Previsión' },
-  { id: 'stock', l: 'Stock' },
+  { id: 'inventario', l: 'Inventario' },
   { id: 'cierre', l: 'Cierre' },
 ]
+
+type Aviso = { id: number; titulo: string; sub: string }
+
+/** Avisa cuando un producto pasa a agotarse (porciones <= umbral) por falta de un insumo. */
+function useAvisosAgotado(s: ProtoState, silencio: boolean) {
+  const prev = useRef<Record<string, boolean> | null>(null)
+  const [avisos, setAvisos] = useState<Aviso[]>([])
+  useEffect(() => {
+    const now: Record<string, boolean> = {}
+    for (const p of s.productos) if (s.escandallos[p.id]) now[p.id] = p.stock <= s.ajustes.umbralStock
+    const antes = prev.current
+    prev.current = now
+    if (!antes) return
+    const grupos = new Map<string, string[]>()
+    for (const p of s.productos) {
+      if (now[p.id] && antes[p.id] === false) {
+        const lim = insumoLimitante(s, p.id)
+        const k = lim?.id ?? ''
+        grupos.set(k, [...(grupos.get(k) ?? []), p.nombre])
+      }
+    }
+    if (!grupos.size) return
+    const nuevos: Aviso[] = [...grupos.entries()].map(([iid, nombres], n) => {
+      const ins = s.insumos.find((i) => i.id === iid)
+      const lista = nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres[nombres.length - 1]}` : nombres[0]
+      return {
+        id: Date.now() + n + Math.random(),
+        titulo: `${nombres.length > 1 ? 'Se han agotado' : 'Se ha agotado'} ${lista}${ins ? `: falta ${ins.nombre}` : ''}`,
+        sub: `Oculto a los pasajeros.${ins ? ` Reposición: ${ins.aprovisionamiento}.` : ''}`,
+      }
+    })
+    setAvisos((a) => [...a, ...nuevos].slice(-3))
+    if (!silencio) pitar()
+    nuevos.forEach((x) => window.setTimeout(() => setAvisos((a) => a.filter((y) => y.id !== x.id)), 8000))
+  }, [s, silencio])
+  return { avisos, cerrar: (id: number) => setAvisos((a) => a.filter((y) => y.id !== id)) }
+}
 
 export default function BarraApp() {
   const s = useProtoState()
@@ -26,6 +63,7 @@ export default function BarraApp() {
   const [scan, setScan] = useState(false)
   const [silencio, toggleSilencio] = useSilencio()
   const now = useNow(1000)
+  const { avisos, cerrar } = useAvisosAgotado(s, silencio)
 
   const pedidos = useMemo(() => s.pedidos.filter((p) => p.cafeteria === caf && p.estado !== 'cancelado'), [s.pedidos, caf])
   const { fresh, anuncio } = usePedidosNuevos(pedidos, caf, silencio)
@@ -118,7 +156,7 @@ export default function BarraApp() {
             <button key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'on' : ''} onClick={() => setTab(t.id)}>
               {t.l}
               {t.id === 'pedidos' && <i>{nActivos}</i>}
-              {t.id === 'stock' && nOcultos > 0 && <i className="warn">{nOcultos}</i>}
+              {t.id === 'inventario' && nOcultos > 0 && <i className="warn">{nOcultos}</i>}
               {t.id === 'cierre' && cerrado && <i className="warn">{sinRecoger}</i>}
               {tab === t.id && <motion.span layoutId="br-tab-ul" className="ul" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
             </button>
@@ -149,11 +187,28 @@ export default function BarraApp() {
             >
               {tab === 'pedidos' && <Tablero s={s} caf={caf} pedidos={pedidos} now={now} fresh={fresh} />}
               {tab === 'prevision' && <Prevision s={s} caf={caf} />}
-              {tab === 'stock' && <Stock s={s} />}
+              {tab === 'inventario' && <Inventario s={s} />}
               {tab === 'cierre' && <Cierre s={s} caf={caf} />}
             </motion.div>
           </AnimatePresence>
         </main>
+
+        <div className="br-toasts" role="alert" aria-live="assertive">
+          <AnimatePresence>
+            {avisos.map((a) => (
+              <motion.div key={a.id} layout className="br-toast" initial={{ opacity: 0, y: -24, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 40 }} transition={{ type: 'spring', stiffness: 420, damping: 34 }}>
+                <Ico n="warn" size={22} />
+                <div>
+                  <b>{a.titulo}</b>
+                  <span>{a.sub}</span>
+                </div>
+                <button onClick={() => cerrar(a.id)} aria-label="Cerrar aviso">
+                  <Ico n="x" size={18} />
+                </button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
 
         <AnimatePresence>{scan && <Escaner s={s} caf={caf} onClose={() => setScan(false)} />}</AnimatePresence>
       </div>

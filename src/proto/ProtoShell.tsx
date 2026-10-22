@@ -5,7 +5,7 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import './proto.css'
-import { arrancarMotor, pararMotor } from './store'
+import { arrancarMotor, pararMotor, resetDemo } from './store'
 import { DemoControls, ProtoChrome, ToastProvider } from './shared'
 import PasajeroApp from './pasajero'
 import BarraApp from './barra'
@@ -15,7 +15,11 @@ function Demo() {
   // Vista "show-off": las tres apps en vivo, una al lado de otra, compartiendo el mismo estado.
   return (
     <div className="fob fob-root">
-      <ProtoChrome titulo="Demo en vivo · 3 perfiles" />
+      <ProtoChrome titulo="Demo en vivo · 3 perfiles">
+        <button className="fob-chip-btn" style={{ marginRight: 8 }} onClick={() => resetDemo()} title="Vuelve al puerto de salida y borra los pedidos">
+          Nueva travesía
+        </button>
+      </ProtoChrome>
       <div className="fob-demo-grid">
         <section>
           <div className="fob-demo-label">Pasajero · móvil</div>
@@ -42,6 +46,11 @@ function Demo() {
 
 export default function ProtoShell() {
   useEffect(() => {
+    // ?reset=1 (desde el lanzador) empieza una travesía nueva
+    if (window.location.hash.includes('reset=1')) {
+      resetDemo()
+      window.history.replaceState(null, '', window.location.href.replace(/[?&]reset=1/, ''))
+    }
     arrancarMotor()
     document.body.classList.add('fob-body')
     return () => {

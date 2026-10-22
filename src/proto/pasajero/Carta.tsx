@@ -6,13 +6,13 @@ import { ProductoArt } from '../shared'
 import { PI } from './ui'
 import { useP } from './ctx'
 
-const CATS: Categoria[] = ['Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks']
-const TAGS = ['km0', 'sin gluten', 'vegetariano', 'combo'] as const
+const CATS: Categoria[] = ['Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks', 'Tienda']
+const TAGS = ['canario', 'sin gluten', 'vegetariano', 'combo'] as const
 type Tag = (typeof TAGS)[number]
 const CAFS: CafeteriaId[] = ['proa', 'popa', 'oro']
 const CAF_CORTO: Record<CafeteriaId, string> = { proa: 'Proa', popa: 'Popa', oro: 'Oro' }
 
-const tieneTag = (p: Producto, t: Tag) => (t === 'km0' ? !!p.km0 : !!p.tags?.includes(t))
+const tieneTag = (p: Producto, t: Tag) => (t === 'canario' ? !!p.km0 : !!p.tags?.includes(t))
 
 export function SelectorCafeteria({ compacto }: { compacto?: boolean }) {
   const { s, t, caf, setCaf, esOro } = useP()
@@ -35,7 +35,7 @@ export function SelectorCafeteria({ compacto }: { compacto?: boolean }) {
 }
 
 export default function Carta() {
-  const { s, t, caf, cart, add, dec, esOro } = useP()
+  const { s, t, caf, cart, add, dec, esOro, billete } = useP()
   const [cat, setCat] = useState<Categoria | 'todo'>('todo')
   const [tags, setTags] = useState<Tag[]>([])
   const abiertos = pedidosAbiertos(s)
@@ -90,12 +90,29 @@ export default function Carta() {
             const on = tags.includes(x)
             return (
               <button key={x} className={'pj-fchip tag' + (on ? ' on' : '')} aria-pressed={on} onClick={() => setTags((a) => (on ? a.filter((y) => y !== x) : [...a, x]))}>
-                {t('tag.' + x)}
+                {x === 'canario' ? t('c.canonly') : t('tag.' + x)}
               </button>
             )
           })}
         </div>
       </div>
+
+      <AnimatePresence initial={false}>
+        {billete.tarifaJoven && (
+          <motion.div key="joven" className="pj-joven" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+            <div>
+              <span className="fob-pill">{t('j.tag')}</span>
+              <b>{t('j.perk')}</b>
+              <em>{t('j.proposal')}</em>
+            </div>
+          </motion.div>
+        )}
+        {cat === 'Tienda' && (
+          <motion.p key="shop" className="pj-note pj-shopnote" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            {t('c.shopnote')}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence initial={false}>
         {upsell && combo && (
@@ -136,8 +153,9 @@ export default function Carta() {
                 <div className="pj-prod-tx">
                   <b>{p.nombre}</b>
                   <span className="desc">{p.desc}</span>
+                  {p.km0 && p.origen && <span className="origen">{t('c.origin', { o: p.origen })}</span>}
                   <span className="tags">
-                    {p.km0 && <span className="fob-pill green">{t('tag.km0')}</span>}
+                    {p.km0 && <span className="fob-pill green">{t('tag.canario')}</span>}
                     {p.tags?.map((x) => (
                       <span key={x} className="fob-pill">
                         {t('tag.' + x)}

@@ -155,6 +155,13 @@ function Sesion() {
             </button>
           </div>
         </header>
+        <div className="pj-club-strip">
+          <span>
+            <PI n="anchor" size={12} sw={2.2} />
+            <b>FredOnBoard</b> {t('club.seal')}
+          </span>
+          {billete.tarifaJoven && <em className="pj-joven-tag">{t('j.tag')}</em>}
+        </div>
 
         <AnimatePresence initial={false}>
           {!online && (

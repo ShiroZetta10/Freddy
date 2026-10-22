@@ -1,0 +1,41 @@
+/* Entregable 06 · Piloto (PoC). Prefijo pi- */
+.pi-hyp { display: grid; gap: 16px; }
+.pi-hyp-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.pi-hyp-num { flex: none; width: 36px; height: 36px; border-radius: 6px; background: var(--navy); color: #fff; font-weight: 800; display: grid; place-items: center; }
+.pi-hyp-head h3 { margin: 0 0 2px; font-size: 16px; }
+.pi-def { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.pi-def > div { background: var(--bg-soft); border-radius: 6px; padding: 12px 14px; min-width: 0; }
+.pi-def .k { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.pi-def .ok { border-left: 3px solid #2a8f84; }
+.pi-def .stop { border-left: 3px solid var(--navy); }
+.pi-def .full { grid-column: 1 / -1; }
+.pi-formula { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; margin-top: 6px; overflow-x: auto; }
+.pi-weeks { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.pi-week { border: 1px solid var(--line); border-radius: 6px; padding: 10px 10px 12px; background: #fff; min-width: 0; }
+.pi-week.base { background: var(--bg-soft); }
+.pi-week.serv { border-top: 3px solid var(--navy); }
+.pi-week .w { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--navy); }
+.pi-week .t { font-weight: 700; font-size: 13.5px; margin: 2px 0 4px; }
+.pi-week p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.pi-sim { border: 1px dashed var(--navy-3); }
+.pi-simtag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #6b5300; background: #fff4c2; padding: 3px 10px; border-radius: 999px; }
+.pi-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.pi-kpis > div { background: var(--bg-soft); border-radius: 6px; padding: 12px 14px; }
+.pi-kpis .l { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--muted); }
+.pi-kpis .v { font-size: 22px; font-weight: 800; color: var(--navy); }
+.pi-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+.pi-table th, .pi-table td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.pi-table thead th { background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.pi-table td:first-child { font-weight: 700; color: var(--navy); }
+.pi-table .pi-min { min-width: 170px; }
+.pi-dec { border-top: 4px solid var(--navy); }
+.pi-dec.go { border-top-color: #2a8f84; }
+.pi-dec.adj { border-top-color: #e3a600; }
+.pi-end { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); }
+@media (max-width: 960px) { .pi-weeks { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .pi-def, .pi-kpis { grid-template-columns: 1fr; }
+  .pi-weeks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pi-end { flex-direction: column; }
+  .pi-end .btn { justify-content: center; }
+}

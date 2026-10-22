@@ -4,7 +4,7 @@ import { Categoria, Producto, ProtoState, disponible, setAgotado, setPrecio, set
 import { ProductoArt } from '../shared'
 import { Card, Ico, NumField, Switch, hhmm } from './util'
 
-const CATS: ('Todas' | Categoria)[] = ['Todas', 'Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks']
+const CATS: ('Todas' | Categoria)[] = ['Todas', 'Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks', 'Tienda']
 
 function Fila({ p, s, onCambio }: { p: Producto; s: ProtoState; onCambio: () => void }) {
   const disp = disponible(s, p)
@@ -15,9 +15,10 @@ function Fila({ p, s, onCambio }: { p: Producto; s: ProtoState; onCambio: () => 
         <ProductoArt nombre={p.nombre} color={p.color} size={38} />
         <div>
           <b>{p.nombre}</b>
+          {p.origen && <small className="mg-origen">Origen: {p.origen}</small>}
           <span>
             {p.cat}
-            {p.km0 && <span className="fob-pill green mg-km0">KM0</span>}
+            {p.km0 && <span className="fob-pill green mg-km0">Producto canario · KM0</span>}
             {p.tags?.includes('combo') && <span className="fob-pill">Combo</span>}
           </span>
         </div>

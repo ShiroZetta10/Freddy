@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { ProtoState, eur, kpis, producto } from '../store'
-import { C, Card, Dot, Ico, num } from './util'
+import { ProtoState, VENTAJA_JOVEN, eur, kpis, producto, sostenibilidad } from '../store'
+import { C, Card, Counter, Dot, Ico, num } from './util'
 
 type Tono = 'ok' | 'warn' | 'ko' | 'nd'
 
 function csv(s: ProtoState) {
   const q = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
-  const head = ['pedido', 'localizador', 'pasajero', 'asiento', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'total_eur', 'lineas', 'creado']
+  const head = ['pedido', 'localizador', 'pasajero', 'asiento', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'total_eur', 'lineas', 'creado']
   const rows = s.pedidos.map((p) =>
     [
       p.id,
@@ -20,6 +20,9 @@ function csv(s: ProtoState) {
       p.estado,
       p.prepedido ? 'si' : 'no',
       p.pago,
+      p.sinPlastico ? 'si' : 'no',
+      p.tarifaJoven ? 'si' : 'no',
+      (p.descuentoJoven ?? 0).toFixed(2).replace('.', ','),
       p.total.toFixed(2).replace('.', ','),
       p.lineas.map((l) => `${l.qty}x ${producto(s, l.pid).nombre}`).join(' | '),
       new Date(p.t.creado ?? 0).toISOString(),
@@ -72,6 +75,7 @@ function Comp({ label, base, medido, fmt, extra, objetivo }: { label: string; ba
 
 export default function Analitica({ s }: { s: ProtoState }) {
   const k = kpis(s)
+  const eco = sostenibilidad(s)
   const validos = s.pedidos.filter((p) => p.estado !== 'cancelado')
   const base = s.base
 
@@ -169,6 +173,33 @@ export default function Analitica({ s }: { s: ProtoState }) {
                 </ResponsiveContainer>
               </div>
             )}
+          </Card>
+          <Card title="En Armonía con el Mar" sub="Papel cero, menos plásticos y producto de las islas">
+            <div className="mg-eco">
+              <div>
+                <b>
+                  <Counter value={eco.ticketsPapelEvitados} />
+                </b>
+                <span>Tickets en papel evitados</span>
+                <small>Ticket digital: 1 por pedido</small>
+              </div>
+              <div>
+                <b>
+                  <Counter value={eco.sinPlastico} />
+                </b>
+                <span>Pedidos sin cubiertos ni bolsa</span>
+                <small>{k.pedidos ? `${num(eco.pctSinPlastico * 100)} % de los pedidos` : 'sin datos'}</small>
+              </div>
+              <div>
+                <b>{k.pedidos ? `${num(eco.pctCanario * 100)} %` : '—'}</b>
+                <span>Venta de producto canario / KM0</span>
+                <small>{k.pedidos ? `${eco.udsCanarias} de ${eco.uds} uds. · tienda ${eur(eco.ventaTienda)}` : 'sin datos'}</small>
+              </div>
+            </div>
+            <p className="mg-eco-j">
+              <span className="fob-pill">Tarifa Joven</span>
+              {eco.pedidosJoven} {eco.pedidosJoven === 1 ? 'pedido' : 'pedidos'} con la ventaja «{VENTAJA_JOVEN.texto}» ({eur(eco.descuentoJoven)} descontados) · <i>ventaja propuesta, por validar con Fred. Olsen</i>
+            </p>
           </Card>
           <div className="mg-mini">
             <Card title="Mix de pago">

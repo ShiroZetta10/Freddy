@@ -64,7 +64,7 @@ export default function Pedidos() {
     setReint(p.clientKey)
     window.setTimeout(() => {
       // mismo clientKey: el store reconoce el pedido y no lo duplica
-      const r = crearPedido({ clientKey: p.clientKey, billete, lineas: p.lineas, cafeteria: p.cafeteria, franja: p.franja, pago: p.pago })
+      const r = crearPedido({ clientKey: p.clientKey, billete, lineas: p.lineas, cafeteria: p.cafeteria, franja: p.franja, pago: p.pago, sinPlastico: p.sinPlastico })
       setReint(null)
       if (r.ok) setMsgs((m) => ({ ...m, [p.clientKey]: r.offline ? t('y.stilloff') : t('y.dup') }))
       else setMsgs((m) => ({ ...m, [p.clientKey]: t('e.' + (r.motivo === 'franja-llena' ? 'franja.t' : r.motivo === 'sin-stock' ? 'stock.t' : r.motivo === 'pausa' ? 'pausa.t' : 'cerrado.t')) }))
@@ -155,6 +155,12 @@ export default function Pedidos() {
                 {p.estado !== 'cancelado' && <Stepper estado={p.estado} />}
 
                 <p className="pj-order-l">{resumen(p, s)}</p>
+                {(p.sinPlastico || p.tarifaJoven) && (
+                  <p className="pj-order-tags">
+                    {p.sinPlastico && <span className="fob-pill green">{t('g.nocut')}</span>}
+                    {p.tarifaJoven && <span className="fob-pill">{t('j.tag')}{p.descuentoJoven ? ` −${eur(p.descuentoJoven)}` : ''}</span>}
+                  </p>
+                )}
                 <div className="pj-order-m row">
                   <span>
                     <PI n="clock" size={14} /> {t('o.pickup', { h: horaDe(s, p.franja * s.ajustes.franjaMin) })}

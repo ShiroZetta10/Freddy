@@ -7,7 +7,7 @@ function Screen({ p, perfil }: { p: Pantalla; perfil: Perfil }) {
   return (
     <div className={`screen screen-${perfil.dispositivo}`}>
       <div className="screen-bar">
-        <span className="screen-brand">FredOnBoard</span>
+        <span className="screen-brand">FredOnBoard · On Board Club</span>
         <span>{perfil.dispositivo === 'movil' ? 'Pasajero' : perfil.dispositivo === 'tablet' ? 'Barra' : 'Gestión'}</span>
       </div>
       <div className="screen-body" key={p.titulo}>
@@ -98,8 +98,8 @@ export default function Journey() {
         <div className="eyebrow">Entregable 04 · User journey</div>
         <h1>Un viaje con FredOnBoard</h1>
         <p>
-          FredOnBoard es el compañero de viaje digital de Fred. Olsen: acompaña antes, durante y después de la travesía, con el Click &amp; Collect como
-          servicio central. Haz scroll para recorrer el viaje y cambia de perfil para ver qué pasa en la barra y en la gestión.
+          FredOnBoard es el compañero de viaje digital de Fred. Olsen, dentro de On Board Club: acompaña antes, durante y después de la travesía, con el Click &amp; Collect como
+          servicio central, producto canario en la carta y cero papel. Haz scroll para recorrer el viaje y cambia de perfil para ver qué pasa en la barra y en la gestión.
         </p>
       </div>
 

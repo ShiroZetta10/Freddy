@@ -133,6 +133,8 @@ export default function Escaner({ s, caf, onClose }: { s: ProtoState; caf: Cafet
                             {l.qty}× {producto(getState(), l.pid).nombre}
                           </li>
                         ))}
+                        {res.pedido.sinPlastico && <li>Sin cubiertos ni bolsa</li>}
+                        {res.pedido.tarifaJoven && <li>Tarifa Joven</li>}
                       </ul>
                     )}
                     <button className="fob-btn ghost" onClick={() => setRes(null)}>

@@ -10,6 +10,7 @@ const DEMO_INFO: Record<string, string> = {
   FO7K2Q: 'Carmen · 42C · ES',
   FO9X4M: 'Tom · 17A · EN',
   FO3H8B: 'Greta · Oro 4 · DE · Clase Oro',
+  FO2J5T: 'Yeray · 23B · ES · Tarifa Joven',
 }
 
 export default function Welcome({ onLogin }: { onLogin: (ticket: string) => void }) {
@@ -82,6 +83,10 @@ export default function Welcome({ onLogin }: { onLogin: (ticket: string) => void
         <div className="pj-hero-text">
           <span className="pj-eyebrow">Fred. Olsen Express</span>
           <h1>{t('w.title')}</h1>
+          <span className="pj-club-seal">
+            <PI n="anchor" size={13} sw={2.2} />
+            <b>FredOnBoard</b> {t('club.seal')}
+          </span>
         </div>
       </div>
 
@@ -142,10 +147,10 @@ export default function Welcome({ onLogin }: { onLogin: (ticket: string) => void
                   setError(false)
                   vibrar(8)
                 }}
-                aria-label={`${b.ticket}, ${DEMO_INFO[b.ticket]}`}
+                aria-label={`${b.ticket}, ${DEMO_INFO[b.ticket] ?? b.nombre}`}
               >
                 <b>{b.ticket}</b>
-                <span>{DEMO_INFO[b.ticket]}</span>
+                <span>{DEMO_INFO[b.ticket] ?? `${b.nombre} · ${b.asiento}`}</span>
               </button>
             ))}
           </div>

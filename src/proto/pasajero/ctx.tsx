@@ -1,6 +1,6 @@
 /** Contexto de la sesión del pasajero: billete, idioma, accesibilidad, carrito, navegación y chat. */
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Billete, CafeteriaId, LineaPedido, Pedido, ProtoState, disponible, pedidosAbiertos, producto, totalLineas, useProtoState } from '../store'
+import { Billete, CafeteriaId, LineaPedido, Pedido, ProtoState, disponible, pedidosAbiertos, totalPedido, useProtoState } from '../store'
 import { Lang, TFn, makeT } from './i18n'
 import { vibrar } from './ui'
 
@@ -215,7 +215,7 @@ export function PJProvider({ ticket, onLogout, children }: { ticket: string; onL
   }, [s, setCartNow])
 
   const cartCount = cart.reduce((a, l) => a + l.qty, 0)
-  const cartTotal = totalLineas(s, cart.filter((l) => s.productos.some((p) => p.id === l.pid)))
+  const cartTotal = totalPedido(s, billete, cart.filter((l) => s.productos.some((p) => p.id === l.pid)))
   const mios = useMemo(() => s.pedidos.filter((p) => p.ticket === ticket), [s.pedidos, ticket])
   const plusGanados = Math.floor(mios.filter((p) => p.estado !== 'cancelado').reduce((a, p) => a + p.total, 0))
 

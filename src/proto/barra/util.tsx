@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { CafeteriaId, Pedido, ProtoState, EstadoPedido } from '../store'
+import { CafeteriaId, Pedido, ProtoState, EstadoPedido, Insumo, Unidad } from '../store'
 
 export const CAFS: CafeteriaId[] = ['proa', 'popa', 'oro']
 export const CAF_CORTO: Record<CafeteriaId, string> = { proa: 'Proa', popa: 'Popa', oro: 'Oro' }
@@ -158,6 +158,15 @@ const I: Record<string, JSX.Element> = {
   check: <><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></>,
   cross: <><circle cx="12" cy="12" r="9" /><path d="M9 9l6 6M15 9l-6 6" /></>,
   user: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></>,
+  snow: <path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5" />,
+  box: <><path d="M4 8l8-4 8 4v9l-8 4-8-4V8z" /><path d="M4 8l8 4 8-4M12 12v9" /></>,
+  down: <path d="M12 5v13M6 13l6 6 6-6" />,
+  edit: <><path d="M4 20h4L19 9l-4-4L4 16v4z" /><path d="M13.5 6.5l4 4" /></>,
+  truck: <><path d="M2 6h11v10H2zM13 10h4l3 3v3h-7" /><circle cx="7" cy="18" r="1.8" /><circle cx="17" cy="18" r="1.8" /></>,
+  back: <><path d="M4 7h10a6 6 0 0 1 0 12H8" /><path d="M8 3L4 7l4 4" /></>,
+  list: <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />,
+  leaf: <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14M5 19c2-4 5-7 9-9" />,
+  bell: <><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4l2-2z" /><path d="M10 21h4" /></>,
 }
 export function Ico({ n, size = 20 }: { n: string; size?: number }) {
   return (
@@ -166,3 +175,21 @@ export function Ico({ n, size = 20 }: { n: string; size?: number }) {
     </svg>
   )
 }
+
+// ---------------------------------------------------------------- inventario
+const nf = (max: number) => new Intl.NumberFormat('es-ES', { maximumFractionDigits: max })
+/** Cantidad con su unidad; g y ml pasan a kg y l a partir de 1000. */
+export function fmtQty(n: number, u: Unidad): string {
+  if ((u === 'g' || u === 'ml') && Math.abs(n) >= 1000) return `${nf(2).format(n / 1000)} ${u === 'g' ? 'kg' : 'l'}`
+  return `${nf(u === 'ud' ? 0 : 1).format(Math.round(n * 10) / 10)} ${u}`
+}
+export type NivelInsumo = 'ok' | 'bajo' | 'critico'
+/** verde / ámbar (bajo 1,5 x mínimo) / rojo (bajo mínimo). */
+export function nivelInsumo(i: Pick<Insumo, 'stock' | 'minimo'>): NivelInsumo {
+  if (i.stock < i.minimo) return 'critico'
+  if (i.stock < i.minimo * 1.5) return 'bajo'
+  return 'ok'
+}
+export const NIVEL_LABEL: Record<NivelInsumo, string> = { ok: 'Correcto', bajo: 'Bajo', critico: 'Bajo mínimo' }
+export const TIPO_MOV_LABEL = { venta: 'Venta', cancelacion: 'Cancelación', entrada: 'Entrada', merma: 'Merma', ajuste: 'Ajuste' } as const
+export const horaReal = (t: number) => new Date(t).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
