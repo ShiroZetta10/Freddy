@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ENTREGABLES, ESTADO_LABEL } from '../data/entregables'
 import Icon from '../components/Icon'
@@ -29,6 +30,14 @@ export default function Hub() {
       </section>
 
       <div className="wrap">
+        <section className="teaser" aria-labelledby="teaser-t">
+          <div className="section-title">
+            <h2 id="teaser-t">Teaser</h2>
+            <p>Un viaje con FredOnBoard en 2 minutos: antes, durante y después de la travesía, con la pasajera, la barra y el manager.</p>
+          </div>
+          <TeaserVideo />
+        </section>
+
         <div className="section-title">
           <h2>Entregables</h2>
           <p>Elige un entregable para ver su contenido.</p>
@@ -158,5 +167,23 @@ export default function Hub() {
         </Link>
       </div>
     </>
+  )
+}
+
+/** Teaser en vídeo. El MP4 va en public/video/teaser-fredonboard.mp4; si aún no está, se muestra un aviso en lugar del reproductor. */
+function TeaserVideo() {
+  const [falta, setFalta] = useState(false)
+  if (falta) return <div className="card teaser-falta small muted">El teaser estará disponible muy pronto.</div>
+  return (
+    <video
+      className="teaser-video"
+      src="video/teaser-fredonboard.mp4"
+      controls
+      playsInline
+      preload="metadata"
+      onError={() => setFalta(true)}
+    >
+      Tu navegador no puede reproducir este vídeo.
+    </video>
   )
 }

@@ -469,3 +469,8 @@ tr.sim-hl, tr.sim-hl > * { background: var(--s2) !important; transition: backgro
 .datax-sello .datax-quien { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
 .datax-sello .datax-quien a { font-weight: 700; color: var(--navy); }
 .datax-sello > a { flex: none; line-height: 0; }
+
+/* Teaser de la portada */
+.teaser { margin-bottom: 36px; }
+.teaser-video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); background: #0b1730; box-shadow: var(--shadow); }
+.teaser-falta { padding: 28px; text-align: center; }
