@@ -70,6 +70,11 @@ const Tarjeta = forwardRef<HTMLElement, { s: ProtoState; p: Pedido; col: Col; no
           </span>
         )}
         {p.menuOro && <span className="br-menu-oro">Menú Oro incluido ×{p.menuOro.uds}</span>}
+        {p.ventajas?.length ? (
+          <span className="br-va" title={p.ventajas.map((v) => v.nombre).join(' · ')}>
+            Ventaja pre-pedido
+          </span>
+        ) : null}
         {p.prepedido && <span className="fob-pill">Pre-pedido</span>}
         {p.sinPlastico && (
           <span className="br-eco" title="Sin cubiertos ni bolsa">

@@ -23,7 +23,7 @@ const PERFILES = [
     icono: 'trend',
     titulo: 'Manager',
     disp: 'Escritorio',
-    desc: 'Flota en vivo, alertas de saturación con acciones, carta y precios, reglas de capacidad, avisos a pasajeros y analítica del piloto frente a la línea base.',
+    desc: 'Panel del buque en vivo, alertas de saturación con acciones, carta y precios, reglas de capacidad, avisos a pasajeros y analítica del piloto frente a la línea base.',
   },
 ]
 

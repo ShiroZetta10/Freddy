@@ -633,7 +633,7 @@ const M0: Esc = {
         <Pastilla x={64} y={33} w={30} txt="Nuevo" tono="info" />
         <rect x={0} y={45} width={94} height={11} rx={3} fill={C.yellow} />
         <T x={47} y={53} s={7} w={800} c={C.navy} a="middle">
-          Publicar en la flota
+          Publicar
         </T>
       </Portatil>
     </Oficina>
@@ -699,9 +699,9 @@ const M2: Esc = {
           <circle cx={88} cy={4} r={3} fill={C.verde} />
         </Loop>
         {[
-          ['4', 'buques', 0],
-          ['612', 'pasajeros', 33],
-          ['118', 'pre-pedidos', 66],
+          ['186', 'pasajeros', 0],
+          ['42', 'pre-pedidos', 33],
+          ['3', 'cafeterías', 66],
         ].map(([v, l, x]) => (
           <Entra key={l as string} d={0.5 + (x as number) / 60} y={4}>
             <T x={x as number} y={27} s={15} w={800} c={C.navy}>

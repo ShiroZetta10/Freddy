@@ -98,7 +98,7 @@ export const PERFILES: Perfil[] = [
         progreso: 0.04,
         hora: 'Día anterior · 21:12',
         titulo: 'Pre-pide el desayuno',
-        hace: 'Elige un café cortado y un bocadillo de pollo gourmet, escoge la franja de recogida 08:15–08:20 y paga con Apple Pay. El pedido se cierra antes de zarpar.',
+        hace: 'Elige un café cortado y un bocadillo de pollo gourmet, escoge la franja de recogida 08:15–08:20 y paga con Apple Pay. El pedido se cierra antes de zarpar. Por pedir con antelación hay ventajas solo antes del viaje, como menús exclusivos y descuentos únicos (propuesta).',
         dolor: 'Al zarpar, toda la mañana se concentra en la barra: es la franja de más ventas (38 % de la facturación).',
         solucion: 'Pre-pedido con franja: la barra sabe lo que tiene que preparar antes del pico.',
         mvp: true,
@@ -385,7 +385,7 @@ export const PERFILES: Perfil[] = [
   {
     id: 'manager',
     nombre: 'Manager',
-    quien: 'Responsable de restauración a bordo de Fred. Olsen. Gestiona la carta, la capacidad y los resultados de toda la flota.',
+    quien: 'Responsable de restauración del Bajamar Express. Gestiona la carta, la capacidad y los resultados de su barco.',
     dispositivo: 'portatil',
     icono: 'trend',
     pasos: [
@@ -394,9 +394,9 @@ export const PERFILES: Perfil[] = [
         progreso: 0,
         hora: 'Lunes · oficina',
         titulo: 'Configura carta, precios y stock',
-        hace: 'Define la carta de FredOnBoard por buque y franja, los combos KM0 y el stock inicial de cada travesía.',
-        dolor: 'Hoy cada buque gestiona su oferta por separado.',
-        solucion: 'Una sola carta digital que se adapta por buque y momento del día.',
+        hace: 'Define la carta de FredOnBoard del barco por franja, los combos KM0 y el stock inicial de cada travesía.',
+        dolor: 'Hoy la carta es de papel y cada cambio tarda en llegar a la barra.',
+        solucion: 'Una carta digital del barco que se adapta al momento del día.',
         mvp: true,
         pantalla: {
           titulo: 'Carta · Bajamar Express · Mañana',
@@ -405,7 +405,7 @@ export const PERFILES: Perfil[] = [
             { l: 'Bocadillo pollo gourmet', r: '5,72 €', estado: 'ok' },
             { l: 'Combo KM0 desayuno', r: 'Nuevo', estado: 'info' },
           ],
-          cta: 'Publicar en la flota',
+          cta: 'Publicar en el Bajamar Express',
         },
       },
       {
@@ -415,7 +415,7 @@ export const PERFILES: Perfil[] = [
         titulo: 'Ajusta la capacidad a la demanda',
         hace: 'Ve la previsión de la salida (pre-pedidos e histórico) y ajusta el tope de pedidos por franja y el horario de apertura y cierre.',
         dolor: 'Sin datos, la capacidad se adivina.',
-        solucion: 'Reglas de capacidad configurables por buque, franja y cafetería.',
+        solucion: 'Reglas de capacidad configurables por franja y cafetería.',
         mvp: true,
         pantalla: {
           titulo: 'Reglas de capacidad',
@@ -430,17 +430,17 @@ export const PERFILES: Perfil[] = [
         fase: 'Embarque',
         progreso: 0.12,
         hora: 'Jueves · 07:45',
-        titulo: 'Sigue la flota en vivo',
-        hace: 'El panel muestra los buques en ruta, los pasajeros conectados a FredOnBoard y los pre-pedidos de cada salida.',
+        titulo: 'Sigue la travesía en vivo',
+        hace: 'El panel muestra el barco en ruta, los pasajeros conectados a FredOnBoard y los pre-pedidos de la salida.',
         dolor: 'Hoy no hay visibilidad de lo que pasa a bordo hasta el cierre.',
-        solucion: 'Panel en vivo de toda la flota.',
+        solucion: 'Panel en vivo del barco y de sus tres cafeterías.',
         mvp: true,
         pantalla: {
           titulo: 'Panel en vivo',
           kpis: [
-            { l: 'Buques en ruta', v: '4' },
-            { l: 'Pasajeros conectados', v: '612' },
-            { l: 'Pre-pedidos', v: '118' },
+            { l: 'Pasajeros conectados', v: '186' },
+            { l: 'Pre-pedidos', v: '42' },
+            { l: 'Cafeterías abiertas', v: '3' },
           ],
         },
       },
@@ -485,7 +485,7 @@ export const PERFILES: Perfil[] = [
         progreso: 1,
         hora: 'Viernes · informe',
         titulo: 'Mide el impacto',
-        hace: 'Compara la venta por pasajero, la adopción y el ticket medio con la línea base del piloto y entre buques.',
+        hace: 'Compara la venta por pasajero, la adopción y el ticket medio con la línea base del piloto y con el grupo de control.',
         dolor: 'Hoy no se puede demostrar el efecto de un cambio.',
         solucion: 'KPIs del piloto listos para decidir si escalar.',
         mvp: true,
@@ -564,16 +564,16 @@ export const ESCENAS: Record<PerfilId, EscenaTexto[]> = {
   ],
   manager: [
     {
-      hoy: 'La responsable gestiona una carta distinta en papel para cada buque.',
-      con: 'La responsable publica desde el portátil una única carta digital que se aplica a todos los buques de la flota.',
+      hoy: 'La responsable cambia la carta en papel y el cambio tarda en llegar a la barra.',
+      con: 'La responsable publica desde el portátil la carta digital del Bajamar Express, que llega al instante a la barra y a los móviles.',
     },
     {
       hoy: 'La responsable adivina qué capacidad necesita cada franja, sin datos.',
       con: 'La responsable ajusta en el portátil el tope por franja y los horarios de apertura y cierre de pedidos.',
     },
     {
-      hoy: 'La responsable no sabe dónde está cada barco ni cuánta gente pide a bordo hasta el cierre.',
-      con: 'El panel en vivo del portátil muestra los buques en ruta, los pasajeros conectados y los pre-pedidos.',
+      hoy: 'La responsable no sabe cuánta gente pide a bordo hasta el cierre de la travesía.',
+      con: 'El panel en vivo del portátil muestra el barco en ruta, los pasajeros conectados y los pre-pedidos.',
     },
     {
       hoy: 'La responsable se entera de la saturación por llamadas de queja cuando ya es tarde.',

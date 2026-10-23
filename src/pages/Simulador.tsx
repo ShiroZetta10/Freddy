@@ -2,6 +2,10 @@ import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, LabelList } from 'recharts'
 import { totales, derivados, eur, num, pct } from '../data/bajamar'
+import { totales as totalesPlan, editsIniciales } from '../data/costes'
+
+/** Totales por defecto del desglose de costes del plan de implementación (piloto, 1 barco). */
+const planTot = totalesPlan(editsIniciales())
 import {
   COSTES_MENSUALES,
   COSTES_UNICOS,
@@ -538,10 +542,10 @@ export default function Simulador() {
               Mismo escenario base que el <Link to="/implementacion">plan de implementación</Link>: +3 pp de compradores, 25 % por el móvil, +10 % de ticket y margen del 55 %. Antes el simulador usaba +15 % de ticket; no tenía fuente y se ha bajado al +10 % del plan.
             </li>
             <li>
-              El plan reserva 30.000 € de implantación y 1.800 €/mes de plataforma (21.600 €/año). Aquí el detalle suma {eur(costeUnico)} de coste único y {eur(mantAnual + fijosAnual)} al año de mantenimiento, nube, IA y soporte, fuera de wifi y comisión. La licencia del módulo de integración de Ágora está a 0 € porque no tiene precio confirmado: es un coste anticipable a validar con Ágora, no un coste cero.
+              El plan de implementación desglosa los costes partida a partida (personas, herramientas de desarrollo e infraestructura): {eur(planTot.unico)} de implantación y {eur(planTot.mensual)}/mes de plataforma. Este simulador usa una estimación propia más gruesa: aquí el detalle suma {eur(costeUnico)} de coste único y {eur(mantAnual + fijosAnual)} al año de mantenimiento, nube, IA y soporte, fuera de wifi y comisión. La licencia del módulo de integración de Ágora está a 0 € porque no tiene precio confirmado: es un coste anticipable a validar con Ágora, no un coste cero.
             </li>
             <li>
-              La diferencia del coste único viene del equipo: el plan reserva 4.500 € (15 %) y aquí el detalle con precios públicos es de {eur(costeHardwareSinPantallas)}, más {eur(importe(unicos.pantallas))} de pantallas que el plan no incluye.
+              Para la decisión, manda el desglose del <Link to="/implementacion">plan de implementación</Link>; este simulador sirve para ver el orden de magnitud del impacto. Equipo con precios públicos: {eur(costeHardwareSinPantallas)}, más {eur(importe(unicos.pantallas))} de pantallas de pedidos «listos».
             </li>
             <li>
               El plan usa una comisión del 1,5 % sin cuota fija. Con la tarifa pública de Stripe, la comisión efectiva es mayor; por eso aquí se puede elegir entre las dos.

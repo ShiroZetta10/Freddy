@@ -99,7 +99,7 @@ export default function Carta({ s }: { s: ProtoState }) {
           <AnimatePresence mode="wait" initial={false}>
             {pub === 'idle' && (
               <motion.span key="i" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
-                Publicar en la flota
+                Publicar en el {s.viaje.buque}
               </motion.span>
             )}
             {pub === 'sending' && (
@@ -125,7 +125,7 @@ export default function Carta({ s }: { s: ProtoState }) {
           </button>
         ))}
         <span className="mg-filtros-r">
-          {pub === 'done' ? 'Confirmado en 3 buques de la flota' : cambios > 0 ? `${cambios} ${cambios === 1 ? 'cambio' : 'cambios'} desde la última publicación` : `${s.productos.length} productos · ${s.productos.filter((p) => p.km0).length} KM0`}
+          {pub === 'done' ? `Confirmado a bordo del ${s.viaje.buque}` : cambios > 0 ? `${cambios} ${cambios === 1 ? 'cambio' : 'cambios'} desde la última publicación` : `${s.productos.length} productos · ${s.productos.filter((p) => p.km0).length} KM0`}
         </span>
       </div>
       <Card className="mg-tabla">

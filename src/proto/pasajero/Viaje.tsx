@@ -6,6 +6,7 @@ import { fase, horaDe, pedidosAbiertos, planMenuOro, progreso } from '../store'
 import { useToast } from '../shared'
 import { BarcoSVG, Olas, PI, Stars, vibrar } from './ui'
 import { BonoCard } from './Bonos'
+import { BloqueVentajas } from './Ventajas'
 import { ss, useP } from './ctx'
 
 function Contador({ valor }: { valor: number }) {
@@ -183,6 +184,9 @@ export default function Viaje() {
           </div>
         </motion.section>
       </AnimatePresence>
+
+      {/* ventajas por pedir con antelación: solo existen antes de zarpar */}
+      <BloqueVentajas donde="viaje" />
 
       {/* bonos de consumo: lo que el pasajero compró con el billete */}
       {bonos.length > 0 && (

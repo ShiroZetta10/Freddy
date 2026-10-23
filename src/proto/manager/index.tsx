@@ -8,17 +8,19 @@ import Vivo from './vivo'
 import Carta from './carta'
 import Reglas from './reglas'
 import Clases from './clases'
+import Ventajas from './ventajas'
 import Mensajes from './mensajes'
 import Inventario from './inventario'
 import Analitica from './analitica'
 import Demo from './demo'
 
-type Sec = 'vivo' | 'carta' | 'inventario' | 'reglas' | 'clases' | 'mensajes' | 'analitica' | 'demo'
+type Sec = 'vivo' | 'carta' | 'inventario' | 'reglas' | 'ventajas' | 'clases' | 'mensajes' | 'analitica' | 'demo'
 const NAV: { id: Sec; full: string; short: string; ico: Parameters<typeof Ico>[0]['name'] }[] = [
   { id: 'vivo', full: 'En vivo', short: 'En vivo', ico: 'live' },
   { id: 'carta', full: 'Carta y stock', short: 'Carta', ico: 'carta' },
   { id: 'inventario', full: 'Inventario y aprovisionamiento', short: 'Inventario', ico: 'caja' },
   { id: 'reglas', full: 'Capacidad y reglas', short: 'Reglas', ico: 'sliders' },
+  { id: 'ventajas', full: 'Ventajas del pre-pedido', short: 'Ventajas', ico: 'star' },
   { id: 'clases', full: 'Clase Estándar y Clase Oro', short: 'Clases', ico: 'star' },
   { id: 'mensajes', full: 'Mensajes', short: 'Avisos', ico: 'msg' },
   { id: 'analitica', full: 'Analítica del piloto', short: 'Piloto', ico: 'chart' },
@@ -77,6 +79,7 @@ export default function ManagerApp() {
               {sec === 'carta' && <Carta s={s} />}
               {sec === 'inventario' && <Inventario s={s} />}
               {sec === 'reglas' && <Reglas s={s} ctl={ctl} />}
+              {sec === 'ventajas' && <Ventajas s={s} />}
               {sec === 'clases' && <Clases s={s} />}
               {sec === 'mensajes' && <Mensajes s={s} />}
               {sec === 'analitica' && <Analitica s={s} />}

@@ -184,7 +184,7 @@ export default function Pedidos() {
                 {p.estado !== 'cancelado' && <Stepper estado={p.estado} />}
 
                 <p className="pj-order-l">{resumen(p, s)}</p>
-                {(p.sinPlastico || p.tarifaJoven || p.bono || p.menuOro || p.servicio) && (
+                {(p.sinPlastico || p.tarifaJoven || p.bono || p.menuOro || p.servicio || p.ventajas?.length) && (
                   <p className="pj-order-tags">
                     {p.bono && (
                       <span className="fob-pill pj-pill-bono">
@@ -192,6 +192,11 @@ export default function Pedidos() {
                         {p.total === 0 ? ` · ${t('b.paid')}` : ''}
                       </span>
                     )}
+                    {p.ventajas?.length ? (
+                      <span className="fob-pill pj-pill-va">
+                        {t('va.order.tag')} −{eur(p.ventajas.reduce((a, v) => a + v.descuento, 0))}
+                      </span>
+                    ) : null}
                     {p.menuOro && <span className="fob-pill pj-pill-oro">{t('or.tag')} ×{p.menuOro.uds}</span>}
                     {p.servicio === 'mesa' && <span className="fob-pill pj-pill-oro">{t('or.mesa.tag')}{p.mesaRef ? ` · ${p.mesaRef}` : ''}</span>}
                     {p.sinPlastico && <span className="fob-pill green">{t('g.nocut')}</span>}

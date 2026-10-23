@@ -234,6 +234,73 @@ const CATS: (Cat | 'Todo')[] = ['Todo', 'Producto canario', 'Recuerdos', 'Tempor
 const TEMPS: Temp[] = ['Navidad', 'Carnaval', 'Verano']
 const LLEGADA = '09:15' // llegada ilustrativa
 
+/** Maqueta de la vista de flota (solo a futuro: en el piloto el manager es de un barco). */
+const FLOTA = [
+  { n: 'Bajamar Express', r: 'Santa Cruz → Agaete', p: 0.62, pedidos: 31, venta: '1,58 €', adop: '19 %', estado: 'Piloto activo', tono: 'green' },
+  { n: 'Bañaderos Express', r: 'Agaete → Santa Cruz', p: 0.25, pedidos: 24, venta: '1,51 €', adop: '16 %', estado: 'En ruta', tono: '' },
+  { n: 'Benchijigua Express', r: 'Los Cristianos → San Sebastián de La Gomera', p: 0.8, pedidos: 12, venta: '1,44 €', adop: '13 %', estado: 'Saturación en Proa', tono: 'yellow' },
+]
+function MaquetaFlota() {
+  const [grupo, setGrupo] = useState<'todos' | 'fast' | 'uno'>('todos')
+  const [publicado, setPublicado] = useState(false)
+  const destino = grupo === 'todos' ? 'los 3 buques' : grupo === 'fast' ? 'los fast ferries de la ruta Tenerife–Gran Canaria' : 'el Bajamar Express'
+  return (
+    <div className="rm-flota">
+      <div className="rm-flota-top">
+        <div>
+          <div className="eyebrow">Dirección de restauración · flota</div>
+          <strong>Buques en ruta ahora</strong>
+        </div>
+        <span className="tag yellow">Ilustrativo · fase de escalado</span>
+      </div>
+      <div className="matrix-wrap" style={{ maxHeight: 'none' }}>
+        <table className="rm-flota-t">
+          <thead>
+            <tr>
+              <th>Buque</th>
+              <th>Travesía</th>
+              <th>Pedidos</th>
+              <th>Venta por pasajero</th>
+              <th>Adopción</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FLOTA.map((b) => (
+              <tr key={b.n}>
+                <th>{b.n}</th>
+                <td>
+                  <div className="small">{b.r}</div>
+                  <div className="rm-flota-bar"><span style={{ width: `${b.p * 100}%` }} /></div>
+                </td>
+                <td>{b.pedidos}</td>
+                <td>{b.venta}</td>
+                <td>{b.adop}</td>
+                <td><span className={`tag ${b.tono}`}>{b.estado}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="rm-flota-pub">
+        <span className="small"><b>Carta maestra:</b> publicar en</span>
+        <div className="chips">
+          {([['todos', 'Toda la flota'], ['fast', 'Fast ferries TF–GC'], ['uno', 'Solo el Bajamar']] as const).map(([id, t]) => (
+            <button key={id} className={`chip${grupo === id ? ' on' : ''}`} onClick={() => { setGrupo(id); setPublicado(false) }}>
+              {t}
+            </button>
+          ))}
+        </div>
+        <button className="btn primary sm" onClick={() => setPublicado(true)}>Publicar carta</button>
+        {publicado && <span className="small">Publicada en {destino}. Cada barco mantiene su stock y sus ajustes locales.</span>}
+      </div>
+      <p className="small muted" style={{ marginTop: 10 }}>
+        Datos de ejemplo. En el piloto el panel del manager es del Bajamar Express; esta vista llega al desplegar FredOnBoard en más barcos.
+      </p>
+    </div>
+  )
+}
+
 function MaquetaTienda() {
   const [cat, setCat] = useState<Cat | 'Todo'>('Todo')
   const [temp, setTemp] = useState<Temp>('Navidad')
@@ -452,6 +519,16 @@ export default function Roadmap() {
         </div>
         <div className="card">
           <MaquetaTienda />
+        </div>
+      </section>
+
+      <section className="section" id="maqueta-flota">
+        <div className="section-title">
+          <h2>Maqueta: Panel de flota para la dirección</h2>
+          <p>Cuando FredOnBoard llegue a más barcos: comparar buques y publicar la carta en toda la flota, en un grupo o en uno solo.</p>
+        </div>
+        <div className="card">
+          <MaquetaFlota />
         </div>
       </section>
 

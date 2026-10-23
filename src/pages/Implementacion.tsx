@@ -10,11 +10,29 @@ import {
   EscenarioId,
   FUENTES,
   Params,
-  REPARTO_IMPLANTACION,
   calcular,
   flota,
   flujoAcumulado,
 } from '../data/negocio'
+import {
+  ANTES,
+  BLOQUES,
+  CONTINGENCIA_DEFECTO,
+  FUENTES_COSTES,
+  PARTIDAS,
+  TARIFAS,
+  TARIFA_SUPUESTOS,
+  editsIniciales,
+  fraccionesPorBuque,
+  importe,
+  mult,
+  totales as totalesCostes,
+  type Edit,
+  type Edits,
+  type Partida,
+  type Periodo,
+  type Totales,
+} from '../data/costes'
 import './implementacion.css'
 
 /* ------------------------------------------------------------------ datos de la página */
@@ -80,8 +98,9 @@ const RECURSOS: Recurso[] = [
     icono: 'box',
     titulo: 'Hardware',
     puntos: [
-      'Una tablet resistente por cafetería, fijada en la barra (3 en el Bajamar Express).',
-      'Un mini PC industrial como servidor a bordo, con SAI pequeño; otro de repuesto en tierra.',
+      'Una tablet resistente por cafetería, fijada en la barra (3 en el Bajamar Express), y una de repuesto en tierra.',
+      'Red local a bordo: puntos de acceso wifi con portal cautivo y un mini PC industrial que sirve la web sin internet (como el wifi de los aviones), con SAI pequeño; otro mini PC de repuesto en tierra.',
+      'Pantalla de aviso de pedidos «listos» en cada cafetería (opcional) y QR en barra y mesas como failsafe.',
       'Sin impresora: el pedido y el recibo son digitales (papel cero).',
     ],
     supuesto: 'Espacio de recogida: dónde se entrega sin crear una cola nueva. Se valida en la semana 0.',
@@ -92,7 +111,7 @@ const RECURSOS: Recurso[] = [
     puntos: [
       'Tripulación existente: el pedido llega ya cobrado a la tablet. El trabajo cambia de sitio (menos cobrar en cola, más preparar con antelación); no se suma.',
       'Las franjas con tope y la pausa de pedidos evitan los picos que la barra no pueda absorber.',
-      'Un responsable de producto (parcial) y un equipo de desarrollo y soporte, fuera de la tripulación.',
+      'Un responsable de producto (parcial) y un equipo de desarrollo y soporte, fuera de la tripulación. Horas y tarifas, en el desglose de costes.',
     ],
     supuesto: 'Quién ejerce de responsable de producto (Fred. Olsen o proveedor) y cuánta carga real supone en barra: se mide en el piloto.',
   },
@@ -202,9 +221,11 @@ function Range(p: RangeProps) {
 
 /* ------------------------------------------------------------------ modelo de negocio interactivo */
 
-function ModeloNegocio() {
+function ModeloNegocio({ implantacion, plataforma, fr }: { implantacion: number; plataforma: number; fr: { implantacion: number; plataforma: number } }) {
   const [esc, setEsc] = useState<EscenarioId | 'personalizado'>('base')
-  const [p, setP] = useState<Params>(ESCENARIOS[1].params)
+  const [pBase, setP] = useState<Params>(ESCENARIOS[1].params)
+  // La implantación y la plataforma salen siempre del desglose de costes
+  const p = useMemo<Params>(() => ({ ...pBase, implantacion, plataforma }), [pBase, implantacion, plataforma])
 
   const set = <K extends keyof Params>(k: K) => (v: number) => {
     setP((prev) => ({ ...prev, [k]: v }))
@@ -216,15 +237,16 @@ function ModeloNegocio() {
   }
 
   const r = useMemo(() => calcular(p), [p])
-  const f = useMemo(() => flota(p), [p])
+  const f = useMemo(() => flota(p, fr), [p, fr])
 
   const serie = useMemo(() => {
+    const con = (x: Params): Params => ({ ...x, implantacion, plataforma })
     const act = flujoAcumulado(p)
-    const pr = flujoAcumulado(ESCENARIOS[0].params)
-    const ba = flujoAcumulado(ESCENARIOS[1].params)
-    const op = flujoAcumulado(ESCENARIOS[2].params)
+    const pr = flujoAcumulado(con(ESCENARIOS[0].params))
+    const ba = flujoAcumulado(con(ESCENARIOS[1].params))
+    const op = flujoAcumulado(con(ESCENARIOS[2].params))
     return act.map((v, m) => ({ mes: m, actual: Math.round(v), prudente: Math.round(pr[m]), base: Math.round(ba[m]), optimista: Math.round(op[m]) }))
-  }, [p])
+  }, [p, implantacion, plataforma])
 
   const barras = [
     { n: 'Ventas actuales', v: r.ventaBase },
@@ -306,28 +328,22 @@ function ModeloNegocio() {
           tag="supuesto"
           help="Sobre toda la venta digital, no solo la incremental."
         />
-        <Range
-          label="Coste mensual de plataforma"
-          value={p.plataforma}
-          set={set('plataforma')}
-          min={500}
-          max={5000}
-          step={100}
-          fmt={(n) => `${eur(n)}/mes`}
-          tag="supuesto"
-          help="Nube, mantenimiento, soporte y producto a tiempo parcial."
-        />
-        <Range
-          label="Coste de implantación"
-          value={p.implantacion}
-          set={set('implantacion')}
-          min={10000}
-          max={80000}
-          step={1000}
-          fmt={(n) => eur(n)}
-          tag="supuesto"
-          help="Una sola vez: desarrollo, hardware, piloto y formación."
-        />
+        <div className="im-fromcost">
+          <div>
+            <span className="small muted">Implantación (una vez)</span>
+            <strong>{eur(implantacion)}</strong>
+          </div>
+          <div>
+            <span className="small muted">Plataforma mensual</span>
+            <strong>{eur(plataforma)}/mes</strong>
+          </div>
+          <p className="tiny muted" style={{ gridColumn: '1 / -1', margin: 0 }}>
+            Son la suma del desglose de costes (piloto, 1 barco): ya no se mueven aquí.{' '}
+            <button type="button" className="im-block-link" onClick={() => irA('desglose-de-costes')}>
+              Editar en el desglose <span aria-hidden="true">↑</span>
+            </button>
+          </p>
+        </div>
 
         <div className="im-group">Extrapolación a la flota</div>
         <Range
@@ -451,7 +467,7 @@ function ModeloNegocio() {
             </div>
           </div>
           <p className="small muted" style={{ marginTop: 12 }}>
-            Cada buque extra cuesta el {pct(CONSTANTES.plataformaPorBuqueExtra)} de plataforma y el {pct(CONSTANTES.implantacionPorBuqueExtra)} de implantación del Bajamar, porque el desarrollo, el panel y la
+            Cada buque extra cuesta el {pct(fr.plataforma)} de plataforma y el {pct(fr.implantacion)} de implantación del Bajamar (cifras que salen de la columna «Al escalar» del desglose de costes), porque el desarrollo, el panel y la
             nube se comparten. No se incluyen miniferris ni buques de carga. Es un orden de magnitud para decidir, no una previsión.
           </p>
         </div>
@@ -460,6 +476,367 @@ function ModeloNegocio() {
   )
 }
 
+
+/* ------------------------------------------------------------------ desglose de costes */
+
+const PERIODO_TXT: Record<Periodo, string> = { unico: 'único', mensual: 'al mes', anual: 'al año', variable: 'variable' }
+const escalaTxt = (e: number) => (e === 0 ? 'No escala' : e === 1 ? 'Por barco' : `${num(e * 100)} % por barco extra`)
+
+function NumIn(p: { value: number; set: (n: number) => void; label: string; step?: number; width?: number }) {
+  return (
+    <input
+      type="number"
+      className="im-in"
+      style={{ width: p.width ?? 72 }}
+      value={Number.isFinite(p.value) ? p.value : 0}
+      min={0}
+      step={p.step ?? 1}
+      aria-label={p.label}
+      onChange={(e) => p.set(e.target.value === '' ? 0 : Math.max(0, +e.target.value))}
+    />
+  )
+}
+
+function FuenteChips({ x }: { x: Partida }) {
+  return (
+    <span className="im-chips">
+      {x.refs.map((id) => {
+        const f = FUENTES_COSTES.find((s) => s.id === id)
+        return f ? (
+          <a key={id} className="im-chip" href={f.url} target="_blank" rel="noopener noreferrer" title={`${f.titulo}. ${f.fecha}`}>
+            {id}
+          </a>
+        ) : null
+      })}
+      {x.supuesto && <span className="tag yellow" style={{ fontWeight: 600 }}>{x.refs.length ? 'Cantidad supuesta' : 'Supuesto del equipo'}</span>}
+    </span>
+  )
+}
+
+function TablaBloque(p: {
+  bloque: (typeof BLOQUES)[number]
+  edits: Edits
+  setEdit: (id: string, e: Edit) => void
+  barcos: number
+  total: Totales
+}) {
+  const partidas = PARTIDAS.filter((x) => x.bloque === p.bloque.id)
+  const unicas = partidas.filter((x) => x.periodo === 'unico')
+  const recurrentes = partidas.filter((x) => x.periodo !== 'unico')
+  const tb = p.total.bloques[p.bloque.id]
+
+  const fila = (x: Partida) => {
+    const e = p.edits[x.id]
+    const total = importe(x, e) * mult(x, p.barcos)
+    return (
+      <tr key={x.id} className={e.activa ? '' : 'off'}>
+        <td>
+          <input type="checkbox" checked={e.activa} onChange={(ev) => p.setEdit(x.id, { ...e, activa: ev.target.checked })} aria-label={`Incluir ${x.concepto}`} />
+        </td>
+        <th scope="row">
+          {x.concepto}
+          {x.avalidar && <span className="tag yellow" style={{ marginLeft: 8, fontWeight: 600 }}>{x.avalidar}</span>}
+          <div className="tiny muted" style={{ fontWeight: 400 }}>{x.detalle}</div>
+          {x.nota && <div className="tiny muted" style={{ fontWeight: 400 }}>{x.nota}</div>}
+        </th>
+        <td className="num">
+          {x.periodo === 'variable' ? (
+            '—'
+          ) : (
+            <>
+              <NumIn value={e.cantidad} set={(n) => p.setEdit(x.id, { ...e, cantidad: n })} label={`Cantidad de ${x.concepto}`} width={64} />
+              <span className="tiny muted"> {x.unidad}</span>
+            </>
+          )}
+        </td>
+        <td className="num">
+          {x.meses !== undefined && x.periodo === 'unico' ? <NumIn value={e.meses} set={(n) => p.setEdit(x.id, { ...e, meses: n })} label={`Meses de ${x.concepto}`} width={52} /> : '—'}
+        </td>
+        <td className="num">
+          {x.periodo === 'variable' ? (
+            <span>{x.textoVariable}</span>
+          ) : (
+            <NumIn value={e.precio} set={(n) => p.setEdit(x.id, { ...e, precio: n })} label={`Precio de ${x.concepto}`} step={0.01} width={84} />
+          )}
+        </td>
+        <td className="num">
+          {x.periodo === 'variable' ? (
+            <span className="muted">no suma</span>
+          ) : (
+            <>
+              <strong>{eur(total, total % 1 ? 2 : 0)}</strong>
+              <div className="tiny muted">{PERIODO_TXT[x.periodo]}</div>
+            </>
+          )}
+        </td>
+        <td className="im-esc-col">{escalaTxt(x.escala)}</td>
+        <td>
+          <FuenteChips x={x} />
+        </td>
+      </tr>
+    )
+  }
+
+  const sub = (txt: string, cls = '') => (
+    <tr className={`im-cost-sub ${cls}`}>
+      <td colSpan={8}>{txt}</td>
+    </tr>
+  )
+
+  return (
+    <div className="card im-cost-block">
+      <div className="im-cost-head">
+        <div>
+          <h3>{p.bloque.nombre}</h3>
+          <p className="small muted" style={{ margin: 0 }}>{p.bloque.resumen}</p>
+        </div>
+        <div className="im-cost-tot">
+          <div><b>{eur(tb.unico)}</b><span>único</span></div>
+          <div><b>{eur(tb.mensual)}</b><span>al mes</span></div>
+          <div><b>{eur(tb.anual)}</b><span>al año</span></div>
+        </div>
+      </div>
+      <div className="im-table-wrap">
+        <table className="im-table im-cost-table">
+          <thead>
+            <tr>
+              <th scope="col">Incluir</th>
+              <th scope="col">Partida</th>
+              <th scope="col" className="num">Cantidad</th>
+              <th scope="col" className="num">Meses</th>
+              <th scope="col" className="num">Precio (€)</th>
+              <th scope="col" className="num">Total{p.barcos > 1 ? ` (${p.barcos} barcos)` : ''}</th>
+              <th scope="col">Al escalar</th>
+              <th scope="col">Fuente</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sub('Coste único: implantación del piloto')}
+            {unicas.map(fila)}
+            {sub(`Subtotal único: ${eur(tb.unico)}`, 'tot')}
+            {sub('Recurrente')}
+            {recurrentes.map(fila)}
+            {sub(`Subtotal recurrente: ${eur(tb.mensual)} al mes · ${eur(tb.anual)} al año`, 'tot')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function DesgloseCostes(p: {
+  edits: Edits
+  setEdit: (id: string, e: Edit) => void
+  reset: () => void
+  contPct: number
+  setContPct: (n: number) => void
+  vista: 'piloto' | 'escalado'
+  setVista: (v: 'piloto' | 'escalado') => void
+  barcosEsc: number
+  setBarcosEsc: (n: number) => void
+  fr: { implantacion: number; plataforma: number }
+}) {
+  const barcos = p.vista === 'piloto' ? 1 : p.barcosEsc
+  const t = useMemo(() => totalesCostes(p.edits, barcos, p.contPct), [p.edits, barcos, p.contPct])
+  const piloto = useMemo(() => totalesCostes(p.edits, 1, p.contPct), [p.edits, p.contPct])
+
+  const datos = [
+    { n: 'Personas', unico: Math.round(t.bloques.personas.unico), rec: Math.round(t.bloques.personas.anual) },
+    { n: 'Herramientas', unico: Math.round(t.bloques.herramientas.unico), rec: Math.round(t.bloques.herramientas.anual) },
+    { n: 'Infraestructura', unico: Math.round(t.bloques.infraestructura.unico), rec: Math.round(t.bloques.infraestructura.anual) },
+    { n: 'Contingencia', unico: Math.round(t.contingencia), rec: 0 },
+  ]
+
+  return (
+    <div id="desglose-de-costes">
+      <h3 style={{ marginTop: 0 }}>Desglose de costes</h3>
+      <p className="small muted" style={{ maxWidth: 820 }}>
+        Tres bloques: personas, herramientas de desarrollo e infraestructura. Cada partida se puede editar y lleva su fuente pública (enlace) o la etiqueta de supuesto del equipo. De la suma del piloto salen la implantación y la
+        plataforma mensual del modelo de negocio. La tripulación del barco no es un coste nuevo: el reto pide no ampliar la plantilla, y solo se paga su formación.
+      </p>
+
+      <div className="toolbar" style={{ margin: '14px 0' }}>
+        <div className="im-seg" role="group" aria-label="Alcance del desglose">
+          <button type="button" className={p.vista === 'piloto' ? 'on' : ''} aria-pressed={p.vista === 'piloto'} onClick={() => p.setVista('piloto')}>
+            Piloto (1 barco)
+          </button>
+          <button type="button" className={p.vista === 'escalado' ? 'on' : ''} aria-pressed={p.vista === 'escalado'} onClick={() => p.setVista('escalado')}>
+            Escalado (p. ej. 5 barcos)
+          </button>
+        </div>
+        {p.vista === 'escalado' && (
+          <label className="small im-barcos">
+            Barcos <NumIn value={p.barcosEsc} set={(n) => p.setBarcosEsc(Math.min(8, Math.max(2, Math.round(n))))} label="Número de barcos del escalado" width={56} />
+          </label>
+        )}
+        <label className="small im-barcos">
+          Contingencia <NumIn value={p.contPct} set={(n) => p.setContPct(Math.min(50, n))} label="Porcentaje de contingencia sobre el coste único" width={56} /> %
+        </label>
+        <button type="button" className="btn ghost sm" onClick={p.reset}>
+          Restablecer partidas
+        </button>
+      </div>
+      {p.vista === 'escalado' && (
+        <p className="small muted" style={{ marginTop: -6 }}>
+          Con {barcos} barcos se repite lo que escala por barco (tablets, red local, servidor, SAI, pantallas, QR, formación) y casi nada de lo que no (desarrollo, diseño, herramientas, dominio, repuestos compartidos). Los importes que se editan son los de un barco.
+        </p>
+      )}
+
+      <div className="grid g3" style={{ marginBottom: 16 }}>
+        <div className="card stat">
+          <div className="label">Coste único{barcos > 1 ? ` · ${barcos} barcos` : ' · implantación'}</div>
+          <div className="value">{eur(t.unico)}</div>
+          <div className="sub">
+            bloques {eur(t.unicoBruto)} + contingencia {eur(t.contingencia)} ({num(p.contPct)} %)
+          </div>
+        </div>
+        <div className="card stat">
+          <div className="label">Recurrente{barcos > 1 ? ` · ${barcos} barcos` : ''}</div>
+          <div className="value">{eur(t.mensual)}/mes</div>
+          <div className="sub">{eur(t.anual)} al año; los pagos anuales, prorrateados</div>
+        </div>
+        <div className="card stat yellow">
+          <div className="label">Primer año completo</div>
+          <div className="value">{eur(t.unico + t.anual)}</div>
+          <div className="sub">único + 12 meses de recurrente. Sin la comisión de la pasarela, que depende de las ventas</div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 16 }}>
+        <h3>Reparto por bloque</h3>
+        <p className="small muted" style={{ marginBottom: 8 }}>Navy: coste único. Amarillo: recurrente de 12 meses. Gris: contingencia.</p>
+        <div style={{ height: 300 }} role="img" aria-label="Costes únicos y recurrentes anuales por bloque: personas, herramientas, infraestructura y contingencia">
+          <ResponsiveContainer>
+            <BarChart data={datos} layout="vertical" margin={{ left: 4, right: 78, top: 4, bottom: 4 }} barCategoryGap={14}>
+              <XAxis type="number" hide domain={[0, 'dataMax']} />
+              <YAxis type="category" dataKey="n" width={104} tickLine={false} axisLine={false} fontSize={12} />
+              <Tooltip formatter={(v: number, name: string) => [eur(v), name]} />
+              <Bar dataKey="unico" name="Único" radius={[0, 4, 4, 0]}>
+                {datos.map((d) => (
+                  <Cell key={d.n} fill={d.n === 'Contingencia' ? '#a9b4c6' : '#0b3478'} />
+                ))}
+                <LabelList dataKey="unico" position="right" formatter={(v: number) => (v ? eur(v) : '')} style={{ fontWeight: 700, fontSize: 12 }} />
+              </Bar>
+              <Bar dataKey="rec" name="Recurrente, 12 meses" fill="#ffcc00" radius={[0, 4, 4, 0]}>
+                <LabelList dataKey="rec" position="right" formatter={(v: number) => (v ? eur(v) : '')} style={{ fontWeight: 700, fontSize: 12 }} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="im-cost-blocks">
+        {BLOQUES.map((b) => (
+          <TablaBloque key={b.id} bloque={b} edits={p.edits} setEdit={p.setEdit} barcos={barcos} total={t} />
+        ))}
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3>Conciliación con el modelo de negocio</h3>
+        <div className="im-table-wrap" style={{ marginTop: 8 }}>
+          <table className="im-table" style={{ minWidth: 520 }}>
+            <thead>
+              <tr>
+                <th>Supuesto del modelo</th>
+                <th className="num">Antes (estimación global)</th>
+                <th className="num">Ahora (suma del desglose, piloto)</th>
+                <th className="num">Diferencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Coste de implantación</th>
+                <td className="num">{eur(ANTES.implantacion)}</td>
+                <td className="num"><strong>{eur(piloto.unico)}</strong></td>
+                <td className="num">{piloto.unico - ANTES.implantacion >= 0 ? '+' : ''}{eur(piloto.unico - ANTES.implantacion)}</td>
+              </tr>
+              <tr>
+                <th scope="row">Plataforma mensual</th>
+                <td className="num">{eur(ANTES.plataforma)}/mes</td>
+                <td className="num"><strong>{eur(piloto.mensual)}/mes</strong></td>
+                <td className="num">{piloto.mensual - ANTES.plataforma >= 0 ? '+' : ''}{eur(piloto.mensual - ANTES.plataforma)}/mes</td>
+              </tr>
+              <tr>
+                <th scope="row">Coste de cada buque extra respecto al Bajamar</th>
+                <td className="num">40 % implantación · 25 % plataforma</td>
+                <td className="num"><strong>{pct(p.fr.implantacion)} implantación · {pct(p.fr.plataforma)} plataforma</strong></td>
+                <td className="num">sale de la columna «Al escalar»</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="small muted" style={{ margin: '10px 0 0' }}>
+          El modelo de negocio usa siempre las cifras del piloto (1 barco), sean cuales sean las partidas que edites arriba. Cambiar el selector a Escalado solo cambia esta vista. La flota del modelo se extrapola con las dos fracciones de la tabla.
+        </p>
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3>De dónde salen las tarifas de las personas</h3>
+        <p className="small muted" style={{ marginBottom: 8 }}>
+          Tarifa por hora = salario bruto medio publicado × {num(TARIFA_SUPUESTOS.seguridadSocial, 2)} (cotización de la empresa, supuesto) ÷ {num(TARIFA_SUPUESTOS.horasAnio)} h productivas al año (supuesto) × {num(TARIFA_SUPUESTOS.gastosMargen, 1)} (gastos generales y margen de un equipo proveedor, supuesto). Son medias nacionales de un portal de empleo: orientativas, no un presupuesto. Las horas de cada rol son estimaciones del equipo.
+        </p>
+        <div className="im-table-wrap">
+          <table className="im-table" style={{ minWidth: 560 }}>
+            <thead>
+              <tr>
+                <th>Rol</th>
+                <th className="num">Salario bruto medio</th>
+                <th className="num">Tarifa (€/h)</th>
+                <th>Fuente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TARIFAS.map((t2) => {
+                const f = FUENTES_COSTES.find((s) => s.id === t2.fuente)!
+                return (
+                  <tr key={t2.id}>
+                    <th scope="row">{t2.rol}</th>
+                    <td className="num">{eur(t2.salario)}</td>
+                    <td className="num"><strong>{eur(t2.tarifa)}</strong></td>
+                    <td>
+                      <a href={f.url} target="_blank" rel="noopener noreferrer">{t2.fuente}: Indeed España</a> <span className="tag yellow">Orientativa</span>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <details className="card im-fuentes" style={{ marginTop: 16 }}>
+        <summary>Fuentes públicas del desglose ({FUENTES_COSTES.length})</summary>
+        <div className="im-table-wrap" style={{ marginTop: 10 }}>
+          <table className="im-table" style={{ minWidth: 720 }}>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Fuente y dato</th>
+                <th>Límite del dato</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FUENTES_COSTES.map((f) => (
+                <tr key={f.id}>
+                  <th scope="row">{f.id}</th>
+                  <td>
+                    <a href={f.url} target="_blank" rel="noopener noreferrer">{f.titulo}</a>
+                    <div>{f.dato}</div>
+                    <div className="tiny muted">{f.fecha}</div>
+                  </td>
+                  <td className="muted">{f.limite ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="tiny muted" style={{ margin: '8px 0 0' }}>
+          Los precios en dólares se tratan como euros 1:1 y sin IVA. La licencia del módulo de integración de Ágora no tiene precio público: figura a 0 € y se marca «a validar con Ágora».
+        </p>
+      </details>
+    </div>
+  )
+}
 
 /* ------------------------------------------------------------------ lienzo de 6 bloques */
 
@@ -477,11 +854,13 @@ type BloqueProps = {
   titulo: string
   desc: string
   detalle?: { id: string; etiqueta: string }
+  /** Segundo enlace opcional */
+  extra?: { id: string; etiqueta: string }
   vacio?: boolean
   children?: React.ReactNode
 }
 
-function Bloque({ n, area, titulo, desc, detalle, vacio, children }: BloqueProps) {
+function Bloque({ n, area, titulo, desc, detalle, extra, vacio, children }: BloqueProps) {
   return (
     <section className={`im-block im-b${n}${vacio ? ' is-empty' : ''}`} style={{ gridArea: area }} aria-labelledby={`im-b${n}-t`}>
       <header className="im-block-head">
@@ -495,6 +874,11 @@ function Bloque({ n, area, titulo, desc, detalle, vacio, children }: BloqueProps
       {detalle && (
         <button type="button" className="im-block-link" onClick={() => irA(detalle.id)}>
           Ver detalle: {detalle.etiqueta} <span aria-hidden="true">↓</span>
+        </button>
+      )}
+      {extra && (
+        <button type="button" className="im-block-link" onClick={() => irA(extra.id)}>
+          Ver también: {extra.etiqueta} <span aria-hidden="true">↓</span>
         </button>
       )}
     </section>
@@ -605,7 +989,7 @@ function Lienzo() {
           </ol>
         </Bloque>
 
-        <Bloque n={6} area="b6" titulo="Primer paso realista" desc="Qué se hace primero y qué hace falta para empezar." detalle={{ id: 'fase-0', etiqueta: 'Fase 0' }}>
+        <Bloque n={6} area="b6" titulo="Primer paso realista" desc="Qué se hace primero y qué hace falta para empezar." detalle={{ id: 'fase-0', etiqueta: 'Fase 0' }} extra={{ id: 'desglose-de-costes', etiqueta: 'desglose de costes' }}>
           <ul className="im-list">
             <li>
               <strong>Semana 0:</strong> medir sin servicio (tickets por hora, % que compra, espera en barra).
@@ -626,8 +1010,15 @@ function Lienzo() {
 /* ------------------------------------------------------------------ página */
 
 export default function Implementacion() {
-  const [verDesglose, setVerDesglose] = useState(false)
-  const base = ESCENARIOS[1].params
+  const [edits, setEdits] = useState<Edits>(() => editsIniciales())
+  const [contPct, setContPct] = useState(CONTINGENCIA_DEFECTO)
+  const [vista, setVista] = useState<'piloto' | 'escalado'>('piloto')
+  const [barcosEsc, setBarcosEsc] = useState(5)
+  const setEdit = (id: string, e: Edit) => setEdits((prev) => ({ ...prev, [id]: e }))
+  const pilotoCostes = useMemo(() => totalesCostes(edits, 1, contPct), [edits, contPct])
+  const implantacion = Math.round(pilotoCostes.unico)
+  const plataforma = Math.round(pilotoCostes.mensual)
+  const fr = useMemo(() => fraccionesPorBuque(edits), [edits])
 
   return (
     <>
@@ -655,8 +1046,8 @@ export default function Implementacion() {
         </div>
         <div className="card stat yellow">
           <div className="label">Inversión estimada</div>
-          <div className="value">{eur(base.implantacion)}</div>
-          <div className="sub">y {eur(base.plataforma)}/mes de plataforma (supuestos). No incluye la licencia del módulo de integración de Ágora (a validar)</div>
+          <div className="value">{eur(implantacion)}</div>
+          <div className="sub">y {eur(plataforma)}/mes de plataforma, suma del <a href="#modelo-de-negocio" onClick={(e) => { e.preventDefault(); irA('desglose-de-costes') }}>desglose de costes</a>. No incluye la licencia del módulo de integración de Ágora (a validar)</div>
         </div>
       </div>
 
@@ -747,7 +1138,23 @@ export default function Implementacion() {
           </p>
         </div>
 
-        <div className="card" style={{ marginBottom: 16 }}>
+        <DesgloseCostes
+          edits={edits}
+          setEdit={setEdit}
+          reset={() => {
+            setEdits(editsIniciales())
+            setContPct(CONTINGENCIA_DEFECTO)
+          }}
+          contPct={contPct}
+          setContPct={setContPct}
+          vista={vista}
+          setVista={setVista}
+          barcosEsc={barcosEsc}
+          setBarcosEsc={setBarcosEsc}
+          fr={fr}
+        />
+
+        <div className="card" style={{ margin: '28px 0 16px' }}>
           <div className="eyebrow">Cómo se calcula</div>
           <div className="im-formula">
             incremental = pasajeros × (23 % + subida) × ticket × (1 + adopción × subida del ticket) − ventas actuales
@@ -761,7 +1168,7 @@ export default function Implementacion() {
           </p>
         </div>
 
-        <ModeloNegocio />
+        <ModeloNegocio implantacion={implantacion} plataforma={plataforma} fr={fr} />
 
         <div className="callout" style={{ marginTop: 16 }}>
           <strong>Qué dice el modelo.</strong> Con un solo buque, el servicio se paga en cerca de un año en el escenario Base y tarda más de dos años en el Prudente: los costes de plataforma son casi fijos. El valor aparece al compartir la plataforma entre buques. Por eso el plan empieza pequeño y escala solo si el piloto lo confirma.
@@ -792,35 +1199,6 @@ export default function Implementacion() {
             </tbody>
           </table>
         </div>
-
-        <div className="toolbar" style={{ marginTop: 16 }}>
-          <button className="btn light sm" onClick={() => setVerDesglose((v) => !v)} aria-expanded={verDesglose}>
-            {verDesglose ? 'Ocultar' : 'Ver'} en qué se gasta la implantación
-          </button>
-          <span className="small muted">Reparto orientativo del escenario Base ({eur(base.implantacion)}).</span>
-        </div>
-        {verDesglose && (
-          <div className="im-table-wrap">
-            <table className="im-table" style={{ minWidth: 480 }}>
-              <thead>
-                <tr>
-                  <th>Concepto</th>
-                  <th className="num">%</th>
-                  <th className="num">Importe</th>
-                </tr>
-              </thead>
-              <tbody>
-                {REPARTO_IMPLANTACION.map((x) => (
-                  <tr key={x.concepto}>
-                    <th scope="row">{x.concepto}</th>
-                    <td className="num">{pct(x.pct)}</td>
-                    <td className="num">{eur(base.implantacion * x.pct)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
       </section>
 
       {/* 4. Escalabilidad */}

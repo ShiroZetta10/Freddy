@@ -128,3 +128,79 @@ export const FUENTES_AGORA = [
   { t: 'Ágora POS API: guía de integración (chift.eu)', url: 'https://www.chift.eu/blog/agora-pos-api-integration-how-to-connect-set-up-and-follow-best-practices' },
   { t: 'Integración de Ágora con Recipok (token y URL del TPV)', url: 'https://recipok.com/wp-content/uploads/2024/05/Integracion-de-Agora-con-Recipok-Presentacion-1.pdf' },
 ]
+
+// ---------------------------------------------------------------------------------------------
+// Red local a bordo (wifi y portal cautivo como en los aviones) y modo degradado sin Starlink.
+// Es un diseño nuestro: el rendimiento real (cobertura, usuarios simultáneos) se mide en la Fase 0.
+// ---------------------------------------------------------------------------------------------
+
+export type NivelRed = {
+  id: string
+  etiqueta: string
+  nombre: string
+  resumen: string
+  incluye: string[]
+  limites: string[]
+}
+
+export const NIVELES_RED: NivelRed[] = [
+  {
+    id: 'n0',
+    etiqueta: 'Nivel 0 · paso previo',
+    nombre: 'Red local a bordo',
+    resumen:
+      'La forma más sencilla de empezar el piloto, sin servidor completo todavía. Un punto de acceso wifi del barco con portal cautivo y un equipo pequeño que sirve la web de FredOnBoard (PWA) y reparte los pedidos entre los móviles y la tablet de barra, sin internet.',
+    incluye: [
+      'Punto de acceso wifi del barco con portal cautivo: al conectarse, el móvil abre FredOnBoard solo',
+      'Mini equipo de a bordo que sirve la PWA y guarda los pedidos del viaje en una base de datos local',
+      'Los pedidos llegan a la tablet de barra por la red local; la barra cobra con Ágora como hoy',
+      'Carta y precios cargados en el equipo antes de zarpar (copia de Ágora o exportación)',
+    ],
+    limites: ['Sin conector Ágora en vivo: el stock se ajusta a mano en la tablet', 'Sin cola de reintentos ni conciliación automática'],
+  },
+  {
+    id: 'n1',
+    etiqueta: 'Nivel 1 · objetivo del piloto',
+    nombre: 'Servidor de a bordo',
+    resumen:
+      'El servidor de a bordo actual toma el relevo del equipo pequeño, sobre la misma red local: conector Ágora, base de datos y colas. Es el nivel que describe el resto de esta página.',
+    incluye: [
+      'Conector Ágora: lee carta, precios y stock y escribe cada pedido como venta',
+      'Base de datos (SQLite o PostgreSQL), WebSockets hacia las tablets y colas de salida',
+      'Cola hacia la nube por Starlink, sin pedidos duplicados',
+    ],
+    limites: ['Requiere el módulo de integración de Ágora y su acceso desde la red del barco (a validar)'],
+  },
+]
+
+export const MODO_DEGRADADO = {
+  titulo: 'Ruta alternativa: modo degradado cuando Starlink cae',
+  resumen:
+    'Starlink solo une el barco con tierra. Lo que pasa dentro del barco no depende de él: la red local sigue sirviendo la web, los pedidos y la barra.',
+  sigue: ['Web de FredOnBoard por el portal cautivo', 'Carta, precios y stock del servidor de a bordo', 'Pedidos del móvil a la tablet de barra', 'Cobro en el mostrador con Ágora', 'Avisos de «pedido listo» dentro de la web'],
+  seEncola: ['Cobro online con la pasarela (si no hay enlace, se paga en el mostrador)', 'Copia de pedidos y analítica a la nube', 'Cambios de carta y reglas hechos en tierra'],
+}
+
+export const REFERENCIAS_RED = [
+  {
+    t: 'Gogo Vision: el contenido está en un servidor del avión y llega a los dispositivos por la red de cabina, sin conexión a internet (Aviation Today)',
+    url: 'https://www.aviationtoday.com/2016/02/04/gogo-vision-achieves-2000-aircraft-milestone/',
+  },
+  {
+    t: 'Vueling: portal de entretenimiento, menú y tienda a bordo por conexión directa al servidor del avión, sin wifi ni datos (Russian Tourism News)',
+    url: 'https://www.rustourismnews.com/2026/04/14/vueling-launches-free-onboard-entertainment-across-its-fleet/',
+  },
+  {
+    t: 'Inflight Dublin: portal IFE inalámbrico con servidor y puntos de acceso a bordo, accesible desde cualquier navegador estándar (Runway Girl Network)',
+    url: 'https://runwaygirlnetwork.com/2015/05/irish-ife-player-jumps-into-wireless-space-with-new-retail-portal/',
+  },
+]
+
+/** Requisitos y supuestos nuevos: red local a bordo y failsafes QR. Todos a validar. */
+export const REQUISITOS_RED: Requisito[] = [
+  { tipo: 'Supuesto', texto: 'Cobertura wifi en todo el salón y las tres cafeterías', detalle: 'Hay que medir la cobertura en el Bajamar Express, con el barco lleno y en cubierta si se quiere pedir desde fuera. Puede hacer falta más de un punto de acceso.' },
+  { tipo: 'Supuesto', texto: 'Capacidad de usuarios simultáneos del punto de acceso', detalle: 'No sabemos cuántos pasajeros se conectarán a la vez en un trayecto de 80 minutos. Se prueba con carga real antes de elegir el equipo.' },
+  { tipo: 'Supuesto', texto: 'Seguridad del portal en una red abierta', detalle: 'Un portal cautivo en una wifi sin clave no cifra el tráfico. Hay que decidir clave o red abierta con HTTPS local, aislamiento de clientes y no guardar datos de tarjeta.' },
+  { tipo: 'Supuesto', texto: 'Caducidad del QR de stock', detalle: 'Un QR de stock viejo puede mostrar disponible lo ya agotado. Se propone una validez corta (por ejemplo 30 minutos) y refresco en cada cambio; el valor se ajusta con el piloto.' },
+  { tipo: 'Requisito', texto: 'Alimentación y montaje del equipo de a bordo', detalle: 'Punto de acceso y mini equipo con SAI, fijados y en un lugar ventilado. Quién los instala: decisión pendiente con Fred. Olsen.' },
+]

@@ -9,16 +9,6 @@ const MAIN: Lane = [
   { x: 276, y: 50 },
   { x: 356, y: 96 },
 ]
-const LANE_B: Lane = [
-  { x: 198, y: 68 },
-  { x: 280, y: 16 },
-  { x: 372, y: 66 },
-]
-const LANE_C: Lane = [
-  { x: 132, y: 168 },
-  { x: 262, y: 218 },
-  { x: 374, y: 166 },
-]
 
 const d = (l: Lane) => `M${l[0].x} ${l[0].y} Q${l[1].x} ${l[1].y} ${l[2].x} ${l[2].y}`
 function en(l: Lane, t: number) {
@@ -30,11 +20,6 @@ function en(l: Lane, t: number) {
   const dx = 2 * (1 - t) * (l[1].x - l[0].x) + 2 * t * (l[2].x - l[1].x)
   const dy = 2 * (1 - t) * (l[1].y - l[0].y) + 2 * t * (l[2].y - l[1].y)
   return { x, y, ang: (Math.atan2(dy, dx) * 180) / Math.PI }
-}
-/** Onda triangular 0..1..0 con dirección. */
-function vaiven(x: number) {
-  const f = ((x % 2) + 2) % 2
-  return f < 1 ? { p: f, dir: 1 } : { p: 2 - f, dir: -1 }
 }
 
 function Barco({ lane, t, dir = 1, main, name }: { lane: Lane; t: number; dir?: 1 | -1; main?: boolean; name: string }) {
@@ -54,14 +39,8 @@ function Barco({ lane, t, dir = 1, main, name }: { lane: Lane; t: number; dir?: 
 
 export default function Mapa({ s }: { s: ProtoState }) {
   const p = progreso(s)
-  const m = s.viaje.minuto
-  const b = vaiven((m + 30) / s.viaje.duracionMin)
-  const c = vaiven((m + 12) / (s.viaje.duracionMin * 1.25) + 0.4)
-  const flota = [
-    { n: s.viaje.buque, r: `${s.viaje.origen.replace(' de Tenerife', '')} → ${s.viaje.destino}`, p, main: true },
-    { n: 'Bañaderos Express', r: b.dir === 1 ? 'Santa Cruz → Agaete' : 'Agaete → Santa Cruz', p: b.p, main: false },
-    { n: 'Benchijigua Express', r: c.dir === 1 ? 'Los Cristianos → San Sebastián de La Gomera' : 'San Sebastián de La Gomera → Los Cristianos', p: c.p, main: false },
-  ]
+  // El manager es del barco: solo su buque y su travesía (la vista de flota está en «Ideas a futuro»).
+  const flota = [{ n: s.viaje.buque, r: `${s.viaje.origen.replace(' de Tenerife', '')} → ${s.viaje.destino}`, p, main: true }]
   return (
     <div className="mg-map">
       <svg viewBox="0 0 520 236" role="img" aria-label={`Mapa de la ruta: ${s.viaje.buque} al ${num(p * 100)} % de la travesía`}>
@@ -82,9 +61,7 @@ export default function Mapa({ s }: { s: ProtoState }) {
         <text x="62" y="190" className="mg-map-t">Tenerife</text>
         <text x="388" y="208" className="mg-map-t">Gran Canaria</text>
 
-        {/* rutas de la flota */}
-        <path d={d(LANE_B)} fill="none" stroke={C.sky} strokeWidth="1.5" strokeDasharray="3 6" strokeLinecap="round" />
-        <path d={d(LANE_C)} fill="none" stroke={C.sky} strokeWidth="1.5" strokeDasharray="3 6" strokeLinecap="round" />
+        {/* ruta del buque */}
         <path d={d(MAIN)} fill="none" stroke={C.sky} strokeWidth="2.5" strokeDasharray="2 7" strokeLinecap="round" />
         <path d={d(MAIN)} pathLength={1} fill="none" stroke={C.navy} strokeWidth="3" strokeLinecap="round" strokeDasharray={`${p} 1`} style={{ transition: 'stroke-dasharray 1s linear' }} />
 
@@ -96,8 +73,6 @@ export default function Mapa({ s }: { s: ProtoState }) {
           <text x={MAIN[2].x + 4} y={MAIN[2].y + 24} className="mg-map-p">Agaete</text>
         </g>
 
-        <Barco lane={LANE_B} t={b.p} dir={b.dir as 1 | -1} name="Bañaderos Express" />
-        <Barco lane={LANE_C} t={c.p} dir={c.dir as 1 | -1} name="Benchijigua Express" />
         <Barco lane={MAIN} t={p} main name={s.viaje.buque} />
       </svg>
       <ul className="mg-fleet">

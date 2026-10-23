@@ -423,3 +423,65 @@
 .mg-reglas-at li { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; font-size: 13px; line-height: 1.4; }
 .mg-fuentes { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; }
 .mg-fuentes a { color: var(--fob-navy-3); }
+
+/* ---- ventajas del pre-pedido ---- */
+.mg-va-obj { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.mg-va-obj > div { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 12px; background: var(--fob-navy-50); min-width: 0; }
+.mg-va-obj b { font-size: 13.5px; color: var(--fob-navy); }
+.mg-va-obj span { font-size: 12.5px; color: var(--fob-muted); line-height: 1.4; }
+.mg-va-estado { display: flex; gap: 8px; align-items: center; margin-top: 12px !important; padding: 8px 12px; border-radius: 10px; background: var(--fob-bg); color: var(--fob-muted); font-size: 13px; font-weight: 600; }
+.mg-va-estado.on { background: var(--fob-green-50); color: #176b50; }
+.mg-va-estado svg { flex: none; }
+.mg-va-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mg-va-card { border: 1.5px solid var(--fob-line); border-radius: 14px; background: #fff; padding: 12px 14px; min-width: 0; }
+.mg-va-card.off { background: var(--fob-bg); }
+.mg-va-card.off .mg-va-title { opacity: .7; }
+.mg-va-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 12px; align-items: center; }
+.mg-va-title { display: grid; gap: 2px; min-width: 0; }
+.mg-va-title > b { font-size: 14.5px; color: var(--fob-navy); line-height: 1.3; }
+.mg-va-title > span { font-size: 12.5px; color: var(--fob-muted); }
+.mg-va-title > span b { color: var(--fob-navy); }
+.mg-va-prop { font-style: normal; margin-left: 8px; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; background: var(--fob-amber-50); color: #6b5300; }
+.mg-va-side { display: grid; gap: 4px; justify-items: end; }
+.mg-va-uso { font-size: 12px; color: var(--fob-muted); font-variant-numeric: tabular-nums; }
+.mg-va-body { margin-top: 12px; border-top: 1px solid var(--fob-line); }
+.mg-va-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding-top: 4px; }
+.mg-va-col { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.mg-va-f { display: grid; gap: 4px; }
+.mg-va-f .mg-lbl { margin: 12px 0 4px !important; }
+.mg-va-f small { font-size: 12px; color: var(--fob-muted); line-height: 1.4; }
+.mg-va-sw { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--fob-muted); margin-top: 12px; cursor: pointer; }
+.mg-va-lim { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.mg-va-lim .mg-va-sw { margin-top: 0; }
+.mg-in { width: 100%; min-height: 40px; border: 1.5px solid var(--fob-line); border-radius: 10px; padding: 0 12px; font: inherit; font-size: 14px; color: var(--fob-text); background: #fff; outline: none; }
+.mg-in:focus { border-color: var(--fob-navy-3); box-shadow: 0 0 0 3px rgba(31,91,181,.15); }
+.mg-va-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mg-va-chip { min-height: 34px; padding: 0 11px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--fob-text); background: #fff; border: 1.5px solid var(--fob-line); }
+.mg-va-chip:hover { border-color: var(--mg-sky); }
+.mg-va-chip.on { background: var(--fob-navy); border-color: var(--fob-navy); color: #fff; }
+.mg-va-chip:focus-visible { outline: 2px solid var(--fob-navy-3); outline-offset: 2px; }
+.mg-va-parte { display: grid; gap: 8px; padding: 10px; margin-bottom: 8px; border-radius: 12px; background: var(--fob-bg); }
+.mg-va-parte-h { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+.mg-va-prev { margin-top: 8px; padding: 10px 12px; border-radius: 12px; background: var(--fob-navy-50); }
+.mg-va-prev .mg-lbl { margin: 0 0 8px !important; }
+.mg-va-prev ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mg-va-prev li { display: grid; gap: 1px; font-size: 13px; }
+.mg-va-prev li b { color: var(--fob-navy); }
+.mg-va-prev li span, .mg-va-prev li em { font-style: normal; font-size: 12.5px; color: var(--fob-muted); }
+.mg-va-prev li span s { color: var(--fob-muted); }
+.mg-va-total { margin-top: 8px !important; font-size: 13px; color: var(--fob-navy); }
+.mg-va-bad { color: #8a0f14; font-weight: 700; }
+.mg-va-plist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mg-va-plist li { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; font-size: 13px; }
+.mg-va-plist li b { color: var(--fob-navy); }
+.mg-va-plist li em { font-style: normal; font-size: 12px; color: var(--fob-muted); flex-basis: 100%; }
+.mg-va-foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--fob-line); font-size: 12.5px; color: var(--fob-muted); }
+.mg-va-cfg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 12px; }
+.mg-va-tabla { min-width: 520px; }
+.mg-va-tabla td:first-child { white-space: normal; }
+@media (max-width: 900px) {
+  .mg-va-obj, .mg-va-grid, .mg-va-cfg { grid-template-columns: 1fr; }
+  .mg-va-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .mg-va-side { grid-column: 2 / 3; justify-items: start; grid-auto-flow: column; gap: 10px; align-items: center; }
+  .mg-va-head > .mg-btn { grid-column: 3; grid-row: 1; }
+}

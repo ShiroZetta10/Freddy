@@ -160,3 +160,39 @@
 .card.im-hero { background: var(--navy); border: 0; }
 .im-hero, .im-hero .big, .im-hero .sub, .im-hero strong { color: #fff; }
 .im-hero .sub { opacity: 1; color: #d6e0f2; }
+
+/* ---------- Desglose de costes ---------- */
+.im-seg { display: inline-flex; border: 1px solid var(--navy); border-radius: 6px; overflow: hidden; }
+.im-seg button { background: #fff; color: var(--navy); border: 0; padding: 8px 14px; font-weight: 700; font-size: 13.5px; }
+.im-seg button + button { border-left: 1px solid var(--navy); }
+.im-seg button.on { background: var(--navy); color: #fff; }
+.im-seg button:focus-visible, .im-in:focus-visible { outline: 2px solid var(--navy-3); outline-offset: 2px; }
+.im-barcos { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--navy); }
+.im-in { border: 1px solid var(--line); border-radius: 4px; padding: 5px 6px; font: inherit; font-size: 13px; text-align: right; background: #fff; color: var(--text); }
+.im-cost-blocks { display: grid; gap: 16px; }
+.im-cost-block { border-top: 3px solid var(--navy); }
+.im-cost-head { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.im-cost-head h3 { margin: 0 0 2px; font-size: 18px; }
+.im-cost-head > div:first-child { flex: 1 1 320px; min-width: 0; }
+.im-cost-tot { display: flex; gap: 10px; flex-wrap: wrap; }
+.im-cost-tot div { background: var(--navy-50); border-radius: 6px; padding: 6px 12px; text-align: right; }
+.im-cost-tot b { display: block; font-size: 17px; color: var(--navy); font-variant-numeric: tabular-nums; }
+.im-cost-tot span { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.im-cost-table { min-width: 900px; }
+.im-cost-table tr.off { opacity: .5; }
+.im-cost-table tr.im-cost-sub td { background: var(--bg-soft); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--navy); padding: 8px 14px; }
+.im-cost-table tr.im-cost-sub.tot td { text-transform: none; font-size: 13.5px; letter-spacing: 0; background: var(--navy-50); }
+.im-esc-col { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.im-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.im-chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 10px; background: var(--navy-50); color: var(--navy); text-decoration: none; border: 1px solid var(--line); }
+.im-chip:hover { background: var(--navy); color: #fff; }
+.im-fromcost { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; background: var(--navy-50); border-left: 3px solid var(--yellow); border-radius: 6px; padding: 10px 12px; }
+.im-fromcost strong { display: block; font-size: 18px; color: var(--navy); }
+.im-fromcost .im-block-link { display: inline; font-size: inherit; }
+.im-fuentes summary { cursor: pointer; font-weight: 700; color: var(--navy); }
+@media (max-width: 760px) {
+  .im-cost-tot div { flex: 1 1 90px; }
+  .im-seg { width: 100%; }
+  .im-seg button { flex: 1; }
+}
+.im-cost-table tbody th { min-width: 280px; }

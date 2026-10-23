@@ -6,7 +6,7 @@ import './pasajero.css'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { ProtoChrome, useToast } from '../shared'
-import { EstadoPedido, eur, fase, login, useProtoState } from '../store'
+import { EstadoPedido, eur, fase, login, useProtoState, ventajaVigente } from '../store'
 import Welcome from './Welcome'
 import Viaje from './Viaje'
 import Carta from './Carta'
@@ -79,6 +79,18 @@ function Tracker() {
       else toast({ titulo: t('n.arrive.t'), texto: t('n.arrive.b'), icono: 'route' })
     }
   }, [f, billete.clase, billete.vehiculo, billete.nombre, billete.ticket, t, toast])
+
+  // las ventajas por pedir con antelación terminan al cerrarse su ventana (antes de zarpar): aviso suave, una sola vez
+  const nVig = s.ventajas.filter((v) => ventajaVigente(s, v)).length
+  const vigPrev = useRef(nVig)
+  const activasV = s.ventajas.filter((v) => v.activa)
+  const hastaMin = activasV.length ? Math.max(...activasV.map((v) => -v.ventanaMin)) : Infinity
+  useEffect(() => {
+    const antes = vigPrev.current
+    vigPrev.current = nVig
+    // solo si terminaron por la hora (no porque el responsable las desactive)
+    if (antes > 0 && nVig === 0 && s.viaje.minuto >= hastaMin) toast({ titulo: t('va.off.t'), texto: t('va.off.b'), icono: 'clock' })
+  }, [nVig, s.viaje.minuto, hastaMin, t, toast])
 
   useEffect(() => {
     const nuevos = s.mensajes.filter((m) => m.id > ultimoMsg.current && m.de === 'manager')

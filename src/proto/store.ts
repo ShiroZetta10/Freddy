@@ -51,6 +51,7 @@ export type Pedido = {
   servicio?: 'mesa' // servicio en mesa del salón Clase Oro (lo atiende la cafetería Oro)
   mesaRef?: string // referencia libre de mesa (no hay asiento asignado)
   bono?: BonoAplicado // bono de consumo canjeado en este pedido
+  ventajas?: VentajaAplicada[] // ventajas por pedir con antelación aplicadas (solo pre-pedidos); el total ya las descuenta
   canal?: 'barra' // pedido creado en barra (bono físico canjeado en mostrador)
   sinPlastico?: boolean // «Sin cubiertos ni bolsa» (En Armonía con el Mar)
   tarifaJoven?: boolean // el billete es Tarifa Joven y se aplicó la ventaja propuesta
@@ -63,6 +64,38 @@ export type Pedido = {
 export type MenuOroAplicado = { uds: number; valor: number; cubiertas: LineaPedido[] }
 /** Bono aplicado a un pedido: qué unidades cubre (a 0 €) y su valor a precio de carta. */
 export type BonoAplicado = { codigo: string; nombre: string; tipo: BonoOrigen; valor: number; cubiertas: LineaPedido[] }
+
+// ---------------------------------------------------------------- ventajas por pedir con antelación
+/** 'menu-exclusivo' = menú a precio cerrado que solo existe antes del viaje · 'descuento' = % sobre los productos a los que aplica. */
+export type TipoVentaja = 'menu-exclusivo' | 'descuento'
+/** Para qué sirve: potenciar producto canario · dar salida al consumo próximo (menos merma) · preparar mejor el barco. */
+export type ObjetivoVentaja = 'canario' | 'consumo-proximo' | 'preparar-barco'
+/** Reglas calculadas: km0 / elaborado en Canarias · perecederos con exceso o que caducan hoy (desde el inventario) · bocadillos y sándwiches. */
+export type ReglaVentaja = 'canario' | 'consumo-proximo' | 'preparar'
+export type AplicaVentaja = { modo: 'productos'; pids: string[] } | { modo: 'categorias'; cats: Categoria[] } | { modo: 'regla'; regla: ReglaVentaja }
+export type Ventaja = {
+  id: string
+  nombre: string
+  tipo: TipoVentaja
+  objetivo: ObjetivoVentaja
+  aplica: AplicaVentaja // a qué productos aplica un descuento (en un menú exclusivo no se usa: manda `menu`)
+  menu: CoberturaBono[] // componentes del menú exclusivo (cada uno admite alternativas); vacío en un descuento
+  valor: number // % de descuento (tipo 'descuento') o precio cerrado del menú en € (tipo 'menu-exclusivo')
+  limiteTravesia: number | null // unidades (o menús) por travesía; null = sin límite
+  limitePasajero: number | null // unidades (o menús) por pasajero y travesía; null = sin límite
+  ventanaMin: number // se ofrece desde la compra del billete hasta estos minutos antes de zarpar
+  activa: boolean
+  propuesta: boolean // precios y porcentajes son una propuesta del equipo, por validar con Fred. Olsen
+}
+export type VentajaCubierta = { pid: string; qty: number; dto: number } // `qty` unidades de `pid` con `dto` € de descuento en total
+/** Ventaja aplicada a un pedido: qué unidades cubre y cuánto descuenta (instantánea: sigue valiendo aunque luego se edite la ventaja). */
+export type VentajaAplicada = { id: string; nombre: string; tipo: TipoVentaja; objetivo: ObjetivoVentaja; uds: number; descuento: number; cubiertas: VentajaCubierta[] }
+/** Ajustes del cálculo de «consumo próximo» (se calcula con el inventario). */
+export type VentajasCfg = {
+  umbralExceso: number // un perecedero está «en exceso» si su stock supera lo previsto en este porcentaje (0,3 = +30 %)
+  pasajerosDia: number // pasajeros previstos del día para la previsión (hipótesis del equipo, la misma del plan de aprovisionamiento)
+  caducaHoy: string[] // insumos que el responsable marca como «caduca hoy» (p. ej. un lote)
+}
 
 // ---------------------------------------------------------------- bonos de consumo
 export type BonoOrigen = 'billete' | 'fisico'
@@ -162,6 +195,8 @@ export type ProtoState = {
   alertasSilenciadas: Record<string, AlertaSilenciada> // por clave estable; compartido entre pestañas/iframes como el resto del estado
   siguienteId: number
   bonos: Bono[] // bonos de consumo emitidos (de billete y físicos); el código es de un solo uso
+  ventajas: Ventaja[] // ventajas por pedir con antelación (configurables por el manager)
+  ventajasCfg: VentajasCfg
   insumos: Insumo[]
   escandallos: Record<string, LineaEscandallo[]> // producto -> receta
   movimientos: Movimiento[] // últimos movimientos de inventario
@@ -177,6 +212,7 @@ export const PRODUCTOS_INICIALES: Producto[] = [
   { id: 'solo', nombre: 'Café solo', precio: 1.9, cat: 'Desayunos', desc: 'Espresso recién molido.', stock: 120, agotado: false, color: '#3b2416', incluidoOro: true },
   { id: 'oferta-bolleria', nombre: 'Bollería + bebida caliente', precio: 4.2, cat: 'Desayunos', desc: 'Croissant o napolitana con café o infusión.', tags: ['combo'], stock: 60, agotado: false, color: '#d99a3d', incluidoOro: true },
   { id: 'croissant', nombre: 'Croissant', precio: 2.1, cat: 'Desayunos', desc: 'Horneado a bordo.', stock: 8, agotado: false, color: '#e0a84f', incluidoOro: true },
+  { id: 'pan-queso', nombre: 'Pan con queso de Tenerife', precio: 2.6, cat: 'Desayunos', desc: 'Pan de leña con queso semicurado canario.', km0: true, origen: 'Quesería de Tenerife', tags: ['vegetariano'], stock: 30, agotado: false, color: '#d4a85a' },
   { id: 'pollo-gourmet', nombre: 'Bocadillo pollo gourmet', precio: 5.72, cat: 'Bocadillos', desc: 'Pollo asado, rúcula y alioli suave.', stock: 40, agotado: false, color: '#c0763a', incluidoOro: true },
   { id: 'serrano-queso', nombre: 'Bocadillo jamón serrano y queso', precio: 5.76, cat: 'Bocadillos', desc: 'Pan de leña y queso semicurado canario.', km0: true, origen: 'Quesería de Tenerife', stock: 35, agotado: false, color: '#b5453a', incluidoOro: true },
   { id: 'tortilla', nombre: 'Bocadillo de tortilla', precio: 5.77, cat: 'Bocadillos', desc: 'Tortilla de papas del día.', tags: ['vegetariano'], stock: 25, agotado: false, color: '#e8c25a', incluidoOro: true },
@@ -241,6 +277,7 @@ export const ESCANDALLOS_INICIALES: Record<string, LineaEscandallo[]> = {
   solo: [{ iid: 'cafe', qty: 7 }, { iid: 'vaso', qty: 1 }, { iid: 'azucar', qty: 1 }],
   'oferta-bolleria': [{ iid: 'croissant', qty: 1 }, { iid: 'cafe', qty: 7 }, { iid: 'leche', qty: 100 }, { iid: 'vaso', qty: 1 }, { iid: 'azucar', qty: 1 }],
   croissant: [{ iid: 'croissant', qty: 1 }],
+  'pan-queso': [{ iid: 'pan-bocadillo', qty: 1 }, { iid: 'queso-semi', qty: 50 }],
   'pollo-gourmet': [{ iid: 'pan-bocadillo', qty: 1 }, { iid: 'pollo', qty: 90 }, { iid: 'verdura', qty: 10 }, { iid: 'alioli', qty: 15 }],
   'serrano-queso': [{ iid: 'pan-bocadillo', qty: 1 }, { iid: 'serrano', qty: 50 }, { iid: 'queso-semi', qty: 40 }],
   tortilla: [{ iid: 'pan-bocadillo', qty: 1 }, { iid: 'tortilla', qty: 1 }],
@@ -281,6 +318,7 @@ export const CONSUMO_POR_PASAJERO: Record<string, { u: number; fuente: 'real' | 
   atun: { u: 1083 / 166453, fuente: 'real' },
   tortilla: { u: 1013 / 166453, fuente: 'real' },
   croissant: { u: 0.008, fuente: 'est.' },
+  'pan-queso': { u: 0.006, fuente: 'est.' },
   refresco: { u: 0.02, fuente: 'est.' },
   cerveza: { u: 0.015, fuente: 'est.' },
   papas: { u: 0.015, fuente: 'est.' },
@@ -482,11 +520,71 @@ export function bonosIniciales(): Bono[] {
   ]
 }
 
+// ---------------------------------------------------------------- ventajas por pedir con antelación: demo
+/** Pasajeros previstos al día para la previsión de consumo (hipótesis del equipo: 8 salidas × ≈ 290; la misma del plan de aprovisionamiento del manager). */
+export const PASAJEROS_DIA_PREVISTOS = 2300
+/**
+ * Ventajas de demo. Precios, porcentajes y límites son una PROPUESTA del equipo (`propuesta: true`): hay que validarlos con Fred. Olsen.
+ *  - «Menú Desayuno Canario»: café con leche canaria + bollería o pan con queso de Tenerife + plátano de Canarias o agua canaria, a precio cerrado.
+ *  - «−15 % en bocadillos y sándwiches»: lo que conviene preparar con antelación.
+ *  - «−25 % en consumo próximo»: la lista se calcula con el inventario (perecederos con exceso o que caducan hoy).
+ */
+export function ventajasIniciales(): Ventaja[] {
+  return [
+    {
+      id: 'v-desayuno-canario',
+      nombre: 'Menú Desayuno Canario solo antes del viaje',
+      tipo: 'menu-exclusivo',
+      objetivo: 'canario',
+      aplica: { modo: 'regla', regla: 'canario' },
+      menu: [
+        { etiqueta: 'Café con leche canaria', pids: ['cortado'], qty: 1 },
+        { etiqueta: 'Bollería o pan con queso de Tenerife', pids: ['croissant', 'pan-queso'], qty: 1 },
+        { etiqueta: 'Plátano de Canarias o agua canaria', pids: ['fruta', 'agua'], qty: 1 },
+      ],
+      valor: 4.4,
+      limiteTravesia: 40,
+      limitePasajero: 2,
+      ventanaMin: 15,
+      activa: true,
+      propuesta: true,
+    },
+    {
+      id: 'v-bocadillos-15',
+      nombre: '−15 % en bocadillos y sándwiches pedidos antes de embarcar',
+      tipo: 'descuento',
+      objetivo: 'preparar-barco',
+      aplica: { modo: 'regla', regla: 'preparar' },
+      menu: [],
+      valor: 15,
+      limiteTravesia: 60,
+      limitePasajero: 4,
+      ventanaMin: 15,
+      activa: true,
+      propuesta: true,
+    },
+    {
+      id: 'v-consumo-proximo-25',
+      nombre: '−25 % en productos de consumo próximo',
+      tipo: 'descuento',
+      objetivo: 'consumo-proximo',
+      aplica: { modo: 'regla', regla: 'consumo-proximo' },
+      menu: [],
+      valor: 25,
+      limiteTravesia: 30,
+      limitePasajero: 3,
+      ventanaMin: 15,
+      activa: true,
+      propuesta: true,
+    },
+  ]
+}
+
 const NOMBRES_BOT = ['Ana', 'Luis', 'Marta', 'Jonay', 'Yeray', 'Elena', 'Pedro', 'Nira', 'Acerina', 'Raúl', 'Sofía', 'Iván', 'Beatriz', 'Dácil', 'Hugo']
 
 export function estadoInicial(): ProtoState {
   return recalcular({
-    version: 7,
+    version: 8,
     viaje: { buque: 'Bajamar Express', origen: 'Santa Cruz de Tenerife', destino: 'Agaete', salida: '08:00', duracionMin: 80, minuto: -25, velocidad: 0.5 },
     ajustes: {
       franjaMin: 5,
@@ -513,6 +611,8 @@ export function estadoInicial(): ProtoState {
     alertasSilenciadas: {},
     siguienteId: 201,
     bonos: bonosIniciales(),
+    ventajas: ventajasIniciales(),
+    ventajasCfg: { umbralExceso: 0.3, pasajerosDia: PASAJEROS_DIA_PREVISTOS, caducaHoy: ['jamon-cocido'] }, // demo: un lote de jamón cocido que caduca hoy
     insumos: INSUMOS_INICIALES.map((i) => ({ ...i })),
     escandallos: JSON.parse(JSON.stringify(ESCANDALLOS_INICIALES)),
     movimientos: [],
@@ -523,7 +623,7 @@ export function estadoInicial(): ProtoState {
 }
 
 // ---------------------------------------------------------------- store (localStorage + BroadcastChannel)
-const KEY = 'fredonboard-proto-v7'
+const KEY = 'fredonboard-proto-v8'
 const canal: BroadcastChannel | null = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(KEY) : null
 
 function cargar(): ProtoState {
@@ -533,7 +633,7 @@ function cargar(): ProtoState {
     // una demo abandonada (más de 20 min sin actividad) arranca de cero con una travesía nueva
     if (raw && Date.now() - t < 20 * 60 * 1000) {
       const s = JSON.parse(raw) as ProtoState
-      if (s.version === 7) return recalcular(s)
+      if (s.version === 8) return recalcular(s)
     }
   } catch {
     /* sin almacenamiento: seguimos en memoria */
@@ -730,23 +830,331 @@ export function planBono(s: ProtoState, bono: Pick<Bono, 'contenido'>, lineas: L
 const restarLineas = (lineas: LineaPedido[], cubiertas: LineaPedido[]) =>
   lineas.map((l) => ({ ...l, qty: l.qty - (cubiertas.find((c) => c.pid === l.pid)?.qty ?? 0) })).filter((l) => l.qty > 0)
 
+// ---------------------------------------------------------------- ventajas por pedir con antelación: motor
 /**
- * Cotización completa de un pedido: subtotal, bono y Tarifa Joven sin doble descuento.
- * El bono se aplica primero (esas unidades quedan a 0 €); la ventaja joven solo puede recaer en unidades NO cubiertas por el bono.
+ * REGLA DE CONVIVENCIA (sin doble descuento): cada unidad del pedido recibe, como mucho, UN beneficio. Orden de aplicación:
+ *   1) menú Clase Oro incluido (0 €) → 2) bono de consumo (0 €) → 3) ventaja por pedir con antelación → 4) Tarifa Joven.
+ * Cada paso solo actúa sobre las unidades que los anteriores han dejado libres. Dentro del paso 3, primero los menús exclusivos y después
+ * los descuentos; si varios descuentos aplican a una misma unidad gana el de mayor ahorro. Las ventajas solo existen en pre-pedidos
+ * (antes de zarpar y dentro de su ventana): a bordo no se ofrecen.
+ */
+const c2 = (n: number) => Math.round(n * 100) / 100
+
+/** Pedidos que cuentan para los límites: activos (no cancelados), incluidos los pendientes de sincronizar, sin duplicados. */
+function pedidosContables(s: Pick<ProtoState, 'pedidos' | 'pendientesOffline'>): Pedido[] {
+  const vistos = new Set<string>()
+  const out: Pedido[] = []
+  for (const p of [...s.pedidos, ...s.pendientesOffline]) {
+    if (vistos.has(p.clientKey)) continue
+    vistos.add(p.clientKey)
+    if (p.estado !== 'cancelado') out.push(p)
+  }
+  return out
+}
+
+/** ¿Está abierta la ventana de la ventaja? Desde la compra del billete hasta `ventanaMin` minutos antes de zarpar. */
+export const ventanaAbierta = (s: Pick<ProtoState, 'viaje'>, v: Pick<Ventaja, 'ventanaMin'>) => s.viaje.minuto < -Math.max(0, v.ventanaMin)
+/** Una ventaja se ofrece si está activa y su ventana sigue abierta (siempre antes de zarpar). */
+export const ventajaVigente = (s: Pick<ProtoState, 'viaje'>, v: Pick<Ventaja, 'ventanaMin' | 'activa'>) => v.activa && ventanaAbierta(s, v)
+
+/** Unidades (o menús) ya usados de una ventaja en esta travesía, opcionalmente solo de un billete. Un pedido cancelado devuelve su cupo. */
+export const ventajaUsadas = (s: Pick<ProtoState, 'pedidos' | 'pendientesOffline'>, id: string, ticket?: string) =>
+  pedidosContables(s)
+    .filter((p) => !ticket || p.ticket === ticket)
+    .reduce((a, p) => a + (p.ventajas?.find((x) => x.id === id)?.uds ?? 0), 0)
+
+export type EstadoVentaja = {
+  vigente: boolean
+  motivo?: 'inactiva' | 'cerrada' | 'agotada' | 'agotada-pasajero'
+  usadasTravesia: number
+  usadasPasajero: number
+  restoTravesia: number | null // null = sin límite
+  restoPasajero: number | null
+  resto: number // unidades que aún se pueden aplicar (Infinity = sin límite)
+  hasta: string // hora (HH:MM) a la que se cierra la ventana
+  minutosHasta: number // minutos simulados que quedan para el cierre (0 si ya cerró)
+}
+export function estadoVentaja(s: ProtoState, v: Ventaja, ticket?: string): EstadoVentaja {
+  const usadasTravesia = ventajaUsadas(s, v.id)
+  const usadasPasajero = ticket ? ventajaUsadas(s, v.id, ticket) : 0
+  const restoTravesia = v.limiteTravesia == null ? null : Math.max(0, v.limiteTravesia - usadasTravesia)
+  const restoPasajero = v.limitePasajero == null || !ticket ? null : Math.max(0, v.limitePasajero - usadasPasajero)
+  const resto = Math.min(restoTravesia ?? Infinity, restoPasajero ?? Infinity)
+  const abierta = ventanaAbierta(s, v)
+  const motivo = !v.activa ? 'inactiva' : !abierta ? 'cerrada' : restoTravesia === 0 ? 'agotada' : restoPasajero === 0 ? 'agotada-pasajero' : undefined
+  return {
+    vigente: !motivo,
+    motivo,
+    usadasTravesia,
+    usadasPasajero,
+    restoTravesia,
+    restoPasajero,
+    resto,
+    hasta: horaDe(s, -Math.max(0, v.ventanaMin)),
+    minutosHasta: Math.max(0, Math.round(-Math.max(0, v.ventanaMin) - s.viaje.minuto)),
+  }
+}
+
+// ---- consumo próximo: se calcula con el inventario
+/** Consumo previsto de un insumo en el día: pasajeros previstos × consumo por pasajero × escandallo (datos reales del Bajamar donde los hay). */
+export function previstoInsumo(s: Pick<ProtoState, 'escandallos' | 'ventajasCfg'>, iid: string): number {
+  let n = 0
+  for (const [pid, c] of Object.entries(CONSUMO_POR_PASAJERO)) for (const e of s.escandallos[pid] ?? []) if (e.iid === iid) n += s.ventajasCfg.pasajerosDia * c.u * e.qty
+  return n
+}
+/** Insumo que más pesa en el coste de un producto (el «principal» de su escandallo). */
+export function insumoPrincipal(s: Pick<ProtoState, 'escandallos' | 'insumos'>, pid: string): Insumo | undefined {
+  let mejor: Insumo | undefined
+  let max = -1
+  for (const l of s.escandallos[pid] ?? []) {
+    const i = s.insumos.find((x) => x.id === l.iid)
+    if (i && l.qty * i.coste > max) {
+      max = l.qty * i.coste
+      mejor = i
+    }
+  }
+  return mejor
+}
+export type InsumoProximo = { insumo: Insumo; previsto: number; ratio: number; motivo: 'exceso' | 'caduca-hoy'; sobrante: number }
+/**
+ * Perecederos de consumo próximo: los que tienen más stock del previsto (por encima de `umbralExceso`) o que el responsable marca como «caduca hoy».
+ * `sobrante` = lo que se perdería si no sale (todo el stock si caduca hoy; el exceso sobre lo previsto en el otro caso).
+ */
+export function insumosConsumoProximo(s: ProtoState): InsumoProximo[] {
+  const out: InsumoProximo[] = []
+  for (const insumo of s.insumos) {
+    if (insumo.tipo !== 'perecedero' || insumo.stock <= 0) continue
+    const previsto = previstoInsumo(s, insumo.id)
+    const ratio = previsto > 0 ? insumo.stock / previsto : Infinity
+    const caduca = s.ventajasCfg.caducaHoy.includes(insumo.id)
+    if (!caduca && ratio < 1 + s.ventajasCfg.umbralExceso) continue
+    out.push({ insumo, previsto, ratio, motivo: caduca ? 'caduca-hoy' : 'exceso', sobrante: caduca ? insumo.stock : Math.max(0, insumo.stock - previsto) })
+  }
+  return out
+}
+export type ProductoProximo = InsumoProximo & { producto: Producto }
+/** Productos de consumo próximo ahora: aquellos cuyo insumo principal es un perecedero en exceso o que caduca hoy (solo los que se pueden pedir). */
+export function productosConsumoProximo(s: ProtoState): ProductoProximo[] {
+  const por = new Map(insumosConsumoProximo(s).map((x) => [x.insumo.id, x] as const))
+  if (!por.size) return []
+  const out: ProductoProximo[] = []
+  for (const producto of s.productos) {
+    if (producto.soloOro || disponible(s, producto) <= 0) continue
+    const i = insumoPrincipal(s, producto.id)
+    const x = i && por.get(i.id)
+    if (x) out.push({ ...x, producto })
+  }
+  return out
+}
+
+/** ¿Aplica la ventaja (de descuento) a este producto? `proximo` = pids de consumo próximo ya calculados. */
+export function aplicaA(s: ProtoState, v: Pick<Ventaja, 'aplica'>, p: Producto, proximo?: Set<string>): boolean {
+  const a = v.aplica
+  if (a.modo === 'productos') return a.pids.includes(p.id)
+  if (a.modo === 'categorias') return a.cats.includes(p.cat)
+  if (a.regla === 'canario') return !!p.km0 || !!p.elaboradoCanarias
+  if (a.regla === 'preparar') return p.cat === 'Bocadillos' || p.cat === 'Sándwiches'
+  return (proximo ?? new Set(productosConsumoProximo(s).map((x) => x.producto.id))).has(p.id)
+}
+/** Productos a los que aplica ahora una ventaja (solo los que se pueden pedir: con stock y fuera de la carta exclusiva de Clase Oro). */
+export function productosDeVentaja(s: ProtoState, v: Ventaja): Producto[] {
+  const vendibles = s.productos.filter((p) => !p.soloOro && disponible(s, p) > 0)
+  if (v.tipo === 'menu-exclusivo') {
+    const pids = new Set(v.menu.flatMap((c) => c.pids))
+    return vendibles.filter((p) => pids.has(p.id))
+  }
+  const proximo = v.aplica.modo === 'regla' && v.aplica.regla === 'consumo-proximo' ? new Set(productosConsumoProximo(s).map((x) => x.producto.id)) : undefined
+  return vendibles.filter((p) => aplicaA(s, v, p, proximo))
+}
+
+export type PlanVentajas = { aplicadas: VentajaAplicada[]; descuento: number; cubiertas: VentajaCubierta[] }
+const SIN_VENTAJAS: PlanVentajas = { aplicadas: [], descuento: 0, cubiertas: [] }
+
+/**
+ * Qué ventajas por pedir con antelación se aplican a unas líneas (las que quedan tras menú Oro y bono). Solo si el pedido es un pre-pedido
+ * (antes de zarpar) y la ventana de cada ventaja sigue abierta. Respeta los límites por travesía y por pasajero (cancelar devuelve el cupo).
+ *  - Menú exclusivo: por cada menú completo en el carrito (se toman las unidades elegibles más baratas, como en un bono) se cobra el precio cerrado,
+ *    solo si es menor que la suma a precio de carta. El ahorro se reparte entre sus unidades.
+ *  - Descuento: % sobre cada unidad elegible; si hay límite, se aplica primero a donde más ahorra.
+ */
+export function planVentajas(s: ProtoState, ticket: string | undefined, lineas: LineaPedido[]): PlanVentajas {
+  if (s.viaje.minuto >= 0) return SIN_VENTAJAS
+  const vig = s.ventajas.filter((v) => ventajaVigente(s, v))
+  if (!vig.length) return SIN_VENTAJAS
+  const resto = new Map<string, number>()
+  for (const l of lineas) if (l.qty > 0) resto.set(l.pid, (resto.get(l.pid) ?? 0) + l.qty)
+  if (!resto.size) return SIN_VENTAJAS
+  const cupo = new Map(vig.map((v) => [v.id, estadoVentaja(s, v, ticket).resto] as const))
+  const acum = new Map<string, { uds: number; cub: Map<string, { qty: number; dto: number }> }>()
+  const anotar = (v: Ventaja, pid: string, qty: number, dto: number, uds: number) => {
+    const a = acum.get(v.id) ?? { uds: 0, cub: new Map() }
+    const c = a.cub.get(pid) ?? { qty: 0, dto: 0 }
+    a.cub.set(pid, { qty: c.qty + qty, dto: c2(c.dto + dto) })
+    a.uds += uds
+    acum.set(v.id, a)
+  }
+  const precio = (pid: string) => s.productos.find((p) => p.id === pid)?.precio ?? 0
+
+  // 1) menús exclusivos (precio cerrado)
+  for (const v of vig.filter((x) => x.tipo === 'menu-exclusivo' && x.menu.length > 0)) {
+    while ((cupo.get(v.id) ?? 0) > 0) {
+      const plan = planBono(s, { contenido: v.menu }, [...resto].map(([pid, qty]) => ({ pid, qty })))
+      if (!plan.completo || plan.valor - v.valor < 0.005) break
+      const ahorro = c2(plan.valor - v.valor)
+      let repartido = 0
+      plan.cubiertas.forEach((c, k) => {
+        const dto = k === plan.cubiertas.length - 1 ? c2(ahorro - repartido) : c2((ahorro * precio(c.pid) * c.qty) / plan.valor)
+        repartido = c2(repartido + dto)
+        resto.set(c.pid, (resto.get(c.pid) ?? 0) - c.qty)
+        anotar(v, c.pid, c.qty, dto, k === 0 ? 1 : 0) // el menú cuenta como 1 unidad
+      })
+      cupo.set(v.id, (cupo.get(v.id) ?? 0) - 1)
+    }
+  }
+
+  // 2) descuentos: cada unidad, con la ventaja que más ahorra
+  const proximo = vig.some((v) => v.tipo === 'descuento' && v.aplica.modo === 'regla' && v.aplica.regla === 'consumo-proximo') ? new Set(productosConsumoProximo(s).map((x) => x.producto.id)) : undefined
+  const pares: { v: Ventaja; pid: string; ahorro: number }[] = []
+  for (const v of vig.filter((x) => x.tipo === 'descuento'))
+    for (const pid of resto.keys()) {
+      const p = s.productos.find((x) => x.id === pid)
+      if (p && aplicaA(s, v, p, proximo)) pares.push({ v, pid, ahorro: c2((p.precio * v.valor) / 100) })
+    }
+  pares.sort((a, b) => b.ahorro - a.ahorro)
+  for (const par of pares) {
+    const n = Math.min(resto.get(par.pid) ?? 0, cupo.get(par.v.id) ?? 0)
+    if (n <= 0 || par.ahorro <= 0) continue
+    resto.set(par.pid, (resto.get(par.pid) ?? 0) - n)
+    cupo.set(par.v.id, (cupo.get(par.v.id) ?? 0) - n)
+    anotar(par.v, par.pid, n, c2(par.ahorro * n), n)
+  }
+
+  const aplicadas: VentajaAplicada[] = []
+  const total = new Map<string, { qty: number; dto: number }>()
+  for (const v of vig) {
+    const a = acum.get(v.id)
+    if (!a || a.uds <= 0) continue
+    const cubiertas = [...a.cub].map(([pid, c]) => ({ pid, qty: c.qty, dto: c.dto }))
+    for (const c of cubiertas) {
+      const t = total.get(c.pid) ?? { qty: 0, dto: 0 }
+      total.set(c.pid, { qty: t.qty + c.qty, dto: c2(t.dto + c.dto) })
+    }
+    aplicadas.push({ id: v.id, nombre: v.nombre, tipo: v.tipo, objetivo: v.objetivo, uds: a.uds, descuento: c2(cubiertas.reduce((x, c) => x + c.dto, 0)), cubiertas })
+  }
+  return { aplicadas, descuento: c2(aplicadas.reduce((x, a) => x + a.descuento, 0)), cubiertas: [...total].map(([pid, c]) => ({ pid, qty: c.qty, dto: c.dto })) }
+}
+
+/** Precio unitario con ventaja de descuento (el mejor aplicable ahora a un billete), para mostrarlo tachado en la carta. */
+export function ventajaDeProducto(s: ProtoState, ticket: string | undefined, p: Producto, proximo?: Set<string>): { ventaja: Ventaja; precio: number } | null {
+  if (s.viaje.minuto >= 0 || p.soloOro) return null
+  proximo ??= new Set(productosConsumoProximo(s).map((x) => x.producto.id))
+  let mejor: { ventaja: Ventaja; precio: number } | null = null
+  for (const v of s.ventajas) {
+    if (v.tipo !== 'descuento' || !estadoVentaja(s, v, ticket).vigente || !aplicaA(s, v, p, proximo)) continue
+    const precio = c2(p.precio - c2((p.precio * v.valor) / 100))
+    if (!mejor || precio < mejor.precio) mejor = { ventaja: v, precio }
+  }
+  return mejor
+}
+
+/** Contadores de la travesía para el manager: pre-pedidos con ventaja, unidades, importe descontado y efecto en producto canario y en merma. */
+export function estadisticasVentajas(s: ProtoState) {
+  const validos = pedidosContables(s)
+  const pre = validos.filter((p) => p.prepedido)
+  const con = validos.filter((p) => p.ventajas?.length)
+  const sin = pre.filter((p) => !p.ventajas?.length)
+  const udsDe = (ps: Pedido[]) => ps.reduce((a, p) => a + p.lineas.reduce((b, l) => b + l.qty, 0), 0)
+  const canDe = (ps: Pedido[]) => ps.reduce((a, p) => a + p.lineas.reduce((b, l) => b + (esCanario(s, l.pid) ? l.qty : 0), 0), 0)
+  const todas = con.flatMap((p) => p.ventajas ?? [])
+  const cub = (f: (v: VentajaAplicada) => boolean) => todas.filter(f).flatMap((v) => v.cubiertas)
+  const porObjetivo = (o: ObjetivoVentaja) => {
+    const vs = todas.filter((v) => v.objetivo === o)
+    return { uds: vs.reduce((a, v) => a + v.uds, 0), descuento: c2(vs.reduce((a, v) => a + v.descuento, 0)), pedidos: con.filter((p) => p.ventajas?.some((v) => v.objetivo === o)).length }
+  }
+  const canarias = cub(() => true).filter((c) => esCanario(s, c.pid))
+  const proximo = cub((v) => v.objetivo === 'consumo-proximo')
+  return {
+    prepedidos: pre.length,
+    pedidos: con.length,
+    pctPrepedidos: pre.length ? con.length / pre.length : 0,
+    uds: todas.reduce((a, v) => a + v.uds, 0),
+    descuento: c2(todas.reduce((a, v) => a + v.descuento, 0)),
+    importe: c2(con.reduce((a, p) => a + p.total, 0)),
+    // producto canario: unidades canarias con ventaja y peso del canario en pre-pedidos con y sin ventaja
+    udsCanariasConVentaja: canarias.reduce((a, c) => a + c.qty, 0),
+    pctCanarioCon: udsDe(con) ? canDe(con) / udsDe(con) : 0,
+    pctCanarioSin: udsDe(sin) ? canDe(sin) / udsDe(sin) : 0,
+    // merma: unidades de consumo próximo que han salido con ventaja (a coste de materia prima) y lo que aún queda por dar salida
+    udsProximo: proximo.reduce((a, c) => a + c.qty, 0),
+    costeProximo: c2(proximo.reduce((a, c) => a + c.qty * costeProducto(s, c.pid), 0)),
+    sobranteCoste: c2(insumosConsumoProximo(s).reduce((a, x) => a + x.sobrante * x.insumo.coste, 0)),
+    // preparar el barco: unidades que la barra conoce antes de zarpar
+    preparar: porObjetivo('preparar-barco'),
+    canario: porObjetivo('canario'),
+    porVentaja: s.ventajas.map((v) => {
+      const vs = todas.filter((x) => x.id === v.id)
+      return { id: v.id, pedidos: con.filter((p) => p.ventajas?.some((x) => x.id === v.id)).length, uds: vs.reduce((a, x) => a + x.uds, 0), descuento: c2(vs.reduce((a, x) => a + x.descuento, 0)) }
+    }),
+  }
+}
+
+// ---- acciones del manager
+const nuevoIdVentaja = () => 'v-' + Math.random().toString(36).slice(2, 7)
+/** Crea una ventaja (por defecto, un −10 % en bebidas y snacks canarios, desactivada para que el manager la revise antes de publicarla). */
+export function crearVentaja(base?: Partial<Ventaja>): Ventaja {
+  const v: Ventaja = {
+    id: nuevoIdVentaja(),
+    nombre: 'Nueva ventaja por pedir con antelación',
+    tipo: 'descuento',
+    objetivo: 'canario',
+    aplica: { modo: 'regla', regla: 'canario' },
+    menu: [],
+    valor: 10,
+    limiteTravesia: 30,
+    limitePasajero: 3,
+    ventanaMin: 15,
+    activa: false,
+    propuesta: true,
+    ...base,
+  }
+  update((s) => ({ ...s, ventajas: [...s.ventajas, v] }))
+  return v
+}
+export function actualizarVentaja(id: string, patch: Partial<Omit<Ventaja, 'id'>>) {
+  update((s) => ({ ...s, ventajas: s.ventajas.map((v) => (v.id === id ? { ...v, ...patch } : v)) }))
+}
+export function eliminarVentaja(id: string) {
+  update((s) => ({ ...s, ventajas: s.ventajas.filter((v) => v.id !== id) }))
+}
+export function setVentajasCfg(patch: Partial<VentajasCfg>) {
+  update((s) => ({ ...s, ventajasCfg: { ...s.ventajasCfg, ...patch } }))
+}
+/** Marca o desmarca un insumo perecedero como «caduca hoy» (entra o sale del consumo próximo). */
+export function setCaducaHoy(iid: string, on: boolean) {
+  update((s) => ({ ...s, ventajasCfg: { ...s.ventajasCfg, caducaHoy: on ? [...new Set([...s.ventajasCfg.caducaHoy, iid])] : s.ventajasCfg.caducaHoy.filter((x) => x !== iid) } }))
+}
+
+/**
+ * Cotización completa de un pedido: subtotal, menú Oro, bono, ventajas por pedir con antelación y Tarifa Joven sin doble descuento.
+ * Orden: menú Oro → bono (esas unidades quedan a 0 €) → ventajas por antelación → Tarifa Joven; cada paso solo recae en unidades que los anteriores no han cubierto.
  * Un bono incompleto no se aplica (`plan.faltan` dice qué añadir).
  */
-export function cotizar(s: ProtoState, billete: Pick<Billete, 'tarifaJoven'> & Partial<Pick<Billete, 'ticket' | 'clase'>>, lineas: LineaPedido[], bono?: Bono | null, cafeteria?: CafeteriaId) {
+export function cotizar(s: ProtoState, billete: Pick<Billete, 'tarifaJoven'> & Partial<Pick<Billete, 'ticket' | 'clase'>>, lineas: LineaPedido[], bono?: Bono | null, cafeteria?: CafeteriaId, opciones?: { sinVentajas?: boolean }) {
   const subtotal = totalLineas(s, lineas)
-  // 1) menú Clase Oro incluido (solo billete Oro en la cafetería Oro) · 2) bono sobre lo que queda · 3) Tarifa Joven sobre lo que queda
+  // 1) menú Clase Oro incluido (solo billete Oro en la cafetería Oro) · 2) bono sobre lo que queda · 3) ventajas por pedir con antelación sobre lo que queda
+  // · 4) Tarifa Joven sobre lo que queda. Cada unidad recibe, como mucho, un beneficio (ver «REGLA DE CONVIVENCIA»).
   const oro = planMenuOro(s, billete, cafeteria, lineas)
   const tras = oro.cubiertas.length ? restarLineas(lineas, oro.cubiertas) : lineas
   const plan = bono ? planBono(s, bono, tras) : null
   const aplicado = plan && plan.completo ? plan : null
   const valorBono = aplicado?.valor ?? 0
   const cubiertas = aplicado?.cubiertas ?? []
-  const dtoJoven = descuentoJoven(s, billete, aplicado ? restarLineas(tras, cubiertas) : tras)
-  const total = Math.max(0, Math.round((subtotal - oro.valor - valorBono - dtoJoven) * 100) / 100)
-  return { subtotal, plan, valorBono, cubiertas, dtoJoven, total, oro }
+  const trasBono = aplicado ? restarLineas(tras, cubiertas) : tras
+  const ventajas = opciones?.sinVentajas ? SIN_VENTAJAS : planVentajas(s, billete.ticket, trasBono)
+  const trasVentajas = ventajas.cubiertas.length ? restarLineas(trasBono, ventajas.cubiertas) : trasBono
+  const dtoJoven = descuentoJoven(s, billete, trasVentajas)
+  const total = Math.max(0, Math.round((subtotal - oro.valor - valorBono - ventajas.descuento - dtoJoven) * 100) / 100)
+  return { subtotal, plan, valorBono, cubiertas, dtoJoven, total, oro, ventajas }
 }
 
 /** Bonos de un billete (comprados con él) que se pueden usar ahora. */
@@ -935,7 +1343,7 @@ function refrescarDesdeAlmacen() {
     const raw = localStorage.getItem(KEY)
     if (!raw) return
     const st = JSON.parse(raw) as ProtoState
-    if (st.version === 7 && st.bonos?.some((b) => b.estado !== 'disponible' && state.bonos.find((x) => x.codigo === b.codigo)?.estado === 'disponible')) {
+    if (st.version === 8 && st.bonos?.some((b) => b.estado !== 'disponible' && state.bonos.find((x) => x.codigo === b.codigo)?.estado === 'disponible')) {
       state = recalcular(st)
       emit()
     }
@@ -995,7 +1403,7 @@ export function crearPedido(input: {
       return { ok: false, motivo: 'sin-stock', detalle: afectado ? producto(s, afectado.pid).nombre : ins.nombre }
     }
   }
-  const cot = cotizar(s, input.billete, input.lineas, bono, input.cafeteria)
+  const cot = cotizar(s, input.billete, input.lineas, bono, input.cafeteria, input.canal === 'barra' ? { sinVentajas: true } : undefined)
   const descuento = cot.dtoJoven
   const esOro = input.billete.clase === 'oro'
   const mesa = !!input.mesa && esOro && input.cafeteria === 'oro'
@@ -1015,6 +1423,7 @@ export function crearPedido(input: {
     ...(cot.oro.uds > 0 ? { menuOro: { uds: cot.oro.uds, valor: cot.oro.valor, cubiertas: cot.oro.cubiertas } } : {}),
     ...(mesa ? { servicio: 'mesa' as const, ...(input.mesaRef?.trim() ? { mesaRef: input.mesaRef.trim().slice(0, 24) } : {}) } : {}),
     ...(bono ? { bono: { codigo: bono.codigo, nombre: bono.nombre, tipo: bono.tipo, valor: cot.valorBono, cubiertas: cot.cubiertas } } : {}),
+    ...(cot.ventajas.aplicadas.length ? { ventajas: cot.ventajas.aplicadas } : {}), // solo en pre-pedidos (antes de zarpar): el descuento ya está en `total`
     ...(input.canal ? { canal: input.canal } : {}),
     ...(input.sinPlastico ? { sinPlastico: true } : {}),
     ...(descuento > 0 ? { tarifaJoven: true, descuentoJoven: descuento } : input.billete.tarifaJoven ? { tarifaJoven: true } : {}),
@@ -1426,12 +1835,41 @@ function tick() {
     const m = state.viaje.minuto
     const intensidad = m < 0 ? 0.25 : m < 25 ? 0.45 : 0.2
     if (Math.random() < intensidad * Math.min(2, dt)) botPedido()
+    // pre-pedidos de pasajeros prudentes: mientras hay ventajas por pedir con antelación, parte de los pedidos simulados las usan (hay datos en barra y manager)
+    if (m < 0 && state.ventajas.some((v) => ventajaVigente(state, v)) && Math.random() < 0.25 * Math.min(2, dt)) botPedido(true)
   }
+}
+
+const elegir = <T,>(l: T[]) => l[Math.floor(Math.random() * l.length)]
+
+/** Carrito de un pasajero simulado que aprovecha una ventaja por pedir con antelación (menú completo o producto al que aplica el descuento). */
+function lineasConVentaja(s: ProtoState, vig: Ventaja[], disp: Producto[]): LineaPedido[] | null {
+  const v = elegir(vig)
+  const out: LineaPedido[] = []
+  const meter = (pid: string, qty = 1) => {
+    const l = out.find((x) => x.pid === pid)
+    if (l) l.qty += qty
+    else out.push({ pid, qty })
+  }
+  if (v.tipo === 'menu-exclusivo') {
+    for (const c of v.menu) {
+      const ok = c.pids.map((pid) => disp.find((p) => p.id === pid)).filter((p): p is Producto => !!p)
+      if (!ok.length) return null
+      meter(elegir(ok).id, c.qty)
+    }
+    return out.length ? out : null
+  }
+  const proximo = v.aplica.modo === 'regla' && v.aplica.regla === 'consumo-proximo' ? new Set(productosConsumoProximo(s).map((x) => x.producto.id)) : undefined
+  const elegibles = disp.filter((p) => aplicaA(s, v, p, proximo))
+  if (!elegibles.length) return null
+  meter(elegir(elegibles).id)
+  if (Math.random() < 0.45) meter(elegir(disp.filter((p) => p.cat === 'Bebidas' || p.id === 'cortado' || p.id === 'solo')).id)
+  return out
 }
 
 const ticketFalso = () => 'FO' + Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('')
 
-function botPedido() {
+function botPedido(conVentaja = false) {
   const s = state
   const disp = s.productos.filter((p) => disponible(s, p) > 0 && !p.soloOro)
   if (!disp.length) return
@@ -1449,6 +1887,17 @@ function botPedido() {
   if (r < 0.14 && tienda.length) meter(pick(tienda))
   else if (r < 0.49 && canarios.length) meter(pick(canarios))
   for (let i = 0; i < n && lineas.length < n; i++) meter(pick(resto.length ? resto : disp))
+  // pre-pedido con ventaja por antelación (antes de zarpar): menú exclusivo o producto con descuento; se aplica sola en `crearPedido`
+  const vigentes = s.ventajas.filter((v) => ventajaVigente(s, v))
+  let conV = false
+  if (vigentes.length && (conVentaja || Math.random() < 0.3)) {
+    const lv = lineasConVentaja(s, vigentes, disp)
+    if (lv) {
+      lineas.splice(0, lineas.length, ...lv)
+      conV = true
+    }
+  }
+  if (conVentaja && !conV) return
   if (!lineas.length) return
   const cafs: CafeteriaId[] = ['proa', 'proa', 'popa', 'popa', 'oro']
   const cafeteria = cafs[Math.floor(Math.random() * cafs.length)]
@@ -1458,7 +1907,7 @@ function botPedido() {
   const ticketBot = ticketFalso()
   // algún pasajero simulado paga con bono (~12 %): compra el menú, lo emite el billete o el mostrador y lo canjea
   let bonoBot: string | undefined
-  if (Math.random() < 0.12) {
+  if (!conV && Math.random() < 0.12) {
     const tipo = TIPOS_BONO[Math.floor(Math.random() * TIPOS_BONO.length)]
     const menu: LineaPedido[] = []
     for (const c of tipo.cubre) {

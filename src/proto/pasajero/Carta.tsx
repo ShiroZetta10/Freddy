@@ -5,6 +5,7 @@ import { CafeteriaId, Categoria, Producto, disponible, eur, pedidosAbiertos, pla
 import { ElaboradoLogo, ProductoArt } from '../shared'
 import { PI } from './ui'
 import { BonoAplicadoPanel } from './Bonos'
+import { BloqueVentajas, useVentajasProducto } from './Ventajas'
 import { useP } from './ctx'
 
 const CATS: Categoria[] = ['Desayunos', 'Bocadillos', 'Sándwiches', 'Bebidas', 'Snacks', 'Tienda']
@@ -51,6 +52,7 @@ export default function Carta() {
     [s.productos, cat, tags, oroMode],
   )
   const qtyDe = (pid: string) => cart.find((l) => l.pid === pid)?.qty ?? 0
+  const ventajasProd = useVentajasProducto() // precio con ventaja por pedir con antelación (solo antes de zarpar)
 
   const hayCafe = cart.some((l) => l.pid === 'cortado' || l.pid === 'solo')
   const hayBolleria = cart.some((l) => l.pid === 'croissant' || l.pid === 'oferta-bolleria')
@@ -78,6 +80,8 @@ export default function Carta() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BloqueVentajas donde="carta" />
 
       {esOro && (
         <section className="pj-oro-menu" aria-label={t('or.menu.t')}>
@@ -182,6 +186,7 @@ export default function Carta() {
             const pocas = !agotado && disp <= 6
             const q = qtyDe(p.id)
             const llegaAlTope = q >= disp
+            const vp = oroMode && p.incluidoOro && oro.restantes > 0 ? undefined : ventajasProd.get(p.id)
             return (
               <motion.li
                 key={p.id}
@@ -204,6 +209,7 @@ export default function Carta() {
                         {t('tag.' + x)}
                       </span>
                     ))}
+                    {vp && !agotado && <span className="pj-va-only">{t('va.only')}</span>}
                     {agotado && <span className="fob-pill red">{t('c.out')}</span>}
                     {pocas && <span className="fob-pill amber">{t('c.last')}</span>}
                   </span>
@@ -213,6 +219,11 @@ export default function Carta() {
                     <span className="price incl">
                       {t('or.incl')}
                       <s>{eur(p.precio)}</s>
+                    </span>
+                  ) : vp ? (
+                    <span className="price va" aria-label={`${eur(vp.precio)}, ${t('va.only')}`}>
+                      <s>{eur(p.precio)}</s>
+                      {eur(vp.precio)}
                     </span>
                   ) : (
                     <span className="price">{eur(p.precio)}</span>

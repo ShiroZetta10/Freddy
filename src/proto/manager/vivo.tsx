@@ -298,7 +298,7 @@ export default function Vivo({ s, ctl, onInventario }: { s: ProtoState; ctl: Pau
       </div>
       <div className="mg-grid2">
         <div className="mg-col">
-          <Card title="Flota y ruta" sub={`${s.viaje.origen} → ${s.viaje.destino} · ${horaDe(s, s.viaje.minuto)}`}>
+          <Card title="Ruta del buque" sub={`${s.viaje.origen} → ${s.viaje.destino} · ${horaDe(s, s.viaje.minuto)}`}>
             <Mapa s={s} />
           </Card>
           <Franjas s={s} />

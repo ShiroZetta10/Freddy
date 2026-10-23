@@ -502,3 +502,10 @@
 .br-oro { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: var(--fob-navy); color: #fff; }
 .br-mesa { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: #fff; border: 1.5px solid var(--fob-navy); color: var(--fob-navy); }
 .br-menu-oro { font-size: 12.5px; font-weight: 700; color: var(--fob-navy); }
+
+/* ventaja por pedir con antelación (pre-pedido) */
+.br-va { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: var(--fob-navy); color: #fff; }
+.br-va-prev { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--fob-line); }
+.br-va-prev h3 { display: flex; align-items: center; gap: 8px; }
+.br-va-prev p { font-size: 13px; margin: 2px 0 10px; }
+.br-franjas .n em.va { color: var(--fob-navy); }

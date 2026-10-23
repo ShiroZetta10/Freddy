@@ -8,7 +8,7 @@ type Tono = 'ok' | 'warn' | 'ko' | 'nd'
 
 function csv(s: ProtoState) {
   const q = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
-  const head = ['pedido', 'localizador', 'pasajero', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'bono', 'valor_bono_eur', 'total_eur', 'lineas', 'creado']
+  const head = ['pedido', 'localizador', 'pasajero', 'cafeteria', 'franja_inicio', 'estado', 'prepedido', 'pago', 'sin_cubiertos', 'tarifa_joven', 'descuento_joven_eur', 'bono', 'valor_bono_eur', 'ventajas_antelacion', 'descuento_ventajas_eur', 'total_eur', 'lineas', 'creado']
   const rows = s.pedidos.map((p) =>
     [
       p.id,
@@ -24,6 +24,8 @@ function csv(s: ProtoState) {
       (p.descuentoJoven ?? 0).toFixed(2).replace('.', ','),
       p.bono?.codigo ?? '',
       (p.bono?.valor ?? 0).toFixed(2).replace('.', ','),
+      p.ventajas?.map((v) => v.nombre).join(' | ') ?? '',
+      (p.ventajas?.reduce((a, v) => a + v.descuento, 0) ?? 0).toFixed(2).replace('.', ','),
       p.total.toFixed(2).replace('.', ','),
       p.lineas.map((l) => `${l.qty}x ${producto(s, l.pid).nombre}`).join(' | '),
       new Date(p.t.creado ?? 0).toISOString(),

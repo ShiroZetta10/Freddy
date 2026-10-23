@@ -49,6 +49,8 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
   // el bono se aplica primero; la ventaja joven solo recae en unidades que el bono no cubre (sin doble descuento)
   const cot = cotizar(s, billete, cart, bono, caf)
   const { subtotal, total, valorBono, dtoJoven: dto, oro } = cot
+  const ventDto = cot.ventajas.descuento // ventajas por pedir con antelación (solo pre-pedidos)
+  const cubVent = new Map(cot.ventajas.cubiertas.map((c) => [c.pid, c]))
   const oroMesa = esOro && caf === 'oro'
   const mesaOn = oroMesa && mesaSel
   const cubOro = new Map(oro.cubiertas.map((c) => [c.pid, c.qty]))
@@ -186,9 +188,10 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                           </button>
                         </div>
                         <span className="sub">
-                          {eur(p.precio * (l.qty - (cubiertas.get(l.pid) ?? 0) - (cubOro.get(l.pid) ?? 0)))}
+                          {eur(p.precio * (l.qty - (cubiertas.get(l.pid) ?? 0) - (cubOro.get(l.pid) ?? 0)) - (cubVent.get(l.pid)?.dto ?? 0))}
                           {(cubOro.get(l.pid) ?? 0) > 0 && <em className="pj-bono-line">{t('or.incl')} ×{cubOro.get(l.pid)}</em>}
                           {(cubiertas.get(l.pid) ?? 0) > 0 && <em className="pj-bono-line">{t('b.covered')} ×{cubiertas.get(l.pid)}</em>}
+                          {(cubVent.get(l.pid)?.qty ?? 0) > 0 && <em className="pj-bono-line">{t('va.cart.tag')} ×{cubVent.get(l.pid)!.qty}</em>}
                         </span>
                       </motion.li>
                     )
@@ -299,6 +302,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                 </div>
               )}
               {prepedido && <p className="pj-note">{t('k.pre')}</p>}
+              {ventDto > 0 && <p className="pj-note">{t('va.nostack')}</p>}
 
               <div className="pj-eco">
                 <button role="switch" aria-checked={sinPlastico} className={'pj-eco-sw' + (sinPlastico ? ' on' : '')} onClick={() => setSpManual(!sinPlastico)}>
@@ -322,7 +326,7 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
         </div>
         {cart.length > 0 && (
           <div className="pj-sh-foot">
-            {(dto > 0 || valorBono > 0 || oro.valor > 0) && (
+            {(dto > 0 || valorBono > 0 || oro.valor > 0 || ventDto > 0) && (
               <div className="pj-total-sub">
                 <span>{t('k.subtotal')}</span>
                 <span>{eur(subtotal)}</span>
@@ -340,6 +344,14 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
                   {t('b.line')} · {bonoActivo.nombre}
                 </span>
                 <span>−{eur(valorBono)}</span>
+              </div>
+            )}
+            {ventDto > 0 && (
+              <div className="pj-total-sub dto">
+                <span>
+                  {t('va.line')} <em>{t('j.proposal')}</em>
+                </span>
+                <span>−{eur(ventDto)}</span>
               </div>
             )}
             {dto > 0 && (
@@ -389,6 +401,11 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
             {valorBono > 0 && bonoActivo && (
               <small className="pj-paydto">
                 {t('b.line')} · {bonoActivo.nombre}: −{eur(valorBono)}
+              </small>
+            )}
+            {ventDto > 0 && (
+              <small className="pj-paydto">
+                {t('va.line')}: −{eur(ventDto)}
               </small>
             )}
             {dto > 0 && (
@@ -467,6 +484,11 @@ export default function Checkout({ onClose }: { onClose: () => void }) {
             <PI n="check" size={18} sw={2.6} /> {t('or.tag')} ×{pedido.menuOro.uds}
           </motion.div>
         )}
+        {pedido.ventajas?.length ? (
+          <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.94 }}>
+            <PI n="check" size={18} sw={2.6} /> {t('va.ok', { n: eur(pedido.ventajas.reduce((a, v) => a + v.descuento, 0)) })}
+          </motion.div>
+        ) : null}
         {pedido.bono && (
           <motion.div className="pj-banner ok" role="status" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.95 }}>
             <PI n="voucher" size={18} />
